@@ -158,7 +158,7 @@ export function EventsPage() {
                 key={index}
                 variants={cardVariants}
                 whileHover={{ y: -10, scale: 1.03 }}
-                className="bg-white border-2 border-purple-100 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all"
+                className="card-shine bg-white border-2 border-purple-100 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:border-purple-300 transition-all"
               >
                 <div className="relative overflow-hidden">
                   <motion.div
@@ -238,7 +238,7 @@ export function EventsPage() {
                 key={index}
                 variants={cardVariants}
                 whileHover={{ y: -10, scale: 1.03 }}
-                className="bg-white border-2 border-orange-100 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all"
+                className="card-shine bg-white border-2 border-orange-100 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:border-orange-300 transition-all"
               >
                 <div className="relative overflow-hidden">
                   <motion.div
@@ -290,8 +290,9 @@ export function EventsPage() {
       </section>
 
       {/* Monthly Tour Schedule */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="py-24 bg-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-40" />
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div
             className="text-center mb-12"
             initial={{ opacity: 0, y: 30 }}
@@ -326,8 +327,8 @@ export function EventsPage() {
               <motion.div
                 key={index}
                 variants={cardVariants}
-                whileHover={{ scale: 1.05, rotate: 2 }}
-                className="bg-gradient-to-br from-purple-100 to-pink-100 p-6 rounded-2xl text-center shadow-lg cursor-pointer border-2 border-purple-200"
+                whileHover={{ scale: 1.05, y:-4 }}
+                className="card-shine bg-gradient-to-br from-purple-100 to-pink-100 p-6 rounded-3xl text-center shadow-lg cursor-pointer border-2 border-purple-200 hover:shadow-xl transition-all"
               >
                 <div className="text-2xl mb-2 font-semibold text-gray-800">{stop.city}</div>
                 <div className="text-purple-600 font-medium">{stop.date}, 2026</div>

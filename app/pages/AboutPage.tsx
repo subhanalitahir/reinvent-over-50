@@ -52,19 +52,17 @@ export function AboutPage() {
   return (
     <div className="pt-20">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 py-20 relative overflow-hidden">
-        <motion.div
-          className="absolute top-10 right-10 w-64 h-64 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-30"
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, -30, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
+      <section className="bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 py-28 relative overflow-hidden">
+        <motion.div className="absolute top-10 right-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-30"
+          animate={{ scale:[1,1.2,1], x:[0,-30,0] }} transition={{ duration:8, repeat:Infinity, ease:'easeInOut' }} />
+        <motion.div className="absolute bottom-0 left-0 w-64 h-64 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-30"
+          animate={{ scale:[1,1.3,1], y:[0,-30,0] }} transition={{ duration:10, repeat:Infinity, ease:'easeInOut', delay:2 }} />
+        {[...Array(5)].map((_,i) => (
+          <motion.div key={i} className="absolute w-3 h-3 bg-purple-400 rounded-full opacity-40"
+            style={{ left:`${10+i*18}%`, top:`${20+(i%2)*50}%` }}
+            animate={{ y:[0,-25,0], scale:[1,1.4,1], opacity:[0.3,0.6,0.3] }}
+            transition={{ duration:3.5+i*0.5, repeat:Infinity, delay:i*0.3, ease:'easeInOut' }} />
+        ))}
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
           <motion.h1
             className="text-5xl md:text-7xl mb-6 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent"
@@ -153,7 +151,7 @@ export function AboutPage() {
             <motion.div
               variants={itemVariants}
               whileHover={{ y: -10, scale: 1.02 }}
-              className="bg-white p-10 rounded-3xl shadow-xl border border-purple-100"
+              className="card-shine bg-white p-10 rounded-3xl shadow-xl border border-purple-100"
             >
               <h2 className="text-3xl md:text-4xl mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Our Mission</h2>
               <p className="text-lg text-gray-700 leading-relaxed">
@@ -165,7 +163,7 @@ export function AboutPage() {
             <motion.div
               variants={itemVariants}
               whileHover={{ y: -10, scale: 1.02 }}
-              className="bg-white p-10 rounded-3xl shadow-xl border border-purple-100"
+              className="card-shine bg-white p-10 rounded-3xl shadow-xl border border-purple-100"
             >
               <h2 className="text-3xl md:text-4xl mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Our Vision</h2>
               <p className="text-lg text-gray-700 leading-relaxed">
@@ -179,8 +177,9 @@ export function AboutPage() {
       </section>
 
       {/* Values */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="py-20 bg-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-dot-pattern opacity-40" />
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}

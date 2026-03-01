@@ -263,6 +263,20 @@ export function HomePage() {
         </div>
       </section>
 
+      {/* Marquee Strip */}
+      <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 py-5 overflow-hidden relative">
+        <div className="flex gap-12 animate-marquee whitespace-nowrap text-white font-semibold text-sm uppercase tracking-widest">
+          {[...Array(3)].map((_, rep) => (
+            ['Join 5,000+ Members', '★ Transform Your Life', '★ Expert Coaching', '★ 98% Success Rate', '★ 30-Day Guarantee', '★ 50+ Countries', '★ 200+ Events Monthly', '★ Start Today'].map((item, i) => (
+              <span key={`${rep}-${i}`} className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-white/60 rounded-full inline-block" />
+                {item}
+              </span>
+            ))
+          ))}
+        </div>
+      </div>
+
       {/* Stats Section */}
       <section className="py-20 bg-white relative">
         <div className="max-w-7xl mx-auto px-6">

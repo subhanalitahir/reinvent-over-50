@@ -164,7 +164,7 @@ export function MembershipPage() {
                 key={index}
                 variants={itemVariants}
                 whileHover={{ y: -10, scale: 1.02 }}
-                className={`relative bg-white rounded-3xl shadow-2xl p-8 ${
+                className={`card-shine relative bg-white rounded-3xl shadow-2xl p-8 ${
                   plan.popular ? 'border-4 border-purple-600' : 'border-2 border-gray-200'
                 }`}
               >
@@ -245,8 +245,9 @@ export function MembershipPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-gradient-to-br from-purple-50 to-pink-50">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="py-20 bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-dot-pattern opacity-40" />
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
@@ -295,7 +296,7 @@ export function MembershipPage() {
                 key={index}
                 variants={itemVariants}
                 whileHover={{ y: -10, scale: 1.05 }}
-                className="bg-white p-6 rounded-2xl shadow-xl border border-purple-100"
+                className="card-shine bg-white p-8 rounded-3xl shadow-xl border border-purple-100 hover:shadow-2xl hover:border-purple-200 transition-all"
               >
                 <h3 className="text-xl mb-3 font-semibold">{benefit.title}</h3>
                 <p className="text-gray-600">{benefit.description}</p>
