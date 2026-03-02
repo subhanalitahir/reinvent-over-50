@@ -10,7 +10,6 @@ export function HomePage() {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
   const features = [
     {
@@ -126,7 +125,7 @@ export function HomePage() {
           />
         ))}
 
-        <motion.div className="max-w-7xl mx-auto px-6 py-20 relative z-10 w-full" style={{ y: heroY, opacity: heroOpacity }}>
+        <motion.div className="max-w-7xl mx-auto px-6 py-20 relative z-10 w-full" style={{ y: heroY }}>
           <div className="grid lg:grid-cols-2 gap-16 items-center">
 
             {/* Left */}

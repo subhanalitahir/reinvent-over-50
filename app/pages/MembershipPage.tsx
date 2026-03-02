@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, Star, Sparkles, ArrowRight, Zap, Crown, Users } from 'lucide-react';
+import { Check, Star, Sparkles, ArrowRight, Zap, Crown, Users, Shield, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
@@ -347,49 +347,88 @@ export function MembershipPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-28 relative overflow-hidden">
-        <div className="absolute inset-0 animate-aurora" />
-        <div className="absolute inset-0 bg-noise opacity-20" />
+      <section className="py-32 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #4c1d95 0%, #6d28d9 30%, #9d174d 70%, #be185d 100%)' }}>
+        {/* Animated glow orbs */}
+        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(167,139,250,0.35) 0%, transparent 70%)' }} />
+        <div className="absolute -bottom-24 -right-24 w-[420px] h-[420px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(244,114,182,0.3) 0%, transparent 70%)' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[300px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(251,191,36,0.08) 0%, transparent 70%)' }} />
+        {/* Floating dots */}
         {[...Array(14)].map((_,i) => (
-          <motion.div key={i} className="absolute w-1.5 h-1.5 rounded-full bg-white/40"
-            style={{ left:`${4+i*7}%`, top:`${15+(i%5)*18}%` }}
-            animate={{ y:[0,-25,0], opacity:[0.2,0.7,0.2] }}
+          <motion.div key={i} className="absolute rounded-full pointer-events-none"
+            style={{ width:`${3+(i%3)*2}px`, height:`${3+(i%3)*2}px`, background:'rgba(255,255,255,0.45)', left:`${4+i*7}%`, top:`${10+(i%5)*18}%` }}
+            animate={{ y:[0,-28,0], opacity:[0.2,0.8,0.2] }}
             transition={{ duration:3+i*0.35, repeat:Infinity, delay:i*0.25 }} />
         ))}
-        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-          <motion.div className="section-label mx-auto mb-8 border-white/30 text-white"
-            style={{ background:'rgba(255,255,255,0.1)' }}
-            initial={{ opacity:0, scale:0.8 }} whileInView={{ opacity:1, scale:1 }} viewport={{ once:true }}>
-            <Sparkles className="w-4 h-4" />
+
+        <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
+          {/* Label */}
+          <motion.div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm text-white/90 text-sm font-semibold tracking-widest uppercase mb-10"
+            initial={{ opacity:0, scale:0.85 }} whileInView={{ opacity:1, scale:1 }} viewport={{ once:true }}
+            transition={{ duration:0.5 }}>
+            <Sparkles className="w-4 h-4 text-yellow-300" />
             Ready to Transform?
           </motion.div>
-          <motion.h2 className="font-display text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
-            initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
-            transition={{ duration:0.7 }}>
-            Start Your Journey
-            <br />
-            <span className="relative inline-block">
-              <span className="font-display italic" style={{ color:'#fde68a', textShadow:'0 0 40px rgba(253,230,138,0.5), 0 0 80px rgba(251,191,36,0.3)' }}>Today</span>
-            </span>
+
+          {/* Headline */}
+          <motion.h2 className="font-display font-extrabold leading-none mb-6"
+            initial={{ opacity:0, y:35 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
+            transition={{ duration:0.75, ease:[0.16,1,0.3,1] }}>
+            <span className="block text-5xl md:text-7xl lg:text-8xl text-white tracking-tight">Start Your Journey</span>
+            <span className="block text-5xl md:text-7xl lg:text-8xl font-black italic mt-1" style={{ color:'#fde68a', textShadow:'0 0 50px rgba(253,230,138,0.6), 0 0 100px rgba(251,191,36,0.35)' }}>Today</span>
           </motion.h2>
-          <motion.p className="text-xl text-purple-100 mb-12 max-w-2xl mx-auto leading-relaxed"
+
+          {/* Sub-copy */}
+          <motion.p className="text-xl md:text-2xl text-purple-100 mb-10 max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
             transition={{ duration:0.6, delay:0.2 }}>
-            Join thousands transforming their lives with our warm, supportive community
+            Join <span className="text-yellow-300 font-bold">5,000+</span> people over 50 who are reinventing themselves — and loving every step.
           </motion.p>
-          <motion.div className="flex flex-col sm:flex-row gap-5 justify-center"
+
+          {/* Trust strip */}
+          <motion.div className="flex flex-wrap justify-center gap-6 mb-12"
             initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
-            transition={{ duration:0.6, delay:0.4 }}>
-            <motion.a href="#" className="inline-flex items-center gap-2 bg-white text-purple-600 px-10 py-5 rounded-full font-bold text-lg shadow-2xl hover:shadow-white/30 transition-all"
-              whileHover={{ scale:1.05 }} whileTap={{ scale:0.95 }}>
+            transition={{ duration:0.6, delay:0.3 }}>
+            {[
+              { icon: Star, label:'4.9/5 Rating', sub:'From 2,400+ reviews' },
+              { icon: Shield, label:'30-Day Guarantee', sub:'No questions asked' },
+              { icon: TrendingUp, label:'98% Success Rate', sub:'Member-reported' },
+              { icon: Users, label:'5,000+ Members', sub:'In 50+ countries' },
+            ].map(({ icon: Icon, label, sub }, i) => (
+              <div key={i} className="flex items-center gap-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-3">
+                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-4 h-4 text-yellow-300" />
+                </div>
+                <div className="text-left">
+                  <div className="text-white font-bold text-sm leading-tight">{label}</div>
+                  <div className="text-purple-200 text-xs">{sub}</div>
+                </div>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* CTAs */}
+          <motion.div className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
+            transition={{ duration:0.6, delay:0.45 }}>
+            <motion.a href="#plans"
+              className="inline-flex items-center gap-2 bg-white text-purple-700 px-10 py-5 rounded-full font-extrabold text-lg shadow-2xl"
+              style={{ boxShadow:'0 0 40px rgba(255,255,255,0.25)' }}
+              whileHover={{ scale:1.06, boxShadow:'0 0 60px rgba(255,255,255,0.4)' }} whileTap={{ scale:0.96 }}>
               Choose Your Plan <ArrowRight className="w-5 h-5" />
             </motion.a>
-            <motion.div whileHover={{ scale:1.05 }} whileTap={{ scale:0.95 }}>
-              <Link href="/about" className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white border-2 border-white/50 px-10 py-5 rounded-full font-bold text-lg hover:bg-white/30 transition-all">
+            <motion.div whileHover={{ scale:1.05 }} whileTap={{ scale:0.96 }}>
+              <Link href="/about" className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm text-white border-2 border-white/40 px-10 py-5 rounded-full font-bold text-lg hover:bg-white/25 transition-all">
                 Learn More
               </Link>
             </motion.div>
           </motion.div>
+
+          {/* Micro trust line */}
+          <motion.p className="text-purple-200/70 text-sm mt-8"
+            initial={{ opacity:0 }} whileInView={{ opacity:1 }} viewport={{ once:true }}
+            transition={{ duration:0.6, delay:0.6 }}>
+            Cancel anytime &nbsp;·&nbsp; No credit card required to browse &nbsp;·&nbsp; Instant access
+          </motion.p>
         </div>
       </section>
     </div>
