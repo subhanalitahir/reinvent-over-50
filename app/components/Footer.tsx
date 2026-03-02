@@ -1,18 +1,11 @@
 ﻿'use client';
 
 import Link from 'next/link';
-import { Sparkles, Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Twitter, ArrowRight, Heart, Star, Users, Calendar, Award } from 'lucide-react';
+import { Sparkles, Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Twitter, Heart, Star, Users, Calendar, Award } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useState } from 'react';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = () => {
-    if (email) { setSubscribed(true); setTimeout(() => setSubscribed(false), 3000); setEmail(''); }
-  };
 
   const stats = [
     { icon: Users, value: '5,000+', label: 'Members' },
@@ -81,93 +74,7 @@ export function Footer() {
         />
       ))}
 
-      {/* Newsletter Section */}
       <div className="relative z-10">
-        <motion.div
-          className="border-b border-white/5"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-        >
-          <div className="max-w-7xl mx-auto px-6 py-20">
-            <div className="relative rounded-3xl overflow-hidden p-10 md:p-16 text-center"
-              style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.2) 0%, rgba(236,72,153,0.15) 50%, rgba(99,102,241,0.1) 100%)', border: '1px solid rgba(167,139,250,0.2)' }}>
-              {/* Glowing inner orb */}
-              <motion.div
-                className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-32 rounded-full blur-3xl pointer-events-none"
-                style={{ background: 'rgba(167,139,250,0.2)' }}
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 4, repeat: Infinity }}
-              />
-              <motion.div
-                className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold mb-6"
-                style={{ background: 'rgba(167,139,250,0.15)', border: '1px solid rgba(167,139,250,0.3)', color: '#c4b5fd' }}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-              >
-                <motion.div animate={{ rotate: [0, 20, -20, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-                  <Sparkles className="w-4 h-4" />
-                </motion.div>
-                Weekly Transformation Tips
-              </motion.div>
-              <motion.h3
-                className="text-4xl md:text-5xl font-bold mb-4"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3 }}
-              >
-                <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-300 bg-clip-text text-transparent">
-                  Stay Inspired
-                </span>
-              </motion.h3>
-              <motion.p
-                className="text-gray-400 text-lg mb-10 max-w-xl mx-auto"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4 }}
-              >
-                Get weekly insights, success stories, and transformation tips delivered to your inbox
-              </motion.p>
-              <motion.div
-                className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.5 }}
-              >
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSubscribe()}
-                  placeholder="Enter your email address"
-                  className="flex-1 px-6 py-4 rounded-full text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
-                  style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(167,139,250,0.25)' }}
-                />
-                <motion.button
-                  onClick={handleSubscribe}
-                  className="px-8 py-4 rounded-full font-bold text-white flex items-center justify-center gap-2 shadow-2xl relative overflow-hidden group"
-                  style={{ background: 'linear-gradient(135deg, #7c3aed, #ec4899)' }}
-                  whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(124,58,237,0.5)' }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <motion.div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                    style={{ background: 'linear-gradient(135deg, #6d28d9, #db2777)' }}
-                  />
-                  <span className="relative z-10">{subscribed ? '✓ Subscribed!' : 'Subscribe'}</span>
-                  {!subscribed && <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />}
-                </motion.button>
-              </motion.div>
-            </div>
-          </div>
-        </motion.div>
-
         {/* Stats Bar */}
         <motion.div
           className="border-b border-white/5"

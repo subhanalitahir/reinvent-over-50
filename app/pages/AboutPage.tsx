@@ -201,7 +201,7 @@ export function AboutPage() {
               className="card-elevated relative overflow-hidden"
             >
               <div className="h-1.5 bg-linear-to-r from-purple-500 to-pink-600 absolute top-0 left-0 right-0" />
-              <div className="pt-8">
+              <div className="px-8 pt-10 pb-8">
                 <div className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest text-white mb-5 bg-linear-to-r from-purple-500 to-pink-500">
                   Our Mission
                 </div>
@@ -219,7 +219,7 @@ export function AboutPage() {
               className="card-elevated relative overflow-hidden"
             >
               <div className="h-1.5 bg-linear-to-r from-orange-500 to-rose-600 absolute top-0 left-0 right-0" />
-              <div className="pt-8">
+              <div className="px-8 pt-10 pb-8">
                 <div className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest text-white mb-5 bg-linear-to-r from-orange-500 to-rose-500">
                   Our Vision
                 </div>

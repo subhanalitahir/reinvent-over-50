@@ -256,37 +256,43 @@ export function MembershipPage() {
               {
                 title: 'Private Community Forum',
                 description: 'Connect 24/7 with members in a safe, supportive space',
+                gradient: 'from-violet-500 to-purple-600',
               },
               {
                 title: 'Weekly Virtual Meetups',
                 description: 'Join live video sessions with expert speakers and discussions',
+                gradient: 'from-pink-500 to-rose-500',
               },
               {
                 title: 'Monthly Events',
                 description: 'In-person gatherings in cities nationwide',
+                gradient: 'from-amber-500 to-orange-500',
               },
               {
                 title: 'Expert Resources',
                 description: 'Access our library of guides, videos, and worksheets',
+                gradient: 'from-cyan-500 to-teal-500',
               },
               {
                 title: 'Accountability Partners',
                 description: 'Get matched with someone to support your goals',
+                gradient: 'from-emerald-500 to-green-500',
               },
               {
                 title: 'Member Discounts',
                 description: 'Special pricing on workshops, events, and products',
+                gradient: 'from-blue-500 to-indigo-500',
               },
             ].map((benefit, index) => (
-              <motion.div key={index} variants={itemVariants} whileHover={{ y:-10, scale:1.03 }}
+              <motion.div key={index} variants={itemVariants} whileHover={{ y:-10, scale:1.02 }}
                 className="card-elevated relative overflow-hidden group">
-                <div className="h-1 bg-gradient-to-r from-purple-500 to-pink-500 absolute top-0 left-0 right-0" />
-                <div className="pt-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-5 shadow-lg">
+                <div className={`h-1 bg-linear-to-r ${benefit.gradient} absolute top-0 left-0 right-0`} />
+                <div className="px-7 pt-8 pb-7">
+                  <div className={`w-12 h-12 bg-linear-to-br ${benefit.gradient} rounded-2xl flex items-center justify-center mb-5 shadow-lg`}>
                     <Zap className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="font-display text-xl font-bold mb-3 text-gray-900">{benefit.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
+                  <h3 className="font-display text-xl font-bold mb-2.5 text-gray-900">{benefit.title}</h3>
+                  <p className="text-gray-500 leading-relaxed text-sm">{benefit.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -360,13 +366,16 @@ export function MembershipPage() {
           <motion.h2 className="font-display text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
             initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
             transition={{ duration:0.7 }}>
-            Start Your Journey <br />
-            <span className="font-display italic text-yellow-300">Today</span>
+            Start Your Journey
+            <br />
+            <span className="relative inline-block">
+              <span className="font-display italic" style={{ color:'#fde68a', textShadow:'0 0 40px rgba(253,230,138,0.5), 0 0 80px rgba(251,191,36,0.3)' }}>Today</span>
+            </span>
           </motion.h2>
-          <motion.p className="text-xl text-purple-100 mb-12 max-w-2xl mx-auto"
+          <motion.p className="text-xl text-purple-100 mb-12 max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
             transition={{ duration:0.6, delay:0.2 }}>
-            Start your transformation with our warm, supportive community
+            Join thousands transforming their lives with our warm, supportive community
           </motion.p>
           <motion.div className="flex flex-col sm:flex-row gap-5 justify-center"
             initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
