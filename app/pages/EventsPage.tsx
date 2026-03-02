@@ -93,12 +93,12 @@ export function EventsPage() {
   return (
     <div className="pt-20">
       {/* Hero Section */}
-      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-linear-to-br from-purple-50 via-pink-50 to-orange-50">
         <div className="absolute inset-0 bg-mesh-gradient opacity-40" />
         <div className="absolute inset-0 bg-dot-pattern opacity-30" />
-        <motion.div className="orb orb-purple w-[450px] h-[450px] top-[-80px] right-[-60px]"
+        <motion.div className="orb orb-purple w-112.5 h-112.5 -top-20 -right-15"
           animate={{ scale:[1,1.25,1], x:[0,-40,0] }} transition={{ duration:12, repeat:Infinity, ease:'easeInOut' }} />
-        <motion.div className="orb orb-pink w-[350px] h-[350px] bottom-[-60px] left-[-40px]"
+        <motion.div className="orb orb-pink w-87.5 h-87.5 -bottom-15 -left-10"
           animate={{ scale:[1,1.2,1], y:[0,-30,0] }} transition={{ duration:10, repeat:Infinity, ease:'easeInOut', delay:2 }} />
         {[...Array(8)].map((_,i) => (
           <motion.div key={i} className="absolute w-2.5 h-2.5 rounded-full"
@@ -131,7 +131,7 @@ export function EventsPage() {
           <motion.div className="flex items-center gap-4 mb-14"
             initial={{ opacity:0, x:-30 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }}
             transition={{ duration:0.6 }}>
-            <motion.div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl"
+            <motion.div className="w-14 h-14 bg-linear-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl"
               whileHover={{ rotate:360 }} transition={{ duration:0.6 }}>
               <Video className="w-7 h-7 text-white" />
             </motion.div>
@@ -188,7 +188,7 @@ export function EventsPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-lg font-semibold text-purple-600">{event.price}</span>
                     <motion.button
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-lg font-medium shadow-lg"
+                      className="bg-linear-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-lg font-medium shadow-lg"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -204,13 +204,13 @@ export function EventsPage() {
 
       {/* In-Person Events */}
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-50 via-rose-50/60 to-white" />
+        <div className="absolute inset-0 bg-linear-to-br from-orange-50 via-rose-50/60 to-white" />
         <div className="absolute inset-0 bg-grid-pattern opacity-25" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div className="flex items-center gap-4 mb-14"
             initial={{ opacity:0, x:-30 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }}
             transition={{ duration:0.6 }}>
-            <motion.div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-xl"
+            <motion.div className="w-14 h-14 bg-linear-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-xl"
               whileHover={{ rotate:360 }} transition={{ duration:0.6 }}>
               <MapPin className="w-7 h-7 text-white" />
             </motion.div>
@@ -271,7 +271,7 @@ export function EventsPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-lg font-semibold text-orange-600">{event.price}</span>
                     <motion.button
-                      className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-6 py-2 rounded-lg font-medium shadow-lg"
+                      className="bg-linear-to-r from-orange-600 to-red-600 text-white px-6 py-2 rounded-lg font-medium shadow-lg"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -320,7 +320,7 @@ export function EventsPage() {
             ].map((stop, index) => (
               <motion.div key={index} variants={cardVariants} whileHover={{ scale:1.05, y:-6 }}
                 className="card-elevated relative overflow-hidden group text-center">
-                <div className="h-1 bg-gradient-to-r from-purple-500 to-pink-500 absolute top-0 left-0 right-0" />
+                <div className="h-1 bg-linear-to-r from-purple-500 to-pink-500 absolute top-0 left-0 right-0" />
                 <div className="pt-3">
                   <div className="font-display text-xl font-bold text-gray-800 mb-2">{stop.city}</div>
                   <div className="text-purple-600 font-semibold text-sm">{stop.date}, 2026</div>
@@ -334,9 +334,9 @@ export function EventsPage() {
       {/* CTA Section */}
       <section className="py-32 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #312e81 35%, #4c1d95 65%, #1e1b4b 100%)' }}>
         {/* Glow orbs */}
-        <div className="absolute -top-28 -left-28 w-[480px] h-[480px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(129,140,248,0.3) 0%, transparent 70%)' }} />
-        <div className="absolute -bottom-20 -right-20 w-[400px] h-[400px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(192,132,252,0.25) 0%, transparent 70%)' }} />
-        <div className="absolute top-1/2 right-1/4 w-[320px] h-[320px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 70%)' }} />
+        <div className="absolute -top-28 -left-28 w-120 h-120 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(129,140,248,0.3) 0%, transparent 70%)' }} />
+        <div className="absolute -bottom-20 -right-20 w-100 h-100 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(192,132,252,0.25) 0%, transparent 70%)' }} />
+        <div className="absolute top-1/2 right-1/4 w-80 h-80 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 70%)' }} />
         {/* Floating dots */}
         {[...Array(12)].map((_,i) => (
           <motion.div key={i} className="absolute rounded-full pointer-events-none"
@@ -380,7 +380,7 @@ export function EventsPage() {
               { icon: Users,    label:'5,000+ Community',       sub:'50+ countries' },
             ].map(({ icon: Icon, label, sub }, i) => (
               <div key={i} className="flex items-center gap-3 bg-white/8 backdrop-blur-sm border border-white/15 rounded-2xl px-5 py-3" style={{ background:'rgba(255,255,255,0.07)' }}>
-                <div className="w-9 h-9 rounded-full bg-indigo-500/40 flex items-center justify-center flex-shrink-0">
+                <div className="w-9 h-9 rounded-full bg-indigo-500/40 flex items-center justify-center shrink-0">
                   <Icon className="w-4 h-4 text-yellow-300" />
                 </div>
                 <div className="text-left">

@@ -43,7 +43,6 @@ export function MembershipPage() {
       ],
       popular: true,
       gradient: 'from-purple-600 to-pink-600',
-      icon: Sparkles,
       glow: 'rgba(124,58,237,0.35)',
       cta: 'Start Transforming',
     },
@@ -63,7 +62,6 @@ export function MembershipPage() {
       ],
       popular: false,
       gradient: 'from-amber-500 to-orange-500',
-      icon: Crown,
       glow: 'rgba(245,158,11,0.25)',
       cta: 'Go VIP',
     },
@@ -93,12 +91,12 @@ export function MembershipPage() {
   return (
     <div className="pt-20">
       {/* Hero Section */}
-      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-linear-to-br from-purple-50 via-pink-50 to-orange-50">
         <div className="absolute inset-0 bg-mesh-gradient opacity-40" />
         <div className="absolute inset-0 bg-dot-pattern opacity-30" />
-        <motion.div className="orb orb-purple w-[450px] h-[450px] top-[-80px] left-[-80px]"
+        <motion.div className="orb orb-purple w-112.5 h-112.5 -top-20 -left-20"
           animate={{ scale:[1,1.25,1], x:[0,50,0] }} transition={{ duration:12, repeat:Infinity, ease:'easeInOut' }} />
-        <motion.div className="orb orb-pink w-[380px] h-[380px] bottom-[-60px] right-[-60px]"
+        <motion.div className="orb orb-pink w-95 h-95 -bottom-15 -right-15"
           animate={{ scale:[1,1.2,1], y:[0,-40,0] }} transition={{ duration:10, repeat:Infinity, ease:'easeInOut', delay:2 }} />
         {[...Array(8)].map((_,i) => (
           <motion.div key={i} className="absolute rounded-full"
@@ -137,7 +135,7 @@ export function MembershipPage() {
                   className={`relative px-8 py-3 rounded-full text-sm font-bold transition-all flex items-center gap-2 z-10 ${billingCycle===cycle ? 'text-white' : 'text-gray-500 hover:text-gray-700'}`}
                   whileTap={{ scale:0.97 }}>
                   {billingCycle===cycle && (
-                    <motion.div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full shadow-lg"
+                    <motion.div className="absolute inset-0 bg-linear-to-r from-purple-600 to-pink-600 rounded-full shadow-lg"
                       layoutId="billingPill"
                       transition={{ type:'spring', stiffness:400, damping:30 }} />
                   )}
@@ -163,8 +161,8 @@ export function MembershipPage() {
                     initial={{ scale:0, y:10 }} animate={{ scale:1, y:0 }}
                     transition={{ delay:0.5, type:'spring' }}>
                     <div className="relative">
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full blur-md opacity-60" />
-                      <div className="relative bg-gradient-to-r from-purple-600 to-pink-600 text-white px-5 py-1.5 rounded-full text-sm font-bold flex items-center gap-1.5 shadow-xl">
+                      <div className="absolute inset-0 bg-linear-to-r from-purple-600 to-pink-600 rounded-full blur-md opacity-60" />
+                      <div className="relative bg-linear-to-r from-purple-600 to-pink-600 text-white px-5 py-1.5 rounded-full text-sm font-bold flex items-center gap-1.5 shadow-xl">
                         <Star className="w-3.5 h-3.5 fill-current" />
                         Most Popular
                       </div>
@@ -172,10 +170,10 @@ export function MembershipPage() {
                   </motion.div>
                 )}
                 <div className={`relative h-full rounded-3xl overflow-hidden shadow-2xl ${plan.popular ? 'border-2 border-purple-600 ring-4 ring-purple-100' : 'border-2 border-gray-100'}`}>
-                  <div className={`h-1.5 bg-gradient-to-r ${plan.gradient}`} />
-                  <div className={`p-8 h-full ${plan.popular ? 'bg-gradient-to-b from-purple-50/50 to-white' : 'bg-white'}`}>
+                  <div className={`h-1.5 bg-linear-to-r ${plan.gradient}`} />
+                  <div className={`p-8 h-full ${plan.popular ? 'bg-linear-to-b from-purple-50/50 to-white' : 'bg-white'}`}>
                     <div className="flex items-start gap-4 mb-6">
-                      <motion.div className={`w-14 h-14 bg-gradient-to-br ${plan.gradient} rounded-2xl flex items-center justify-center shadow-xl flex-shrink-0`}
+                      <motion.div className={`w-14 h-14 bg-linear-to-br ${plan.gradient} rounded-2xl flex items-center justify-center shadow-xl shrink-0`}
                         whileHover={{ rotate:15, scale:1.1 }}>
                         <plan.icon className="w-7 h-7 text-white" />
                       </motion.div>
@@ -190,7 +188,7 @@ export function MembershipPage() {
                           initial={{ opacity:0, y:10, scale:0.9 }} animate={{ opacity:1, y:0, scale:1 }} exit={{ opacity:0, y:-10 }}
                           transition={{ duration:0.3 }}>
                           <div className="flex items-baseline gap-1">
-                            <span className={`text-6xl font-bold font-display bg-gradient-to-r ${plan.gradient} bg-clip-text text-transparent`}>
+                            <span className={`text-6xl font-bold font-display bg-linear-to-r ${plan.gradient} bg-clip-text text-transparent`}>
                               ${billingCycle === 'monthly' ? plan.monthlyPrice : plan.annualPrice}
                             </span>
                             <span className="text-gray-400 text-lg">/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
@@ -206,7 +204,7 @@ export function MembershipPage() {
                         <motion.li key={idx} className="flex items-start gap-3"
                           initial={{ opacity:0, x:-15 }} animate={{ opacity:1, x:0 }}
                           transition={{ duration:0.4, delay:idx*0.06+index*0.1 }}>
-                          <div className={`w-5 h-5 bg-gradient-to-br ${plan.gradient} rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm`}>
+                          <div className={`w-5 h-5 bg-linear-to-br ${plan.gradient} rounded-full flex items-center justify-center shrink-0 mt-0.5 shadow-sm`}>
                             <Check className="w-3 h-3 text-white" />
                           </div>
                           <span className="text-gray-700 text-sm leading-relaxed">{feature}</span>
@@ -233,7 +231,7 @@ export function MembershipPage() {
 
       {/* Benefits Section */}
       <section className="py-28 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-pink-50/60 to-white" />
+        <div className="absolute inset-0 bg-linear-to-br from-purple-50 via-pink-50/60 to-white" />
         <div className="absolute inset-0 bg-grid-pattern opacity-25" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div className="text-center mb-20"
@@ -337,7 +335,7 @@ export function MembershipPage() {
                 initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
                 transition={{ duration:0.5, delay:index*0.1 }}
                 whileHover={{ x:6 }}>
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-500 to-pink-500 rounded-l-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-purple-500 to-pink-500 rounded-l-full opacity-0 group-hover:opacity-100 transition-opacity" />
                 <h3 className="font-display text-lg font-bold mb-2 text-gray-900">{faq.q}</h3>
                 <p className="text-gray-600 leading-relaxed">{faq.a}</p>
               </motion.div>
@@ -349,9 +347,9 @@ export function MembershipPage() {
       {/* CTA Section */}
       <section className="py-32 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #4c1d95 0%, #6d28d9 30%, #9d174d 70%, #be185d 100%)' }}>
         {/* Animated glow orbs */}
-        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(167,139,250,0.35) 0%, transparent 70%)' }} />
-        <div className="absolute -bottom-24 -right-24 w-[420px] h-[420px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(244,114,182,0.3) 0%, transparent 70%)' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[300px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(251,191,36,0.08) 0%, transparent 70%)' }} />
+        <div className="absolute -top-32 -left-32 w-125 h-125 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(167,139,250,0.35) 0%, transparent 70%)' }} />
+        <div className="absolute -bottom-24 -right-24 w-105 h-105 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(244,114,182,0.3) 0%, transparent 70%)' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-175 h-75 rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(251,191,36,0.08) 0%, transparent 70%)' }} />
         {/* Floating dots */}
         {[...Array(14)].map((_,i) => (
           <motion.div key={i} className="absolute rounded-full pointer-events-none"
@@ -395,7 +393,7 @@ export function MembershipPage() {
               { icon: Users, label:'5,000+ Members', sub:'In 50+ countries' },
             ].map(({ icon: Icon, label, sub }, i) => (
               <div key={i} className="flex items-center gap-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-3">
-                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center shrink-0">
                   <Icon className="w-4 h-4 text-yellow-300" />
                 </div>
                 <div className="text-left">
