@@ -1,8 +1,8 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 
-export type MembershipPlan = 'community' | 'growth' | 'transformation';
-export type BillingCycle = 'monthly' | 'annual';
-export type MemberStatus = 'active' | 'cancelled' | 'expired' | 'trial';
+export type MembershipPlan = "community" | "growth" | "transformation";
+export type BillingCycle = "monthly" | "annual";
+export type MemberStatus = "active" | "cancelled" | "expired" | "trial";
 
 export interface IMember extends Document {
   _id: mongoose.Types.ObjectId;
@@ -26,24 +26,24 @@ const MemberSchema = new Schema<IMember>(
   {
     user: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
       unique: true,
     },
     plan: {
       type: String,
-      enum: ['community', 'growth', 'transformation'],
-      required: [true, 'Membership plan is required'],
+      enum: ["community", "growth", "transformation"],
+      required: [true, "Membership plan is required"],
     },
     billingCycle: {
       type: String,
-      enum: ['monthly', 'annual'],
-      default: 'monthly',
+      enum: ["monthly", "annual"],
+      default: "monthly",
     },
     status: {
       type: String,
-      enum: ['active', 'cancelled', 'expired', 'trial'],
-      default: 'trial',
+      enum: ["active", "cancelled", "expired", "trial"],
+      default: "trial",
     },
     price: {
       type: Number,
@@ -61,11 +61,11 @@ const MemberSchema = new Schema<IMember>(
     cancelledAt: Date,
     cancelReason: String,
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 MemberSchema.index({ user: 1 });
 MemberSchema.index({ status: 1 });
 MemberSchema.index({ plan: 1, status: 1 });
 
-export default mongoose.model<IMember>('Member', MemberSchema);
+export default mongoose.model<IMember>("Member", MemberSchema);

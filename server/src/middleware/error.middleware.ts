@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import mongoose from 'mongoose';
-import logger from '../utils/logger';
+import { Request, Response, NextFunction } from "express";
+import mongoose from "mongoose";
+import logger from "../utils/logger";
 
 export class AppError extends Error {
   statusCode: number;
@@ -19,10 +19,10 @@ const errorHandler = (
   req: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _next: NextFunction
+  _next: NextFunction,
 ): void => {
   let statusCode = 500;
-  let message = 'Internal Server Error';
+  let message = "Internal Server Error";
 
   logger.error({
     message: err.message,
@@ -47,7 +47,7 @@ const errorHandler = (
   if (err instanceof mongoose.Error.ValidationError) {
     statusCode = 400;
     const errors = Object.values(err.errors).map((e) => e.message);
-    message = errors.join(', ');
+    message = errors.join(", ");
   }
 
   // MongoDB duplicate key
@@ -59,19 +59,19 @@ const errorHandler = (
   }
 
   // JWT errors
-  if (err.name === 'JsonWebTokenError') {
+  if (err.name === "JsonWebTokenError") {
     statusCode = 401;
-    message = 'Invalid token';
+    message = "Invalid token";
   }
-  if (err.name === 'TokenExpiredError') {
+  if (err.name === "TokenExpiredError") {
     statusCode = 401;
-    message = 'Token has expired';
+    message = "Token has expired";
   }
 
   res.status(statusCode).json({
     success: false,
     message,
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
   });
 };
 

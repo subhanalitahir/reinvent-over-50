@@ -1,26 +1,26 @@
-import winston from 'winston';
+import winston from "winston";
 
 const { combine, timestamp, errors, json, colorize, simple } = winston.format;
 
 const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL ?? 'info',
+  level: process.env.LOG_LEVEL ?? "info",
   format: combine(
-    timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
     errors({ stack: true }),
-    json()
+    json(),
   ),
-  defaultMeta: { service: 'reinvent-over-50-api' },
+  defaultMeta: { service: "reinvent-over-50-api" },
   transports: [
-    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'logs/combined.log' }),
+    new winston.transports.File({ filename: "logs/error.log", level: "error" }),
+    new winston.transports.File({ filename: "logs/combined.log" }),
   ],
 });
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   logger.add(
     new winston.transports.Console({
       format: combine(colorize(), simple()),
-    })
+    }),
   );
 }
 

@@ -1,11 +1,11 @@
-import mongoose from 'mongoose';
-import logger from '../utils/logger';
+import mongoose from "mongoose";
+import logger from "../utils/logger";
 
 const connectDB = async (): Promise<void> => {
   const uri = process.env.MONGODB_URI as string;
 
   if (!uri) {
-    logger.error('MONGODB_URI is not defined in environment variables');
+    logger.error("MONGODB_URI is not defined in environment variables");
     process.exit(1);
   }
 
@@ -18,15 +18,15 @@ const connectDB = async (): Promise<void> => {
 
     logger.info(`MongoDB connected: ${conn.connection.host}`);
 
-    mongoose.connection.on('disconnected', () => {
-      logger.warn('MongoDB disconnected. Attempting to reconnect...');
+    mongoose.connection.on("disconnected", () => {
+      logger.warn("MongoDB disconnected. Attempting to reconnect...");
     });
 
-    mongoose.connection.on('reconnected', () => {
-      logger.info('MongoDB reconnected');
+    mongoose.connection.on("reconnected", () => {
+      logger.info("MongoDB reconnected");
     });
 
-    mongoose.connection.on('error', (err) => {
+    mongoose.connection.on("error", (err) => {
       logger.error(`MongoDB connection error: ${err.message}`);
     });
   } catch (error) {
