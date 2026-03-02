@@ -50,10 +50,10 @@ export function Header() {
               </div>
             </motion.div>
             <div>
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent bg-size-200 bg-pos-0 hover:bg-pos-100 transition-all duration-500">
+              <span className="font-display text-xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent">
                 Reinvent You Over 50
               </span>
-              <div className="text-xs text-gray-500 font-medium">Transform Your Life</div>
+              <div className="text-xs text-gray-500 font-medium tracking-widest uppercase">Transform Your Life</div>
             </div>
           </Link>
 
@@ -82,9 +82,10 @@ export function Header() {
             >
               <Link
                 href="/membership"
-                className="ml-4 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-medium shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                className="ml-4 relative overflow-hidden px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold shadow-lg hover:shadow-xl hover:shadow-purple-500/30 transition-all hover:scale-105 group"
               >
-                Get Started
+                <span className="relative z-10">Get Started</span>
+                <div className="btn-shimmer" />
               </Link>
             </motion.div>
           </div>

@@ -1,8 +1,9 @@
 'use client';
 
-import { Check, Star } from 'lucide-react';
+import { Check, Star, Sparkles, ArrowRight, Zap, Crown, Users } from 'lucide-react';
 import { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
+import Link from 'next/link';
 
 export function MembershipPage() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
@@ -22,9 +23,13 @@ export function MembershipPage() {
       ],
       popular: false,
       gradient: 'from-blue-500 to-cyan-500',
+      icon: Users,
+      glow: 'rgba(59,130,246,0.25)',
+      cta: 'Get Started',
     },
     {
       name: 'Transformation',
+      icon: Sparkles,
       monthlyPrice: 59,
       annualPrice: 590,
       description: 'Our most popular plan',
@@ -38,9 +43,13 @@ export function MembershipPage() {
       ],
       popular: true,
       gradient: 'from-purple-600 to-pink-600',
+      icon: Sparkles,
+      glow: 'rgba(124,58,237,0.35)',
+      cta: 'Start Transforming',
     },
     {
       name: 'VIP',
+      icon: Crown,
       monthlyPrice: 99,
       annualPrice: 990,
       description: 'Complete transformation package',
@@ -53,7 +62,10 @@ export function MembershipPage() {
         'Direct founder access',
       ],
       popular: false,
-      gradient: 'from-orange-500 to-red-500',
+      gradient: 'from-amber-500 to-orange-500',
+      icon: Crown,
+      glow: 'rgba(245,158,11,0.25)',
+      cta: 'Go VIP',
     },
   ];
 
@@ -81,163 +93,138 @@ export function MembershipPage() {
   return (
     <div className="pt-20">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 py-20 relative overflow-hidden">
-        <motion.div
-          className="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-30"
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, 50, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-          <motion.h1
-            className="text-5xl md:text-7xl mb-6 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            Join Our Community
+      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+        <div className="absolute inset-0 bg-mesh-gradient opacity-40" />
+        <div className="absolute inset-0 bg-dot-pattern opacity-30" />
+        <motion.div className="orb orb-purple w-[450px] h-[450px] top-[-80px] left-[-80px]"
+          animate={{ scale:[1,1.25,1], x:[0,50,0] }} transition={{ duration:12, repeat:Infinity, ease:'easeInOut' }} />
+        <motion.div className="orb orb-pink w-[380px] h-[380px] bottom-[-60px] right-[-60px]"
+          animate={{ scale:[1,1.2,1], y:[0,-40,0] }} transition={{ duration:10, repeat:Infinity, ease:'easeInOut', delay:2 }} />
+        {[...Array(8)].map((_,i) => (
+          <motion.div key={i} className="absolute rounded-full"
+            style={{ width:8, height:8, background:`hsl(${270+i*20},70%,65%)`, left:`${8+i*12}%`, top:`${18+(i%3)*26}%`, opacity:0.4 }}
+            animate={{ y:[0,-28,0], scale:[1,1.6,1], opacity:[0.3,0.7,0.3] }}
+            transition={{ duration:4+i*0.5, repeat:Infinity, delay:i*0.35, ease:'easeInOut' }} />
+        ))}
+        <div className="max-w-5xl mx-auto px-6 py-28 text-center relative z-10 w-full">
+          <motion.div className="section-label mx-auto mb-8"
+            initial={{ opacity:0, scale:0.8 }} animate={{ opacity:1, scale:1 }} transition={{ duration:0.5 }}>
+            <Sparkles className="w-4 h-4 text-purple-600" />
+            Choose Your Plan
+          </motion.div>
+          <motion.h1 className="font-display text-6xl md:text-8xl lg:text-9xl font-bold mb-6 leading-[0.9]"
+            initial={{ opacity:0, y:40 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.8, ease:[0.16,1,0.3,1] }}>
+            <span className="block text-gray-900">Join Our</span>
+            <span className="block gradient-text-aurora font-display italic">Community</span>
           </motion.h1>
-          <motion.p
-            className="text-xl text-gray-600"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Choose the membership level that's right for your journey
+          <motion.p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
+            initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.8, delay:0.25 }}>
+            Choose the membership level that&apos;s right for your transformation journey
           </motion.p>
         </div>
       </section>
 
-      {/* Billing Toggle */}
-      <section className="py-12 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            className="flex justify-center items-center gap-4 mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <motion.button
-              onClick={() => setBillingCycle('monthly')}
-              className={`px-8 py-3 rounded-full transition-all font-medium ${
-                billingCycle === 'monthly'
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Monthly
-            </motion.button>
-            <motion.button
-              onClick={() => setBillingCycle('annual')}
-              className={`px-8 py-3 rounded-full transition-all font-medium flex items-center gap-2 ${
-                billingCycle === 'annual'
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Annual
-              <span className="text-sm bg-green-500 text-white px-2 py-1 rounded-full">
-                Save 17%
-              </span>
-            </motion.button>
+      {/* Billing Toggle + Pricing */}
+      <section className="py-20 bg-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-dot-pattern opacity-20" />
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <motion.div className="flex justify-center items-center gap-4 mb-16"
+            initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6 }}>
+            <div className="relative flex items-center bg-gray-100 rounded-full p-1.5 shadow-inner">
+              {(['monthly','annual'] as const).map((cycle) => (
+                <motion.button key={cycle}
+                  onClick={() => setBillingCycle(cycle)}
+                  className={`relative px-8 py-3 rounded-full text-sm font-bold transition-all flex items-center gap-2 z-10 ${billingCycle===cycle ? 'text-white' : 'text-gray-500 hover:text-gray-700'}`}
+                  whileTap={{ scale:0.97 }}>
+                  {billingCycle===cycle && (
+                    <motion.div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full shadow-lg"
+                      layoutId="billingPill"
+                      transition={{ type:'spring', stiffness:400, damping:30 }} />
+                  )}
+                  <span className="relative z-10 capitalize">{cycle}</span>
+                  {cycle==='annual' && (
+                    <span className={`relative z-10 text-xs px-2 py-0.5 rounded-full font-bold ${billingCycle==='annual' ? 'bg-white/25 text-white' : 'bg-green-100 text-green-700'}`}>Save 17%</span>
+                  )}
+                </motion.button>
+              ))}
+            </div>
           </motion.div>
 
           {/* Pricing Cards */}
-          <motion.div
-            className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
+          <motion.div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+            variants={containerVariants} initial="hidden" animate="visible">
             {plans.map((plan, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                whileHover={{ y: -10, scale: 1.02 }}
-                className={`card-shine relative bg-white rounded-3xl shadow-2xl p-8 ${
-                  plan.popular ? 'border-4 border-purple-600' : 'border-2 border-gray-200'
-                }`}
-              >
+              <motion.div key={index} variants={itemVariants}
+                whileHover={{ y:-12, scale:1.02 }}
+                className="relative"
+                style={{ zIndex: plan.popular ? 10 : 1 }}>
                 {plan.popular && (
-                  <motion.div
-                    className="absolute -top-4 left-1/2 -translate-x-1/2"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.5, type: "spring" }}
-                  >
-                    <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1 rounded-full text-sm flex items-center gap-1 shadow-lg">
-                      <Star className="w-4 h-4 fill-current" />
-                      Most Popular
+                  <motion.div className="absolute -top-5 left-1/2 -translate-x-1/2 z-20"
+                    initial={{ scale:0, y:10 }} animate={{ scale:1, y:0 }}
+                    transition={{ delay:0.5, type:'spring' }}>
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full blur-md opacity-60" />
+                      <div className="relative bg-gradient-to-r from-purple-600 to-pink-600 text-white px-5 py-1.5 rounded-full text-sm font-bold flex items-center gap-1.5 shadow-xl">
+                        <Star className="w-3.5 h-3.5 fill-current" />
+                        Most Popular
+                      </div>
                     </div>
                   </motion.div>
                 )}
-
-                <div className="text-center mb-6">
-                  <motion.div
-                    className={`w-16 h-16 bg-gradient-to-br ${plan.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  >
-                    <span className="text-2xl text-white font-bold">{plan.name[0]}</span>
-                  </motion.div>
-                  <h3 className="text-3xl mb-2 font-bold">{plan.name}</h3>
-                  <p className="text-gray-600 text-sm mb-4">{plan.description}</p>
-                  <div className="mb-2">
-                    <motion.span
-                      className={`text-6xl bg-gradient-to-r ${plan.gradient} bg-clip-text text-transparent font-bold`}
-                      initial={{ scale: 0.8 }}
-                      animate={{ scale: 1 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                    >
-                      ${billingCycle === 'monthly' ? plan.monthlyPrice : plan.annualPrice}
-                    </motion.span>
-                    <span className="text-gray-600 text-lg">
-                      /{billingCycle === 'monthly' ? 'month' : 'year'}
-                    </span>
+                <div className={`relative h-full rounded-3xl overflow-hidden shadow-2xl ${plan.popular ? 'border-2 border-purple-600 ring-4 ring-purple-100' : 'border-2 border-gray-100'}`}>
+                  <div className={`h-1.5 bg-gradient-to-r ${plan.gradient}`} />
+                  <div className={`p-8 h-full ${plan.popular ? 'bg-gradient-to-b from-purple-50/50 to-white' : 'bg-white'}`}>
+                    <div className="flex items-start gap-4 mb-6">
+                      <motion.div className={`w-14 h-14 bg-gradient-to-br ${plan.gradient} rounded-2xl flex items-center justify-center shadow-xl flex-shrink-0`}
+                        whileHover={{ rotate:15, scale:1.1 }}>
+                        <plan.icon className="w-7 h-7 text-white" />
+                      </motion.div>
+                      <div>
+                        <h3 className="font-display text-2xl font-bold text-gray-900">{plan.name}</h3>
+                        <p className="text-gray-500 text-sm">{plan.description}</p>
+                      </div>
+                    </div>
+                    <div className="mb-7">
+                      <AnimatePresence mode="wait">
+                        <motion.div key={billingCycle}
+                          initial={{ opacity:0, y:10, scale:0.9 }} animate={{ opacity:1, y:0, scale:1 }} exit={{ opacity:0, y:-10 }}
+                          transition={{ duration:0.3 }}>
+                          <div className="flex items-baseline gap-1">
+                            <span className={`text-6xl font-bold font-display bg-gradient-to-r ${plan.gradient} bg-clip-text text-transparent`}>
+                              ${billingCycle === 'monthly' ? plan.monthlyPrice : plan.annualPrice}
+                            </span>
+                            <span className="text-gray-400 text-lg">/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
+                          </div>
+                          {billingCycle === 'annual' && (
+                            <p className="text-sm text-gray-400 mt-1">${(plan.annualPrice/12).toFixed(0)}/month billed annually</p>
+                          )}
+                        </motion.div>
+                      </AnimatePresence>
+                    </div>
+                    <ul className="space-y-3.5 mb-8">
+                      {plan.features.map((feature, idx) => (
+                        <motion.li key={idx} className="flex items-start gap-3"
+                          initial={{ opacity:0, x:-15 }} animate={{ opacity:1, x:0 }}
+                          transition={{ duration:0.4, delay:idx*0.06+index*0.1 }}>
+                          <div className={`w-5 h-5 bg-gradient-to-br ${plan.gradient} rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm`}>
+                            <Check className="w-3 h-3 text-white" />
+                          </div>
+                          <span className="text-gray-700 text-sm leading-relaxed">{feature}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                    <motion.div whileHover={{ scale:1.03 }} whileTap={{ scale:0.97 }}>
+                      <Link href="/booking" className={`relative w-full py-4 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2 overflow-hidden ${
+                        plan.popular ? 'text-white shadow-xl' : 'border-2 border-gray-200 text-gray-800 hover:border-purple-400 hover:text-purple-600'
+                      }`}
+                        style={plan.popular ? { background:'linear-gradient(135deg,#7c3aed,#db2777)' } : {}}>
+                        {plan.cta ?? 'Get Started'}
+                        <ArrowRight className="w-4 h-4" />
+                        {plan.popular && <div className="btn-shimmer" />}
+                      </Link>
+                    </motion.div>
                   </div>
-                  {billingCycle === 'annual' && (
-                    <p className="text-sm text-gray-500">
-                      ${(plan.annualPrice / 12).toFixed(2)}/month billed annually
-                    </p>
-                  )}
                 </div>
-
-                <ul className="space-y-4 mb-8">
-                  {plan.features.map((feature, idx) => (
-                    <motion.li
-                      key={idx}
-                      className="flex items-start gap-3"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.5, delay: idx * 0.1 }}
-                    >
-                      <Check className={`w-5 h-5 bg-gradient-to-br ${plan.gradient} bg-clip-text text-transparent flex-shrink-0 mt-0.5`} />
-                      <span className="text-gray-700">{feature}</span>
-                    </motion.li>
-                  ))}
-                </ul>
-
-                <motion.button
-                  className={`w-full py-4 rounded-xl transition-all font-medium text-lg shadow-lg ${
-                    plan.popular
-                      ? `bg-gradient-to-r ${plan.gradient} text-white hover:shadow-2xl`
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                  }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Get Started
-                </motion.button>
               </motion.div>
             ))}
           </motion.div>
@@ -245,18 +232,17 @@ export function MembershipPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-dot-pattern opacity-40" />
+      <section className="py-28 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-pink-50/60 to-white" />
+        <div className="absolute inset-0 bg-grid-pattern opacity-25" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-4xl md:text-5xl mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              What You Get as a Member
+          <motion.div className="text-center mb-20"
+            initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
+            transition={{ duration:0.6 }}>
+            <div className="section-label mx-auto mb-6">Member Benefits</div>
+            <h2 className="font-display text-5xl md:text-6xl font-bold">
+              <span className="text-gray-900">What You Get as a </span>
+              <span className="gradient-text-aurora font-display italic">Member</span>
             </h2>
           </motion.div>
           <motion.div
@@ -292,14 +278,16 @@ export function MembershipPage() {
                 description: 'Special pricing on workshops, events, and products',
               },
             ].map((benefit, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                whileHover={{ y: -10, scale: 1.05 }}
-                className="card-shine bg-white p-8 rounded-3xl shadow-xl border border-purple-100 hover:shadow-2xl hover:border-purple-200 transition-all"
-              >
-                <h3 className="text-xl mb-3 font-semibold">{benefit.title}</h3>
-                <p className="text-gray-600">{benefit.description}</p>
+              <motion.div key={index} variants={itemVariants} whileHover={{ y:-10, scale:1.03 }}
+                className="card-elevated relative overflow-hidden group">
+                <div className="h-1 bg-gradient-to-r from-purple-500 to-pink-500 absolute top-0 left-0 right-0" />
+                <div className="pt-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-5 shadow-lg">
+                    <Zap className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="font-display text-xl font-bold mb-3 text-gray-900">{benefit.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
+                </div>
               </motion.div>
             ))}
           </motion.div>
@@ -307,17 +295,18 @@ export function MembershipPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-3xl mx-auto px-6">
-          <motion.h2
-            className="text-4xl md:text-5xl text-center mb-12 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            Frequently Asked Questions
-          </motion.h2>
+      <section className="py-24 bg-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-dot-pattern opacity-20" />
+        <div className="max-w-3xl mx-auto px-6 relative z-10">
+          <motion.div className="text-center mb-16"
+            initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
+            transition={{ duration:0.6 }}>
+            <div className="section-label mx-auto mb-6">Questions</div>
+            <h2 className="font-display text-5xl md:text-6xl font-bold">
+              <span className="text-gray-900">Frequently </span>
+              <span className="gradient-text-purple font-display italic">Asked</span>
+            </h2>
+          </motion.div>
           <div className="space-y-6">
             {[
               {
@@ -337,17 +326,14 @@ export function MembershipPage() {
                 a: 'Yes, all virtual events are recorded and available to members for 30 days.',
               },
             ].map((faq, index) => (
-              <motion.div
-                key={index}
-                className="border-b border-gray-200 pb-6"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ x: 10 }}
-              >
-                <h3 className="text-xl mb-2 font-semibold">{faq.q}</h3>
-                <p className="text-gray-600">{faq.a}</p>
+              <motion.div key={index}
+                className="card-bordered relative overflow-hidden group"
+                initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
+                transition={{ duration:0.5, delay:index*0.1 }}
+                whileHover={{ x:6 }}>
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-500 to-pink-500 rounded-l-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                <h3 className="font-display text-lg font-bold mb-2 text-gray-900">{faq.q}</h3>
+                <p className="text-gray-600 leading-relaxed">{faq.a}</p>
               </motion.div>
             ))}
           </div>
@@ -355,50 +341,46 @@ export function MembershipPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-600 text-white relative overflow-hidden">
-        <motion.div
-          className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl opacity-20"
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, 50, 0],
-            y: [0, 30, 0],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
+      <section className="py-28 relative overflow-hidden">
+        <div className="absolute inset-0 animate-aurora" />
+        <div className="absolute inset-0 bg-noise opacity-20" />
+        {[...Array(14)].map((_,i) => (
+          <motion.div key={i} className="absolute w-1.5 h-1.5 rounded-full bg-white/40"
+            style={{ left:`${4+i*7}%`, top:`${15+(i%5)*18}%` }}
+            animate={{ y:[0,-25,0], opacity:[0.2,0.7,0.2] }}
+            transition={{ duration:3+i*0.35, repeat:Infinity, delay:i*0.25 }} />
+        ))}
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-          <motion.h2
-            className="text-4xl md:text-5xl mb-6 font-bold"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            Ready to Join?
+          <motion.div className="section-label mx-auto mb-8 border-white/30 text-white"
+            style={{ background:'rgba(255,255,255,0.1)' }}
+            initial={{ opacity:0, scale:0.8 }} whileInView={{ opacity:1, scale:1 }} viewport={{ once:true }}>
+            <Sparkles className="w-4 h-4" />
+            Ready to Transform?
+          </motion.div>
+          <motion.h2 className="font-display text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
+            initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
+            transition={{ duration:0.7 }}>
+            Start Your Journey <br />
+            <span className="font-display italic text-yellow-300">Today</span>
           </motion.h2>
-          <motion.p
-            className="text-xl mb-8 text-purple-100"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Start your transformation journey today with our supportive community
+          <motion.p className="text-xl text-purple-100 mb-12 max-w-2xl mx-auto"
+            initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
+            transition={{ duration:0.6, delay:0.2 }}>
+            Start your transformation with our warm, supportive community
           </motion.p>
-          <motion.button
-            className="bg-white text-purple-600 px-10 py-4 rounded-full hover:bg-gray-100 transition-all shadow-2xl text-lg font-medium"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Choose Your Plan
-          </motion.button>
+          <motion.div className="flex flex-col sm:flex-row gap-5 justify-center"
+            initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
+            transition={{ duration:0.6, delay:0.4 }}>
+            <motion.a href="#" className="inline-flex items-center gap-2 bg-white text-purple-600 px-10 py-5 rounded-full font-bold text-lg shadow-2xl hover:shadow-white/30 transition-all"
+              whileHover={{ scale:1.05 }} whileTap={{ scale:0.95 }}>
+              Choose Your Plan <ArrowRight className="w-5 h-5" />
+            </motion.a>
+            <motion.div whileHover={{ scale:1.05 }} whileTap={{ scale:0.95 }}>
+              <Link href="/about" className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white border-2 border-white/50 px-10 py-5 rounded-full font-bold text-lg hover:bg-white/30 transition-all">
+                Learn More
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
     </div>
