@@ -7,6 +7,9 @@ import { motion, AnimatePresence } from 'motion/react';
 export function PDFPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     // Show popup after 5 seconds
@@ -20,13 +23,27 @@ export function PDFPopup() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle email submission
-    console.log('Email submitted:', email);
-    alert('Thank you! Check your email for the free PDF guide.');
-    sessionStorage.setItem('pdfPopupSeen', 'true');
-    setIsOpen(false);
+    setLoading(true);
+    setError('');
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
+      const res = await fetch(`${apiUrl}/api/subscribers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'pdf-popup' }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message ?? 'Something went wrong');
+      setSuccess(true);
+      sessionStorage.setItem('pdfPopupSeen', 'true');
+      setTimeout(() => setIsOpen(false), 3000);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleClose = () => {
@@ -83,27 +100,39 @@ export function PDFPopup() {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <motion.input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  required
-                  className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  whileFocus={{ scale: 1.02 }}
-                />
+            {success ? (
+              <div className="text-center py-4">
+                <p className="text-green-600 font-semibold text-lg">🎉 Check your inbox!</p>
+                <p className="text-gray-500 text-sm mt-1">
+                  We&apos;ve sent the free guide to <strong>{email}</strong>.
+                </p>
               </div>
-              <motion.button
-                type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl hover:shadow-2xl transition-all font-medium text-lg"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Download Free Guide
-              </motion.button>
-            </form>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <motion.input
+                    type="email"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setError(''); }}
+                    placeholder="Enter your email"
+                    required
+                    disabled={loading}
+                    className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all disabled:opacity-60"
+                    whileFocus={{ scale: 1.02 }}
+                  />
+                  {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                </div>
+                <motion.button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl hover:shadow-2xl transition-all font-medium text-lg disabled:opacity-70 disabled:cursor-not-allowed"
+                  whileHover={{ scale: loading ? 1 : 1.02 }}
+                  whileTap={{ scale: loading ? 1 : 0.98 }}
+                >
+                  {loading ? 'Sending…' : 'Download Free Guide'}
+                </motion.button>
+              </form>
+            )}
 
             <p className="text-xs text-gray-500 text-center mt-4">
               We respect your privacy. Unsubscribe at any time.

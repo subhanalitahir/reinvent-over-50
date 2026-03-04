@@ -1,9 +1,11 @@
 import { Response } from "express";
 import Member from "../models/Member";
+import User from "../models/User";
 import asyncHandler from "../utils/asyncHandler";
 import { sendSuccess, sendCreated, sendError } from "../utils/apiResponse";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { AppError } from "../middleware/error.middleware";
+import logger from "../utils/logger";
 
 const PLAN_PRICES: Record<string, Record<string, number>> = {
   community: { monthly: 29, annual: 24 },
@@ -11,15 +13,28 @@ const PLAN_PRICES: Record<string, Record<string, number>> = {
   transformation: { monthly: 149, annual: 124 },
 };
 
+/** Returns a configured Stripe instance or null if env vars are missing. */
+async function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) return null;
+  try {
+    const Stripe = (await import("stripe")).default;
+    return new Stripe(key, { apiVersion: "2024-06-20" });
+  } catch {
+    return null;
+  }
+}
+
 // POST /api/members  (protected)
 export const createMembership = asyncHandler(
   async (req: AuthRequest, res: Response) => {
     const existing = await Member.findOne({ user: req.user!._id });
     if (existing) throw new AppError("You already have a membership", 409);
 
-    const { plan, billingCycle } = req.body as {
+    const { plan, billingCycle, stripePriceId } = req.body as {
       plan: string;
       billingCycle: string;
+      stripePriceId?: string;
     };
 
     const price = PLAN_PRICES[plan]?.[billingCycle];
@@ -29,6 +44,35 @@ export const createMembership = asyncHandler(
     const trialEndsAt = new Date();
     trialEndsAt.setDate(trialEndsAt.getDate() + 14); // 14-day trial
 
+    let stripeCustomerId: string | undefined;
+    let stripeSubscriptionId: string | undefined;
+
+    // Attempt Stripe subscription creation if configured
+    const stripe = await getStripe();
+    if (stripe && stripePriceId) {
+      try {
+        const user = await User.findById(req.user!._id);
+        // Create or retrieve a Stripe customer
+        const customer = await stripe.customers.create({
+          email: user?.email,
+          name: user?.name,
+          metadata: { userId: req.user!._id.toString() },
+        });
+        stripeCustomerId = customer.id;
+
+        const subscription = await stripe.subscriptions.create({
+          customer: customer.id,
+          items: [{ price: stripePriceId }],
+          trial_period_days: 14,
+          payment_behavior: "default_incomplete",
+          expand: ["latest_invoice.payment_intent"],
+        });
+        stripeSubscriptionId = subscription.id;
+      } catch (err) {
+        logger.warn("Stripe subscription creation failed – continuing without Stripe", err);
+      }
+    }
+
     const member = await Member.create({
       user: req.user!._id,
       plan,
@@ -36,7 +80,12 @@ export const createMembership = asyncHandler(
       price,
       status: "trial",
       trialEndsAt,
+      stripeCustomerId,
+      stripeSubscriptionId,
     });
+
+    // Promote user role to "member"
+    await User.findByIdAndUpdate(req.user!._id, { role: "member" });
 
     sendCreated(res, member, "Membership created. 14-day trial started.");
   },
@@ -87,10 +136,23 @@ export const cancelMembership = asyncHandler(
     const member = await Member.findOne({ user: req.user!._id });
     if (!member) throw new AppError("No membership found", 404);
 
+    // Cancel Stripe subscription if present
+    const stripe = await getStripe();
+    if (stripe && member.stripeSubscriptionId) {
+      try {
+        await stripe.subscriptions.cancel(member.stripeSubscriptionId);
+      } catch (err) {
+        logger.warn("Stripe subscription cancellation failed", err);
+      }
+    }
+
     member.status = "cancelled";
     member.cancelledAt = new Date();
     member.cancelReason = reason;
     await member.save();
+
+    // Downgrade user role back to visitor
+    await User.findByIdAndUpdate(req.user!._id, { role: "visitor" });
 
     sendSuccess(res, member, "Membership cancelled");
   },

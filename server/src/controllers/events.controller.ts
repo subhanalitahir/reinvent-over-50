@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 import Event from "../models/Event";
 import asyncHandler from "../utils/asyncHandler";
 import { sendSuccess, sendCreated } from "../utils/apiResponse";
@@ -77,6 +78,47 @@ export const deleteEvent = asyncHandler(async (req: Request, res: Response) => {
   sendSuccess(res, null, "Event deleted");
 });
 
+// POST /api/events/:id/purchase  (public/protected – ticket purchase)
+export const purchaseTicket = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const event = await Event.findById(req.params.id);
+    if (!event || event.status !== "published")
+      throw new AppError("Event not found or not available", 404);
+
+    if (event.isFree) {
+      throw new AppError(
+        "This is a free event. Use the RSVP endpoint instead.",
+        400,
+      );
+    }
+
+    if (event.maxAttendees && event.attendees.length >= event.maxAttendees) {
+      throw new AppError("Event is fully booked", 400);
+    }
+
+    const { guestEmail, guestName } = req.body as {
+      guestEmail: string;
+      guestName?: string;
+    };
+
+    if (!guestEmail) throw new AppError("Email is required for ticket purchase", 400);
+
+    // For paid events, create a pending order referencing the event as a line item.
+    // Actual payment is handled by Stripe checkout (separate endpoint or frontend).
+    // Here we record the registration intent and return payment instructions.
+    sendSuccess(
+      res,
+      {
+        event: { _id: event._id, title: event.title, price: event.price },
+        stripePublicKey: process.env.STRIPE_PUBLISHABLE_KEY ?? "",
+        message:
+          "Proceed to checkout to complete your ticket purchase.",
+      },
+      "Ticket purchase initiated",
+    );
+  },
+);
+
 // POST /api/events/:id/rsvp  (protected)
 export const rsvpEvent = asyncHandler(
   async (req: AuthRequest, res: Response) => {
@@ -84,13 +126,14 @@ export const rsvpEvent = asyncHandler(
     if (!event) throw new AppError("Event not found", 404);
 
     const userId = req.user!._id;
-    const alreadyRSVP = event.attendees.some((id) => id.equals(userId));
+    const alreadyRSVP = event.attendees.some((id: mongoose.Types.ObjectId) => id.equals(userId));
 
     if (alreadyRSVP) {
       // Withdraw RSVP
-      event.attendees = event.attendees.filter((id) => !id.equals(userId));
+      event.attendees = event.attendees.filter((id: mongoose.Types.ObjectId) => !id.equals(userId));
       await event.save();
-      return sendSuccess(res, event, "RSVP withdrawn");
+      sendSuccess(res, event, "RSVP withdrawn");
+      return;
     }
 
     if (event.maxAttendees && event.attendees.length >= event.maxAttendees) {

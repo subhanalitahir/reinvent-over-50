@@ -18,6 +18,7 @@ export interface IBooking extends Document {
   reminderSentAt?: Date;
   cancelledAt?: Date;
   cancelReason?: string;
+  stripeSessionId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -72,6 +73,7 @@ const BookingSchema = new Schema<IBooking>(
     reminderSentAt: Date,
     cancelledAt: Date,
     cancelReason: String,
+    stripeSessionId: { type: String, index: true },
   },
   { timestamps: true },
 );

@@ -1,14 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import { Calendar, Clock, Video, Check, Star, ArrowRight, Sparkles, Shield, Award } from 'lucide-react';
+import { Calendar, Clock, Video, Check, Star, ArrowRight, Sparkles, Shield, Award, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useSearchParams } from 'next/navigation';
 
 export function BookingPage() {
+  const searchParams = useSearchParams();
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-  const [step, setStep] = useState<'info' | 'schedule' | 'payment'>('info');
+  const [step, setStep] = useState<'info' | 'schedule' | 'payment' | 'success'>('info');
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', notes: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  // Handle Stripe redirect back
+  useEffect(() => {
+    const success = searchParams.get('success');
+    const sessionId = searchParams.get('session_id');
+    if (success === 'true' && sessionId) {
+      setStep('success');
+      // Verify with backend (fires email)
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
+      fetch(`${apiUrl}/api/checkout/verify?session_id=${sessionId}`).catch(() => {});
+    }
+    if (searchParams.get('canceled') === 'true') {
+      setStep('payment');
+      setError('Payment was cancelled. You can try again.');
+    }
+  }, [searchParams]);
 
   const availableDates = [
     'March 5, 2026',
@@ -281,7 +302,7 @@ export function BookingPage() {
           <div className="absolute inset-0 bg-dot-pattern opacity-30" />
           <div className="max-w-3xl mx-auto px-6 relative z-10">
             <motion.div initial={{ opacity:0, x:-20 }} animate={{ opacity:1, x:0 }} transition={{ duration:0.4 }}>
-              <button type="button" onClick={() => setStep('schedule')}
+              <button type="button" onClick={() => { setStep('schedule'); setError(''); }}
                 className="flex items-center gap-2 text-purple-600 hover:text-purple-700 font-semibold mb-8 group">
                 <ArrowRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition-transform" />
                 Back to Scheduling
@@ -292,7 +313,7 @@ export function BookingPage() {
               <h2 className="text-4xl font-bold mb-2">
                 <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Complete Your Booking</span>
               </h2>
-              <p className="text-gray-500 mb-8">Just a few details and you're all set!</p>
+              <p className="text-gray-500 mb-8">Just a few details and you&apos;re all set!</p>
             </motion.div>
 
             <motion.div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-8 mb-8 border border-purple-100 shadow-lg"
@@ -319,36 +340,106 @@ export function BookingPage() {
               </div>
             </motion.div>
 
-            <motion.form className="space-y-6" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6, delay:0.2 }}>
-              {[
-                { label:'Full Name', type:'text', placeholder:'Jane Smith' },
-                { label:'Email', type:'email', placeholder:'jane@example.com' },
-                { label:'Phone Number', type:'tel', placeholder:'(555) 123-4567' },
-              ].map((field, i) => (
-                <div key={i}>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">{field.label}</label>
-                  <input type={field.type} required placeholder={field.placeholder}
-                    className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)]" />
-                </div>
-              ))}
+            <motion.form className="space-y-6" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6, delay:0.2 }}
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setLoading(true);
+                setError('');
+                try {
+                  // Parse selected date + time into an ISO string
+                  const dateStr = selectedDate; // e.g. "March 5, 2026"
+                  const timeStr = selectedTime.replace(' ET', ''); // e.g. "9:00 AM"
+                  const scheduledAt = new Date(`${dateStr} ${timeStr}`).toISOString();
+
+                  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
+                  const res = await fetch(`${apiUrl}/api/checkout/booking`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      guestName: formData.name,
+                      guestEmail: formData.email,
+                      guestPhone: formData.phone || undefined,
+                      sessionType: 'coaching',
+                      scheduledAt,
+                      duration: 60,
+                      notes: formData.notes || undefined,
+                    }),
+                  });
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data?.message ?? 'Checkout failed');
+                  if (data.url) window.location.href = data.url;
+                } catch (err: unknown) {
+                  setError(err instanceof Error ? err.message : 'Something went wrong');
+                } finally {
+                  setLoading(false);
+                }
+              }}>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                <input type="text" required placeholder="Jane Smith" value={formData.name}
+                  onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))}
+                  className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)]" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                <input type="email" required placeholder="jane@example.com" value={formData.email}
+                  onChange={(e) => setFormData(p => ({ ...p, email: e.target.value }))}
+                  className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)]" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                <input type="tel" placeholder="(555) 123-4567" value={formData.phone}
+                  onChange={(e) => setFormData(p => ({ ...p, phone: e.target.value }))}
+                  className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)]" />
+              </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">What would you like to focus on?</label>
-                <textarea rows={4} placeholder="Tell us about your goals and challenges..."
+                <textarea rows={4} placeholder="Tell us about your goals and challenges..." value={formData.notes}
+                  onChange={(e) => setFormData(p => ({ ...p, notes: e.target.value }))}
                   className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 resize-none transition-all duration-300 focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)]" />
               </div>
               <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 flex items-start gap-3">
                 <Shield className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-blue-700">
-                  Payment will be processed securely. You will receive a confirmation email with your video call link and pre-session assessment.
+                  You&apos;ll be redirected to Stripe for secure payment. A confirmation email with your session details will follow.
                 </p>
               </div>
-              <motion.button type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-5 rounded-2xl font-bold text-lg shadow-xl flex items-center justify-center gap-3"
-                whileHover={{ scale:1.02, boxShadow:'0 20px 60px rgba(124,58,237,0.4)' }} whileTap={{ scale:0.98 }}>
-                Complete Booking & Pay $150
-                <ArrowRight className="w-5 h-5" />
+              {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+              <motion.button type="submit" disabled={loading}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-5 rounded-2xl font-bold text-lg shadow-xl flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
+                whileHover={loading ? {} : { scale:1.02, boxShadow:'0 20px 60px rgba(124,58,237,0.4)' }} whileTap={loading ? {} : { scale:0.98 }}>
+                {loading ? 'Redirecting to payment…' : 'Complete Booking & Pay $150'}
+                {!loading && <ArrowRight className="w-5 h-5" />}
               </motion.button>
             </motion.form>
+          </div>
+        </section>
+      )}
+
+      {/* Success Section */}
+      {step === 'success' && (
+        <section className="py-24 bg-white relative overflow-hidden">
+          <div className="max-w-3xl mx-auto px-6 text-center">
+            <motion.div initial={{ scale:0 }} animate={{ scale:1 }} transition={{ type:'spring', stiffness:200, damping:15 }}>
+              <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl">
+                <CheckCircle className="w-12 h-12 text-white" />
+              </div>
+            </motion.div>
+            <motion.h2 className="text-4xl md:text-5xl font-bold mb-4" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.2 }}>
+              <span className="bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent">Booking Confirmed!</span>
+            </motion.h2>
+            <motion.p className="text-xl text-gray-600 mb-6" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.3 }}>
+              Your 1-on-1 coaching session is booked. Check your email for a confirmation with all the details.
+            </motion.p>
+            <motion.div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-8 border border-purple-100 shadow-lg inline-block text-left mx-auto"
+              initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.4 }}>
+              <h3 className="text-lg font-bold text-gray-900 mb-4">What&apos;s next?</h3>
+              <ul className="space-y-3 text-gray-700">
+                <li className="flex items-start gap-3"><Check className="w-5 h-5 text-green-500 mt-0.5" /> Check your inbox for the confirmation email</li>
+                <li className="flex items-start gap-3"><Check className="w-5 h-5 text-green-500 mt-0.5" /> Complete the pre-session assessment (link in email)</li>
+                <li className="flex items-start gap-3"><Check className="w-5 h-5 text-green-500 mt-0.5" /> Join your Zoom session at the scheduled time</li>
+              </ul>
+            </motion.div>
           </div>
         </section>
       )}

@@ -6,10 +6,12 @@ import { sendSuccess, sendCreated, sendError } from "../utils/apiResponse";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { AppError } from "../middleware/error.middleware";
 
-const generateToken = (id: string): string =>
-  jwt.sign({ id }, process.env.JWT_SECRET as string, {
-    expiresIn: process.env.JWT_EXPIRES_IN ?? "7d",
-  });
+const generateToken = (id: string): string => {
+  // @types/jsonwebtoken v9 uses the branded StringValue type for expiresIn;
+  // casting options avoids the string-vs-StringValue mismatch at compile time.
+  const options = { expiresIn: process.env.JWT_EXPIRES_IN ?? "7d" };
+  return jwt.sign({ id }, process.env.JWT_SECRET as string, options as jwt.SignOptions);
+};
 
 // POST /api/auth/register
 export const register = asyncHandler(async (req, res: Response) => {

@@ -4,6 +4,7 @@ import asyncHandler from "../utils/asyncHandler";
 import { sendSuccess, sendCreated } from "../utils/apiResponse";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { AppError } from "../middleware/error.middleware";
+import { sendBookingConfirmationEmail } from "../utils/email";
 
 // POST /api/bookings
 export const createBooking = asyncHandler(
@@ -47,6 +48,15 @@ export const createBooking = asyncHandler(
       duration: duration ?? 60,
       notes,
     });
+
+    // Fire-and-forget: send booking confirmation email
+    sendBookingConfirmationEmail(guestEmail, {
+      guestName,
+      sessionType,
+      scheduledAt: booking.scheduledAt,
+      duration: booking.duration,
+      meetingLink: booking.meetingLink,
+    }).catch(() => void 0);
 
     sendCreated(res, booking, "Booking created successfully");
   },

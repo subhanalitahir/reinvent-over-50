@@ -6,7 +6,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role: "user" | "admin";
+  role: "visitor" | "member" | "admin";
   avatar?: string;
   isVerified: boolean;
   resetPasswordToken?: string;
@@ -41,8 +41,8 @@ const UserSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
-      default: "user",
+      enum: ["visitor", "member", "admin"],
+      default: "visitor",
     },
     avatar: {
       type: String,
@@ -58,7 +58,7 @@ const UserSchema = new Schema<IUser>(
   {
     timestamps: true,
     toJSON: {
-      transform: (_doc, ret) => {
+      transform: (_doc: mongoose.Document, ret: Record<string, unknown>) => {
         delete ret.password;
         delete ret.resetPasswordToken;
         delete ret.resetPasswordExpires;
@@ -69,7 +69,8 @@ const UserSchema = new Schema<IUser>(
 );
 
 // Hash password before saving
-UserSchema.pre("save", async function (next) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(UserSchema as any).pre("save", async function (this: any, next: any) {
   if (!this.isModified("password")) return next();
   const salt = await bcrypt.genSalt(12);
   this.password = await bcrypt.hash(this.password, salt);

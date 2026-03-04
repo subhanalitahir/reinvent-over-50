@@ -1,12 +1,44 @@
 'use client';
 
-import { Check, Star, Sparkles, ArrowRight, Zap, Crown, Users, Shield, TrendingUp } from 'lucide-react';
-import { useState } from 'react';
+import { Check, Star, Sparkles, ArrowRight, Zap, Crown, Users, Shield, TrendingUp, CheckCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 export function MembershipPage() {
+  const searchParams = useSearchParams();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('success') === 'true') setSuccess(true);
+    if (searchParams.get('canceled') === 'true') setError('Payment was cancelled. You can try again.');
+  }, [searchParams]);
+
+  const handleCheckout = async (planKey: string) => {
+    setLoadingPlan(planKey);
+    setError('');
+    try {
+      const email = prompt('Enter your email to get started:');
+      if (!email) { setLoadingPlan(null); return; }
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
+      const res = await fetch(`${apiUrl}/api/checkout/membership`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: planKey, billingCycle, email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message ?? 'Checkout failed');
+      if (data.url) window.location.href = data.url;
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
 
   const plans = [
     {
@@ -90,6 +122,23 @@ export function MembershipPage() {
 
   return (
     <div className="pt-20">
+      {/* Success Banner */}
+      {success && (
+        <motion.div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white py-6 text-center"
+          initial={{ opacity:0, y:-20 }} animate={{ opacity:1, y:0 }}>
+          <div className="max-w-3xl mx-auto px-6 flex flex-col items-center gap-3">
+            <CheckCircle className="w-10 h-10" />
+            <h2 className="text-2xl font-bold">Welcome to the Community!</h2>
+            <p className="text-green-100">Your membership is active. Check your email for details and next steps.</p>
+          </div>
+        </motion.div>
+      )}
+      {/* Error Banner */}
+      {error && !success && (
+        <div className="bg-red-50 border-b border-red-200 text-red-700 py-4 text-center text-sm font-medium">
+          {error}
+        </div>
+      )}
       {/* Hero Section */}
       <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-linear-to-br from-purple-50 via-pink-50 to-orange-50">
         <div className="absolute inset-0 bg-mesh-gradient opacity-40" />
@@ -212,15 +261,21 @@ export function MembershipPage() {
                       ))}
                     </ul>
                     <motion.div whileHover={{ scale:1.03 }} whileTap={{ scale:0.97 }}>
-                      <Link href="/booking" className={`relative w-full py-4 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2 overflow-hidden ${
+                      <button
+                        onClick={() => handleCheckout(plan.name.toLowerCase())}
+                        disabled={loadingPlan === plan.name.toLowerCase()}
+                        className={`relative w-full py-4 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2 overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed ${
                         plan.popular ? 'text-white shadow-xl' : 'border-2 border-gray-200 text-gray-800 hover:border-purple-400 hover:text-purple-600'
                       }`}
                         style={plan.popular ? { background:'linear-gradient(135deg,#7c3aed,#db2777)' } : {}}>
-                        {plan.cta ?? 'Get Started'}
-                        <ArrowRight className="w-4 h-4" />
+                        {loadingPlan === plan.name.toLowerCase() ? 'Redirecting…' : (plan.cta ?? 'Get Started')}
+                        {loadingPlan !== plan.name.toLowerCase() && <ArrowRight className="w-4 h-4" />}
                         {plan.popular && <div className="btn-shimmer" />}
-                      </Link>
+                      </button>
                     </motion.div>
+                    {error && loadingPlan === null && (
+                      <p className="text-red-500 text-xs text-center mt-2">{error}</p>
+                    )}
                   </div>
                 </div>
               </motion.div>

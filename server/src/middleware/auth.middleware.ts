@@ -64,3 +64,28 @@ export const adminOnly = (
   }
   next();
 };
+
+export const memberOnly = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+): void => {
+  if (!req.user || (req.user.role !== "member" && req.user.role !== "admin")) {
+    sendError(res, "Access denied. Members only.", 403);
+    return;
+  }
+  next();
+};
+
+/**
+ * Middleware factory: allows access if the user has one of the specified roles.
+ * Usage: requireRole("admin", "member")
+ */
+export const requireRole = (...roles: string[]) =>
+  (req: AuthRequest, res: Response, next: NextFunction): void => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      sendError(res, `Access denied. Required roles: ${roles.join(", ")}.`, 403);
+      return;
+    }
+    next();
+  };

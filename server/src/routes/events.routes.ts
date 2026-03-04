@@ -9,6 +9,7 @@ import {
   updateEvent,
   deleteEvent,
   rsvpEvent,
+  purchaseTicket,
 } from "../controllers/events.controller";
 
 const router = Router();
@@ -19,6 +20,7 @@ router.get("/:id", getEventById);
 
 // Protected routes
 router.post("/:id/rsvp", protect, rsvpEvent);
+router.post("/:id/purchase", purchaseTicket);
 
 // Admin routes
 router.post(

@@ -11,13 +11,19 @@ import mongoSanitize from "express-mongo-sanitize";
 
 import connectDB from "./config/db";
 import logger from "./utils/logger";
-import { errorHandler, AppError } from "./middleware/error.middleware";
+import errorHandler, { AppError } from "./middleware/error.middleware";
 
 import authRoutes from "./routes/auth.routes";
 import membersRoutes from "./routes/members.routes";
 import bookingsRoutes from "./routes/bookings.routes";
 import contactsRoutes from "./routes/contacts.routes";
 import eventsRoutes from "./routes/events.routes";
+import productsRoutes from "./routes/products.routes";
+import ordersRoutes from "./routes/orders.routes";
+import subscribersRoutes from "./routes/emailSubscribers.routes";
+import paymentsRoutes from "./routes/payments.routes";
+import bannersRoutes from "./routes/banners.routes";
+import checkoutRoutes from "./routes/checkout.routes";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -36,6 +42,9 @@ app.use(
 );
 
 app.use(mongoSanitize());
+
+// ─── Stripe Webhook (raw body – must be registered BEFORE express.json) ─────
+app.use("/api/payments", paymentsRoutes);
 
 // ─── Request Parsing ──────────────────────────────────────────────────────────
 app.use(express.json({ limit: "10mb" }));
@@ -87,6 +96,11 @@ app.use("/api/members", membersRoutes);
 app.use("/api/bookings", bookingsRoutes);
 app.use("/api/contacts", contactsRoutes);
 app.use("/api/events", eventsRoutes);
+app.use("/api/products", productsRoutes);
+app.use("/api/orders", ordersRoutes);
+app.use("/api/subscribers", subscribersRoutes);
+app.use("/api/banners", bannersRoutes);
+app.use("/api/checkout", checkoutRoutes);
 
 // ─── 404 Handler ──────────────────────────────────────────────────────────────
 app.use((req: Request, _res: Response, next: NextFunction) => {
