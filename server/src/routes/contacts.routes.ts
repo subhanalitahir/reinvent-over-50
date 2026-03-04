@@ -31,7 +31,16 @@ router.post(
       .isLength({ min: 10, max: 2000 }),
     body("subject")
       .optional()
-      .isIn(["general", "membership", "technical", "partnership", "other"]),
+      .isIn([
+        "general",
+        "membership",
+        "workbook",
+        "events",
+        "coaching",
+        "technical",
+        "partnership",
+        "other",
+      ]),
   ],
   validate,
   createContact,

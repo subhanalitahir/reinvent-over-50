@@ -1,5 +1,10 @@
+import { Suspense } from 'react';
 import { EventsPage } from '../pages/EventsPage';
 
 export default function Events() {
-  return <EventsPage />;
+  return (
+    <Suspense>
+      <EventsPage />
+    </Suspense>
+  );
 }

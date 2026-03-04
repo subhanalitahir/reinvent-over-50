@@ -1,13 +1,76 @@
 'use client';
 
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import { Check, BookOpen, Video, ArrowRight, Star, Sparkles, Shield, Award, Zap } from 'lucide-react';
-import { motion } from 'motion/react';
+import { Check, BookOpen, Video, ArrowRight, Star, Sparkles, Shield, Award, Zap, CheckCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export function WorkbookPage() {
+  const searchParams = useSearchParams();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [checkoutError, setCheckoutError] = useState('');
+  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+
+  useEffect(() => {
+    const successParam = searchParams.get('success');
+    const sessionId = searchParams.get('session_id');
+    if (successParam === 'true') {
+      setPurchaseSuccess(true);
+      // Verify with backend so the download email is sent
+      if (sessionId) {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
+        fetch(`${apiUrl}/api/checkout/verify?session_id=${sessionId}`).catch(() => {});
+      }
+    }
+    if (searchParams.get('canceled') === 'true') setCheckoutError('Payment was cancelled. You can try again.');
+  }, [searchParams]);
+
+  const handleWorkbookCheckout = async (plan: 'workbook' | 'bundle') => {
+    setLoadingPlan(plan);
+    setCheckoutError('');
+    try {
+      const email = prompt('Enter your email address to proceed to checkout:');
+      if (!email) { setLoadingPlan(null); return; }
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
+      const res = await fetch(`${apiUrl}/api/checkout/workbook`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan, email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message ?? 'Checkout failed');
+      if (data.url) window.location.href = data.url;
+    } catch (err: unknown) {
+      setCheckoutError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
   return (
     <div className="pt-20">
+      {/* Success Banner */}
+      <AnimatePresence>
+        {purchaseSuccess && (
+          <motion.div
+            className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-green-500 text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-3 font-bold text-lg"
+            initial={{ opacity: 0, y: -40, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -40 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          >
+            <CheckCircle className="w-6 h-6" />
+            Purchase complete! Check your email for your download link.
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {checkoutError && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-red-500 text-white px-8 py-4 rounded-2xl shadow-2xl font-semibold">
+          {checkoutError}
+        </div>
+      )}
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 overflow-hidden">
         <motion.div className="orb orb-purple w-96 h-96 top-[-100px] right-[-60px]" animate={{ scale:[1,1.3,1], x:[0,-50,0] }} transition={{ duration:14, repeat:Infinity, ease:'easeInOut' }} />
@@ -139,9 +202,13 @@ export function WorkbookPage() {
                   </li>
                 ))}
               </ul>
-              <motion.button className="w-full border-2 border-purple-600 text-purple-600 py-5 rounded-2xl font-bold text-lg hover:bg-purple-600 hover:text-white transition-all"
-                whileHover={{ scale:1.02 }} whileTap={{ scale:0.98 }}>
-                Purchase Workbook
+              <motion.button
+                onClick={() => handleWorkbookCheckout('workbook')}
+                disabled={loadingPlan !== null}
+                className="w-full border-2 border-purple-600 text-purple-600 py-5 rounded-2xl font-bold text-lg hover:bg-purple-600 hover:text-white transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                whileHover={{ scale: loadingPlan ? 1 : 1.02 }}
+                whileTap={{ scale: loadingPlan ? 1 : 0.98 }}>
+                {loadingPlan === 'workbook' ? 'Redirecting…' : 'Purchase Workbook'}
               </motion.button>
             </motion.div>
 
@@ -176,9 +243,13 @@ export function WorkbookPage() {
                     </li>
                   ))}
                 </ul>
-                <motion.button className="w-full bg-white text-purple-600 py-5 rounded-2xl font-bold text-lg shadow-xl hover:bg-purple-50 transition-all"
-                  whileHover={{ scale:1.02 }} whileTap={{ scale:0.98 }}>
-                  Get the Bundle
+                <motion.button
+                  onClick={() => handleWorkbookCheckout('bundle')}
+                  disabled={loadingPlan !== null}
+                  className="w-full bg-white text-purple-600 py-5 rounded-2xl font-bold text-lg shadow-xl hover:bg-purple-50 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                  whileHover={{ scale: loadingPlan ? 1 : 1.02 }}
+                  whileTap={{ scale: loadingPlan ? 1 : 0.98 }}>
+                  {loadingPlan === 'bundle' ? 'Redirecting…' : 'Get the Bundle'}
                 </motion.button>
               </div>
             </motion.div>

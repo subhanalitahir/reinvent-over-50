@@ -2,10 +2,72 @@
 
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { Calendar, MapPin, Users, Video, Clock, Sparkles, ArrowRight, Star, Ticket } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export function EventsPage() {
+  const searchParams = useSearchParams();
+  const [loadingEvent, setLoadingEvent] = useState<string | null>(null);
+  const [eventError, setEventError] = useState('');
+  const [eventSuccess, setEventSuccess] = useState(false);
+
+  useEffect(() => {
+    const successParam = searchParams.get('success');
+    const sessionId = searchParams.get('session_id');
+    if (successParam === 'true') {
+      setEventSuccess(true);
+      // Verify with backend so the registration confirmation email is sent
+      if (sessionId) {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
+        fetch(`${apiUrl}/api/checkout/verify?session_id=${sessionId}`).catch(() => {});
+      }
+    }
+    if (searchParams.get('canceled') === 'true') setEventError('Payment was cancelled. Please try again.');
+  }, [searchParams]);
+
+  /** Extracts the first dollar amount from a price string, e.g. "$25 ($15 for members)" → 25 */
+  const parsePriceAmount = (priceStr: string): number | null => {
+    if (priceStr === 'Free for Members') return null;
+    const match = priceStr.match(/\$(\d+(?:\.\d+)?)/);
+    return match ? parseFloat(match[1]) : null;
+  };
+
+  const handleEventRegister = async (event: { title: string; date: string; price: string; location?: string }) => {
+    const amount = parsePriceAmount(event.price);
+    if (amount === null) {
+      // Free for members – redirect to membership page
+      window.location.href = '/membership';
+      return;
+    }
+    const key = event.title;
+    setLoadingEvent(key);
+    setEventError('');
+    try {
+      const email = prompt(`Enter your email to register for "${event.title}":`);
+      if (!email) { setLoadingEvent(null); return; }
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
+      const res = await fetch(`${apiUrl}/api/checkout/event`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: event.title,
+          amount,
+          email,
+          date: event.date,
+          location: event.location ?? 'Online',
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message ?? 'Registration failed');
+      if (data.url) window.location.href = data.url;
+    } catch (err: unknown) {
+      setEventError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setLoadingEvent(null);
+    }
+  };
   const virtualEvents = [
     {
       title: 'Weekly Community Meetup',
@@ -92,6 +154,23 @@ export function EventsPage() {
 
   return (
     <div className="pt-20">
+      {/* Notifications */}
+      <AnimatePresence>
+        {eventSuccess && (
+          <motion.div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-green-500 text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-3 font-bold text-lg"
+            initial={{ opacity:0, y:-40, scale:0.9 }} animate={{ opacity:1, y:0, scale:1 }} exit={{ opacity:0, y:-40 }}
+            transition={{ type:'spring', stiffness:300, damping:25 }}>
+            <Ticket className="w-6 h-6" />
+            You&apos;re registered! Check your email for confirmation.
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {eventError && (
+        <motion.div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-red-500 text-white px-8 py-4 rounded-2xl shadow-2xl font-semibold"
+          initial={{ opacity:0, y:-30 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0 }}>
+          {eventError}
+        </motion.div>
+      )}
       {/* Hero Section */}
       <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-linear-to-br from-purple-50 via-pink-50 to-orange-50">
         <div className="absolute inset-0 bg-mesh-gradient opacity-40" />
@@ -188,11 +267,14 @@ export function EventsPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-lg font-semibold text-purple-600">{event.price}</span>
                     <motion.button
-                      className="bg-linear-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-lg font-medium shadow-lg"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleEventRegister({ title: event.title, date: event.date, price: event.price, location: 'Online' })}
+                      disabled={loadingEvent === event.title}
+                      className="bg-linear-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-lg font-medium shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                      whileHover={{ scale: loadingEvent === event.title ? 1 : 1.05 }}
+                      whileTap={{ scale: loadingEvent === event.title ? 1 : 0.95 }}
                     >
-                      Register
+                      {loadingEvent === event.title ? 'Loading…' :
+                        event.price === 'Free for Members' ? 'Join as Member' : 'Register'}
                     </motion.button>
                   </div>
                 </div>
@@ -271,11 +353,14 @@ export function EventsPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-lg font-semibold text-orange-600">{event.price}</span>
                     <motion.button
-                      className="bg-linear-to-r from-orange-600 to-red-600 text-white px-6 py-2 rounded-lg font-medium shadow-lg"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleEventRegister({ title: event.title, date: event.date, price: event.price, location: event.location })}
+                      disabled={loadingEvent === event.title}
+                      className="bg-linear-to-r from-orange-600 to-red-600 text-white px-6 py-2 rounded-lg font-medium shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                      whileHover={{ scale: loadingEvent === event.title ? 1 : 1.05 }}
+                      whileTap={{ scale: loadingEvent === event.title ? 1 : 0.95 }}
                     >
-                      Book Now
+                      {loadingEvent === event.title ? 'Loading…' :
+                        event.price.includes('Free for members') ? 'Book (Members Free)' : 'Book Now'}
                     </motion.button>
                   </div>
                 </div>

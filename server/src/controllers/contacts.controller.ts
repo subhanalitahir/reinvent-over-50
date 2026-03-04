@@ -3,6 +3,10 @@ import Contact from "../models/Contact";
 import asyncHandler from "../utils/asyncHandler";
 import { sendSuccess, sendCreated } from "../utils/apiResponse";
 import { AppError } from "../middleware/error.middleware";
+import {
+  sendContactNotificationEmail,
+  sendContactAcknowledgementEmail,
+} from "../utils/email";
 
 // POST /api/contacts  (public)
 export const createContact = asyncHandler(
@@ -23,6 +27,11 @@ export const createContact = asyncHandler(
       message,
       ipAddress: req.ip,
     });
+
+    // Notify admin and acknowledge to sender (fire-and-forget)
+    const adminEmail = process.env.ADMIN_EMAIL ?? process.env.EMAIL_FROM ?? "admin@reinventyou50.com";
+    sendContactNotificationEmail(adminEmail, { name, email, phone, subject, message }).catch(() => {});
+    sendContactAcknowledgementEmail(email, name).catch(() => {});
 
     sendCreated(
       res,

@@ -3,7 +3,12 @@ import asyncHandler from "../utils/asyncHandler";
 import { AppError } from "../middleware/error.middleware";
 import logger from "../utils/logger";
 import Booking from "../models/Booking";
-import { sendBookingConfirmationEmail } from "../utils/email";
+import {
+  sendBookingConfirmationEmail,
+  sendWorkbookPurchaseEmail,
+  sendEventRegistrationEmail,
+  sendMembershipWelcomeEmail,
+} from "../utils/email";
 
 /** Returns a configured Stripe instance or throws. */
 async function getStripe() {
@@ -177,6 +182,107 @@ export const createMembershipCheckout = asyncHandler(
   },
 );
 
+// ─── Workbook checkout ────────────────────────────────────────────────────────
+
+const WORKBOOK_PLANS: Record<string, { amount: number; name: string }> = {
+  workbook: { amount: 4700, name: "Reinvention Workbook (Digital PDF)" },
+  bundle: { amount: 19700, name: "Workbook + Coaching Bundle" },
+};
+
+/**
+ * POST /api/checkout/workbook
+ * Creates a Stripe Checkout Session for a workbook or bundle purchase.
+ */
+export const createWorkbookCheckout = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { plan, email } = req.body as { plan: string; email: string };
+
+    const planConfig = WORKBOOK_PLANS[plan?.toLowerCase()];
+    if (!planConfig)
+      throw new AppError("Invalid plan. Use 'workbook' or 'bundle'", 400);
+    if (!email) throw new AppError("Email is required", 400);
+
+    const stripe = await getStripe();
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      payment_method_types: ["card"],
+      customer_email: email,
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: { name: planConfig.name },
+            unit_amount: planConfig.amount,
+          },
+          quantity: 1,
+        },
+      ],
+      metadata: { type: "workbook", plan: plan.toLowerCase() },
+      success_url: `${CLIENT_URL()}/workbook?success=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${CLIENT_URL()}/workbook?canceled=true`,
+    });
+
+    res.json({ success: true, url: session.url });
+  },
+);
+
+// ─── Event checkout ───────────────────────────────────────────────────────────
+
+/**
+ * POST /api/checkout/event
+ * Creates a Stripe Checkout Session for an event ticket.
+ */
+export const createEventCheckout = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { title, amount, email, date, location } = req.body as {
+      title: string;
+      amount: number;
+      email: string;
+      date?: string;
+      location?: string;
+    };
+
+    if (!title) throw new AppError("Event title is required", 400);
+    if (!amount || amount <= 0)
+      throw new AppError("Valid amount is required", 400);
+    if (!email) throw new AppError("Email is required", 400);
+
+    const stripe = await getStripe();
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      payment_method_types: ["card"],
+      customer_email: email,
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: title,
+              description:
+                [date, location].filter(Boolean).join(" · ") || undefined,
+            },
+            unit_amount: Math.round(amount * 100),
+          },
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        type: "event",
+        title,
+        date: date ?? "",
+        location: location ?? "",
+        price: `$${amount}`,
+      },
+      success_url: `${CLIENT_URL()}/events?success=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${CLIENT_URL()}/events?canceled=true`,
+    });
+
+    res.json({ success: true, url: session.url });
+  },
+);
+
 // ─── Verify checkout session (for success pages) ─────────────────────────────
 
 /**
@@ -211,6 +317,53 @@ export const verifyCheckoutSession = asyncHandler(
 
         logger.info(`Booking ${booking._id.toString()} confirmed via checkout`);
       }
+    }
+
+    // If it's a workbook purchase, send the download email
+    if (
+      session.payment_status === "paid" &&
+      session.metadata?.type === "workbook" &&
+      session.customer_email
+    ) {
+      sendWorkbookPurchaseEmail(
+        session.customer_email,
+        (session.metadata.plan ?? "workbook") as "workbook" | "bundle",
+      ).catch(() => void 0);
+
+      logger.info(`Workbook purchase email sent to ${session.customer_email}`);
+    }
+
+    // If it's an event ticket, send the registration confirmation email
+    if (
+      session.payment_status === "paid" &&
+      session.metadata?.type === "event" &&
+      session.customer_email
+    ) {
+      sendEventRegistrationEmail(session.customer_email, {
+        title: session.metadata.title ?? "Event",
+        date: session.metadata.date ?? "",
+        location: session.metadata.location ?? "Online",
+        price: session.metadata.price ?? "",
+      }).catch(() => void 0);
+
+      logger.info(`Event registration email sent to ${session.customer_email}`);
+    }
+
+    // If it's a membership subscription, send the welcome email
+    if (
+      session.metadata?.type === "membership" &&
+      session.customer_email &&
+      (session.status === "complete" || session.payment_status === "paid")
+    ) {
+      const plan = session.metadata.plan ?? "community";
+      const planDisplayName = plan.charAt(0).toUpperCase() + plan.slice(1);
+      sendMembershipWelcomeEmail(
+        session.customer_email,
+        session.customer_email, // name not available at this point
+        `${planDisplayName} — ${session.metadata.billingCycle ?? "monthly"}`,
+      ).catch(() => void 0);
+
+      logger.info(`Membership welcome email sent to ${session.customer_email}`);
     }
 
     res.json({

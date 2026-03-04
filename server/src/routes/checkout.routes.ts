@@ -4,6 +4,8 @@ import validate from "../middleware/validate.middleware";
 import {
   createBookingCheckout,
   createMembershipCheckout,
+  createWorkbookCheckout,
+  createEventCheckout,
   verifyCheckoutSession,
 } from "../controllers/checkout.controller";
 
@@ -48,5 +50,40 @@ router.post(
 
 // GET /api/checkout/verify?session_id=cs_xxx
 router.get("/verify", verifyCheckoutSession);
+
+// POST /api/checkout/workbook
+router.post(
+  "/workbook",
+  [
+    body("plan")
+      .isIn(["workbook", "bundle"])
+      .withMessage("Invalid plan. Use 'workbook' or 'bundle'"),
+    body("email")
+      .isEmail()
+      .withMessage("Valid email required")
+      .normalizeEmail(),
+  ],
+  validate,
+  createWorkbookCheckout,
+);
+
+// POST /api/checkout/event
+router.post(
+  "/event",
+  [
+    body("title").trim().notEmpty().withMessage("Event title is required"),
+    body("amount")
+      .isFloat({ min: 0.5 })
+      .withMessage("Valid amount (in dollars) is required"),
+    body("email")
+      .isEmail()
+      .withMessage("Valid email required")
+      .normalizeEmail(),
+    body("date").optional().isString(),
+    body("location").optional().isString(),
+  ],
+  validate,
+  createEventCheckout,
+);
 
 export default router;

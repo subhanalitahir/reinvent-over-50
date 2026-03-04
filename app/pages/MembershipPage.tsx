@@ -14,7 +14,16 @@ export function MembershipPage() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get('success') === 'true') setSuccess(true);
+    const successParam = searchParams.get('success');
+    const sessionId = searchParams.get('session_id');
+    if (successParam === 'true') {
+      setSuccess(true);
+      // Verify with backend so the welcome email is sent
+      if (sessionId) {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
+        fetch(`${apiUrl}/api/checkout/verify?session_id=${sessionId}`).catch(() => {});
+      }
+    }
     if (searchParams.get('canceled') === 'true') setError('Payment was cancelled. You can try again.');
   }, [searchParams]);
 

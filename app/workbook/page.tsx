@@ -1,5 +1,10 @@
+import { Suspense } from 'react';
 import { WorkbookPage } from '../pages/WorkbookPage';
 
 export default function Workbook() {
-  return <WorkbookPage />;
+  return (
+    <Suspense>
+      <WorkbookPage />
+    </Suspense>
+  );
 }

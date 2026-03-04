@@ -13,15 +13,33 @@ export function ContactPage() {
     message: '',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    }, 4000);
+    setLoading(true);
+    setSubmitError('');
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
+      const res = await fetch(`${apiUrl}/api/contacts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message ?? 'Failed to send message');
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      }, 4000);
+    } catch (err: unknown) {
+      setSubmitError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -152,11 +170,14 @@ export function ContactPage() {
                           className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 resize-none transition-all duration-300 focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)]"
                           placeholder="Tell us how we can help you…" />
                       </motion.div>
-                      <motion.button type="submit" className="w-full relative overflow-hidden bg-gradient-to-r from-purple-600 to-pink-600 text-white py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 shadow-xl"
-                        whileHover={{ scale:1.02, boxShadow:'0 20px 60px rgba(124,58,237,0.4)' }} whileTap={{ scale:0.98 }}>
+                      {submitError && (
+                        <p className="text-red-500 text-sm text-center font-medium">{submitError}</p>
+                      )}
+                      <motion.button type="submit" disabled={loading} className="w-full relative overflow-hidden bg-gradient-to-r from-purple-600 to-pink-600 text-white py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
+                        whileHover={loading ? {} : { scale:1.02, boxShadow:'0 20px 60px rgba(124,58,237,0.4)' }} whileTap={loading ? {} : { scale:0.98 }}>
                         <Send className="w-5 h-5" />
-                        Send Message
-                        <motion.div className="absolute inset-0 bg-white/20" initial={{ x:'-100%', skewX:-20 }} whileHover={{ x:'200%' }} transition={{ duration:0.5 }} />
+                        {loading ? 'Sending…' : 'Send Message'}
+                        {!loading && <motion.div className="absolute inset-0 bg-white/20" initial={{ x:'-100%', skewX:-20 }} whileHover={{ x:'200%' }} transition={{ duration:0.5 }} />}
                       </motion.button>
                     </motion.form>
                   )}

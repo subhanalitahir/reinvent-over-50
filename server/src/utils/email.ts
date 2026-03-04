@@ -168,3 +168,112 @@ export const sendBookingConfirmationEmail = async (
     text: `Booking confirmed!\n\nSession: ${booking.sessionType} Coaching\nDate: ${formattedDate}\nTime: ${formattedTime}\nDuration: ${booking.duration} minutes\n\n${booking.meetingLink ? `Zoom Link: ${booking.meetingLink}` : "You will receive your video call link closer to the session date."}`,
   });
 };
+
+export const sendContactNotificationEmail = async (
+  adminEmail: string,
+  contact: {
+    name: string;
+    email: string;
+    phone?: string;
+    subject?: string;
+    message: string;
+  },
+) => {
+  await sendEmail({
+    to: adminEmail,
+    subject: `New Contact Message – ${contact.subject ?? "general"} from ${contact.name}`,
+    html: `
+      <h2>New Contact Form Submission</h2>
+      <table style="border-collapse:collapse;width:100%;max-width:500px;margin:16px 0;">
+        <tr><td style="padding:8px 12px;color:#666;">Name</td><td style="padding:8px 12px;font-weight:600;">${contact.name}</td></tr>
+        <tr style="background:#f9fafb;"><td style="padding:8px 12px;color:#666;">Email</td><td style="padding:8px 12px;font-weight:600;"><a href="mailto:${contact.email}">${contact.email}</a></td></tr>
+        ${contact.phone ? `<tr><td style="padding:8px 12px;color:#666;">Phone</td><td style="padding:8px 12px;font-weight:600;">${contact.phone}</td></tr>` : ""}
+        <tr style="background:#f9fafb;"><td style="padding:8px 12px;color:#666;">Subject</td><td style="padding:8px 12px;font-weight:600;">${contact.subject ?? "general"}</td></tr>
+      </table>
+      <h3>Message:</h3>
+      <div style="background:#f9fafb;border-left:4px solid #7c3aed;padding:16px;border-radius:4px;margin:12px 0;">
+        <p style="margin:0;white-space:pre-wrap;">${contact.message}</p>
+      </div>
+      <p style="margin-top:16px;"><a href="mailto:${contact.email}" style="background:#7c3aed;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;">Reply to ${contact.name}</a></p>
+    `,
+    text: `New contact from ${contact.name} (${contact.email})\nSubject: ${contact.subject ?? "general"}\n\n${contact.message}`,
+  });
+};
+
+export const sendContactAcknowledgementEmail = async (
+  email: string,
+  name: string,
+) => {
+  await sendEmail({
+    to: email,
+    subject: "We received your message – Reinvent You 50+",
+    html: `
+      <h2>Thanks for reaching out, ${name}!</h2>
+      <p>We received your message and will get back to you within <strong>1–2 business days</strong>.</p>
+      <p>In the meantime, feel free to explore:</p>
+      <ul>
+        <li><a href="${process.env.CLIENT_URL ?? ""}/events">Upcoming Events</a></li>
+        <li><a href="${process.env.CLIENT_URL ?? ""}/workbook">The Reinvention Workbook</a></li>
+        <li><a href="${process.env.CLIENT_URL ?? ""}/membership">Membership Plans</a></li>
+      </ul>
+      <p style="margin-top:24px;color:#888;font-size:13px;">— The Reinvent You 50+ Team</p>
+    `,
+    text: `Hi ${name}, we received your message and will reply within 1–2 business days. — Reinvent You 50+`,
+  });
+};
+
+export const sendEventRegistrationEmail = async (
+  email: string,
+  event: {
+    title: string;
+    date: string;
+    location: string;
+    price: string;
+  },
+) => {
+  await sendEmail({
+    to: email,
+    subject: `You're Registered: ${event.title} – Reinvent You 50+`,
+    html: `
+      <h2>Registration Confirmed!</h2>
+      <p>You are registered for the following event:</p>
+      <table style="border-collapse:collapse;width:100%;max-width:480px;margin:16px 0;">
+        <tr><td style="padding:8px 12px;color:#666;">Event</td><td style="padding:8px 12px;font-weight:600;">${event.title}</td></tr>
+        <tr style="background:#f9fafb;"><td style="padding:8px 12px;color:#666;">Date</td><td style="padding:8px 12px;font-weight:600;">${event.date}</td></tr>
+        <tr><td style="padding:8px 12px;color:#666;">Location</td><td style="padding:8px 12px;font-weight:600;">${event.location}</td></tr>
+        <tr style="background:#f9fafb;"><td style="padding:8px 12px;color:#666;">Ticket</td><td style="padding:8px 12px;font-weight:600;">${event.price}</td></tr>
+      </table>
+      <p>We'll send you any additional details or virtual access links closer to the event date.</p>
+      <p>Excited to see you there!</p>
+      <p style="margin-top:24px;color:#888;font-size:13px;">— The Reinvent You 50+ Team</p>
+    `,
+    text: `Registration confirmed for ${event.title}\nDate: ${event.date}\nLocation: ${event.location}\nTicket: ${event.price}`,
+  });
+};
+
+export const sendWorkbookPurchaseEmail = async (
+  email: string,
+  plan: "workbook" | "bundle",
+) => {
+  const planName = plan === "bundle" ? "Workbook + Coaching Bundle" : "Workbook Only";
+  const price = plan === "bundle" ? "$197" : "$47";
+  const extras =
+    plan === "bundle"
+      ? `<p><strong>Next steps:</strong> Our team will email you within 24 hours to schedule your 60-minute personalized coaching session.</p>`
+      : "";
+
+  await sendEmail({
+    to: email,
+    subject: `Your Purchase: ${planName} – Reinvent You 50+`,
+    html: `
+      <h2>Thank you for your purchase!</h2>
+      <p>You purchased the <strong>${planName}</strong> (${price}).</p>
+      <p>Your digital workbook (PDF) will be available at the link below:</p>
+      <p style="margin:16px 0;"><a href="${process.env.WORKBOOK_DOWNLOAD_URL ?? process.env.FREE_PDF_DOWNLOAD_URL ?? "#"}" style="background:#7c3aed;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:600;">Download Your Workbook →</a></p>
+      ${extras}
+      <p>Your 30-day money-back guarantee starts today. Any issues? Reply to this email.</p>
+      <p style="margin-top:24px;color:#888;font-size:13px;">— The Reinvent You 50+ Team</p>
+    `,
+    text: `Thank you for purchasing ${planName} (${price}). Download your workbook at: ${process.env.WORKBOOK_DOWNLOAD_URL ?? "#"}`,
+  });
+};
