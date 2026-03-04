@@ -55,11 +55,14 @@ async function main() {
   console.log("3/4  Membership welcome email sent.");
 
   // 4. Free resource / PDF
-  await sendFreeResourceEmail(recipient, "https://example.com/free-workbook.pdf");
+  await sendFreeResourceEmail(
+    recipient,
+    "https://example.com/free-workbook.pdf",
+  );
   console.log("4/4  Free resource email sent.");
 
   console.log(
-    "\n✅  All 4 emails delivered to MailHog.\n   Open http://localhost:8025 to inspect them."
+    "\n✅  All 4 emails delivered to MailHog.\n   Open http://localhost:8025 to inspect them.",
   );
 }
 

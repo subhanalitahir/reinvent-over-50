@@ -39,11 +39,10 @@ export const createProduct = asyncHandler(
 // PUT /api/products/:id  (admin)
 export const updateProduct = asyncHandler(
   async (req: Request, res: Response) => {
-    const product = await Product.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true },
-    );
+    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
     if (!product) throw new AppError("Product not found", 404);
     sendSuccess(res, product, "Product updated");
   },

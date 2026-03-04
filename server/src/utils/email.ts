@@ -44,7 +44,10 @@ export const sendEmail = async (options: EmailOptions): Promise<void> => {
   }
 
   await transporter.sendMail({
-    from: options.from ?? process.env.EMAIL_FROM ?? `"Reinvent You 50+" <noreply@reinventyou50.com>`,
+    from:
+      options.from ??
+      process.env.EMAIL_FROM ??
+      `"Reinvent You 50+" <noreply@reinventyou50.com>`,
     to: options.to,
     subject: options.subject,
     html: options.html,

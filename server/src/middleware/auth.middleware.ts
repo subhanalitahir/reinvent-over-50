@@ -81,10 +81,15 @@ export const memberOnly = (
  * Middleware factory: allows access if the user has one of the specified roles.
  * Usage: requireRole("admin", "member")
  */
-export const requireRole = (...roles: string[]) =>
+export const requireRole =
+  (...roles: string[]) =>
   (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (!req.user || !roles.includes(req.user.role)) {
-      sendError(res, `Access denied. Required roles: ${roles.join(", ")}.`, 403);
+      sendError(
+        res,
+        `Access denied. Required roles: ${roles.join(", ")}.`,
+        403,
+      );
       return;
     }
     next();

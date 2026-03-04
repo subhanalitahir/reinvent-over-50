@@ -138,8 +138,7 @@ export const createMembershipCheckout = asyncHandler(
     };
 
     const planConfig = MEMBERSHIP_PLANS[plan?.toLowerCase()]?.[billingCycle];
-    if (!planConfig)
-      throw new AppError("Invalid plan or billing cycle", 400);
+    if (!planConfig) throw new AppError("Invalid plan or billing cycle", 400);
 
     if (!email) throw new AppError("Email is required", 400);
 

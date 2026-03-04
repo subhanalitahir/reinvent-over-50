@@ -101,7 +101,8 @@ export const purchaseTicket = asyncHandler(
       guestName?: string;
     };
 
-    if (!guestEmail) throw new AppError("Email is required for ticket purchase", 400);
+    if (!guestEmail)
+      throw new AppError("Email is required for ticket purchase", 400);
 
     // For paid events, create a pending order referencing the event as a line item.
     // Actual payment is handled by Stripe checkout (separate endpoint or frontend).
@@ -111,8 +112,7 @@ export const purchaseTicket = asyncHandler(
       {
         event: { _id: event._id, title: event.title, price: event.price },
         stripePublicKey: process.env.STRIPE_PUBLISHABLE_KEY ?? "",
-        message:
-          "Proceed to checkout to complete your ticket purchase.",
+        message: "Proceed to checkout to complete your ticket purchase.",
       },
       "Ticket purchase initiated",
     );
@@ -126,11 +126,15 @@ export const rsvpEvent = asyncHandler(
     if (!event) throw new AppError("Event not found", 404);
 
     const userId = req.user!._id;
-    const alreadyRSVP = event.attendees.some((id: mongoose.Types.ObjectId) => id.equals(userId));
+    const alreadyRSVP = event.attendees.some((id: mongoose.Types.ObjectId) =>
+      id.equals(userId),
+    );
 
     if (alreadyRSVP) {
       // Withdraw RSVP
-      event.attendees = event.attendees.filter((id: mongoose.Types.ObjectId) => !id.equals(userId));
+      event.attendees = event.attendees.filter(
+        (id: mongoose.Types.ObjectId) => !id.equals(userId),
+      );
       await event.save();
       sendSuccess(res, event, "RSVP withdrawn");
       return;

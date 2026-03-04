@@ -4,7 +4,10 @@ import Member from "../models/Member";
 import asyncHandler from "../utils/asyncHandler";
 import { sendSuccess } from "../utils/apiResponse";
 import logger from "../utils/logger";
-import { sendOrderConfirmationEmail, sendMembershipWelcomeEmail } from "../utils/email";
+import {
+  sendOrderConfirmationEmail,
+  sendMembershipWelcomeEmail,
+} from "../utils/email";
 
 /**
  * POST /api/payments/webhook
@@ -33,7 +36,11 @@ export const stripeWebhook = asyncHandler(
 
     let event: import("stripe").Stripe.Event;
     try {
-      event = stripe.webhooks.constructEvent(req.body as Buffer, sig, webhookSecret);
+      event = stripe.webhooks.constructEvent(
+        req.body as Buffer,
+        sig,
+        webhookSecret,
+      );
     } catch (err) {
       logger.error("Stripe webhook signature verification failed", err);
       res.status(400).json({ received: false, error: "Invalid signature" });
@@ -45,7 +52,8 @@ export const stripeWebhook = asyncHandler(
     switch (event.type) {
       // ── One-time checkout (products / orders) ──────────────────────────────
       case "checkout.session.completed": {
-        const session = event.data.object as import("stripe").Stripe.Checkout.Session;
+        const session = event.data
+          .object as import("stripe").Stripe.Checkout.Session;
 
         const order = await Order.findOne({ stripeSessionId: session.id });
         if (order) {

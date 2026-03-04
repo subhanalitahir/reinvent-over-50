@@ -28,8 +28,8 @@ services:
     container_name: reinvent_mailhog
     restart: unless-stopped
     ports:
-      - "1025:1025"   # SMTP
-      - "8025:8025"   # Web UI  →  http://localhost:8025
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI  →  http://localhost:8025
     networks:
       - reinvent-network
 

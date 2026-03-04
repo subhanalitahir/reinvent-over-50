@@ -24,7 +24,10 @@ export const createOrder = asyncHandler(
       items.map(async (item) => {
         const product = await Product.findById(item.productId);
         if (!product || product.status !== "active") {
-          throw new AppError(`Product ${item.productId} not found or inactive`, 404);
+          throw new AppError(
+            `Product ${item.productId} not found or inactive`,
+            404,
+          );
         }
         return {
           product: product._id,

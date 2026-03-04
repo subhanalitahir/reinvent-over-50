@@ -69,7 +69,10 @@ export const createMembership = asyncHandler(
         });
         stripeSubscriptionId = subscription.id;
       } catch (err) {
-        logger.warn("Stripe subscription creation failed – continuing without Stripe", err);
+        logger.warn(
+          "Stripe subscription creation failed – continuing without Stripe",
+          err,
+        );
       }
     }
 

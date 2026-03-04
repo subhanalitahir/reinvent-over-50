@@ -13,13 +13,13 @@ export interface IProduct extends Document {
   price: number;
   compareAtPrice?: number; // original price for display
   imageUrl?: string;
-  fileUrl?: string;        // downloadable file (digital product)
+  fileUrl?: string; // downloadable file (digital product)
   includesBooking: boolean; // true for bundle (workbook + 1-on-1 session)
   stripeProductId?: string;
   stripePriceId?: string;
   tags: string[];
   isDigital: boolean;
-  maxPurchases?: number;   // limit total sales (optional)
+  maxPurchases?: number; // limit total sales (optional)
   createdAt: Date;
   updatedAt: Date;
 }

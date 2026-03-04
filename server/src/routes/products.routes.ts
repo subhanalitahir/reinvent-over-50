@@ -24,7 +24,10 @@ router.post(
   [
     body("name").trim().notEmpty().withMessage("Name is required"),
     body("slug").trim().notEmpty().withMessage("Slug is required"),
-    body("description").trim().notEmpty().withMessage("Description is required"),
+    body("description")
+      .trim()
+      .notEmpty()
+      .withMessage("Description is required"),
     body("type")
       .isIn(["workbook", "bundle", "course", "other"])
       .withMessage("Invalid product type"),

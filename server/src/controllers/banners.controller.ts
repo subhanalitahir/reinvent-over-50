@@ -21,9 +21,10 @@ export const getActiveBanners = asyncHandler(
 
     // Increment impressions asynchronously (fire and forget)
     const ids = banners.map((b) => b._id);
-    Banner.updateMany({ _id: { $in: ids } }, { $inc: { impressions: 1 } }).catch(
-      () => void 0,
-    );
+    Banner.updateMany(
+      { _id: { $in: ids } },
+      { $inc: { impressions: 1 } },
+    ).catch(() => void 0);
 
     sendSuccess(res, banners, "Banners fetched");
   },

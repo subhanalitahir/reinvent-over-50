@@ -10,7 +10,11 @@ const generateToken = (id: string): string => {
   // @types/jsonwebtoken v9 uses the branded StringValue type for expiresIn;
   // casting options avoids the string-vs-StringValue mismatch at compile time.
   const options = { expiresIn: process.env.JWT_EXPIRES_IN ?? "7d" };
-  return jwt.sign({ id }, process.env.JWT_SECRET as string, options as jwt.SignOptions);
+  return jwt.sign(
+    { id },
+    process.env.JWT_SECRET as string,
+    options as jwt.SignOptions,
+  );
 };
 
 // POST /api/auth/register

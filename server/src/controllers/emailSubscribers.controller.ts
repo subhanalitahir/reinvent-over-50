@@ -6,78 +6,74 @@ import { AppError } from "../middleware/error.middleware";
 import { sendFreeResourceEmail } from "../utils/email";
 
 // POST /api/subscribers  (public – email capture / free PDF popup)
-export const subscribe = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { email, firstName, lastName, source, freeResourceDownloaded } =
-      req.body as {
-        email: string;
-        firstName?: string;
-        lastName?: string;
-        source?: string;
-        freeResourceDownloaded?: string;
-      };
+export const subscribe = asyncHandler(async (req: Request, res: Response) => {
+  const { email, firstName, lastName, source, freeResourceDownloaded } =
+    req.body as {
+      email: string;
+      firstName?: string;
+      lastName?: string;
+      source?: string;
+      freeResourceDownloaded?: string;
+    };
 
-    // Upsert: if email already exists, just update the record
-    const existing = await EmailSubscriber.findOne({ email });
-    if (existing) {
-      if (existing.status === "unsubscribed") {
-        existing.status = "subscribed";
-        existing.unsubscribedAt = undefined;
-      }
-      if (freeResourceDownloaded) {
-        existing.freeResourceDownloaded = freeResourceDownloaded;
-      }
-      await existing.save();
-
-      // Re-send the free resource email even for existing subscribers
-      if (process.env.FREE_PDF_DOWNLOAD_URL) {
-        sendFreeResourceEmail(email, process.env.FREE_PDF_DOWNLOAD_URL).catch(
-          () => void 0,
-        );
-      }
-
-      sendSuccess(res, existing, "Thank you for subscribing!");
-      return;
+  // Upsert: if email already exists, just update the record
+  const existing = await EmailSubscriber.findOne({ email });
+  if (existing) {
+    if (existing.status === "unsubscribed") {
+      existing.status = "subscribed";
+      existing.unsubscribedAt = undefined;
     }
+    if (freeResourceDownloaded) {
+      existing.freeResourceDownloaded = freeResourceDownloaded;
+    }
+    await existing.save();
 
-    const subscriber = await EmailSubscriber.create({
-      email,
-      firstName,
-      lastName,
-      source: source ?? "pdf-popup",
-      freeResourceDownloaded,
-      ipAddress: req.ip,
-    });
-
-    sendCreated(
-      res,
-      { subscriber, redirectUrl: process.env.UPSELL_PAGE_URL ?? "/workbook" },
-      "Successfully subscribed. Enjoy your free resource!",
-    );
-
-    // Fire-and-forget: send the free resource download email
+    // Re-send the free resource email even for existing subscribers
     if (process.env.FREE_PDF_DOWNLOAD_URL) {
       sendFreeResourceEmail(email, process.env.FREE_PDF_DOWNLOAD_URL).catch(
         () => void 0,
       );
     }
-  },
-);
+
+    sendSuccess(res, existing, "Thank you for subscribing!");
+    return;
+  }
+
+  const subscriber = await EmailSubscriber.create({
+    email,
+    firstName,
+    lastName,
+    source: source ?? "pdf-popup",
+    freeResourceDownloaded,
+    ipAddress: req.ip,
+  });
+
+  sendCreated(
+    res,
+    { subscriber, redirectUrl: process.env.UPSELL_PAGE_URL ?? "/workbook" },
+    "Successfully subscribed. Enjoy your free resource!",
+  );
+
+  // Fire-and-forget: send the free resource download email
+  if (process.env.FREE_PDF_DOWNLOAD_URL) {
+    sendFreeResourceEmail(email, process.env.FREE_PDF_DOWNLOAD_URL).catch(
+      () => void 0,
+    );
+  }
+});
 
 // POST /api/subscribers/unsubscribe  (public)
-export const unsubscribe = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { email } = req.body as { email: string };
-    const subscriber = await EmailSubscriber.findOne({ email });
-    if (!subscriber) throw new AppError("Email not found", 404);
+export const unsubscribe = asyncHandler(async (req: Request, res: Response) => {
+  const { email } = req.body as { email: string };
+  const subscriber = await EmailSubscriber.findOne({ email });
+  if (!subscriber) throw new AppError("Email not found", 404);
 
-    subscriber.status = "unsubscribed";
-    subscriber.unsubscribedAt = new Date();
-    await subscriber.save();
+  subscriber.status = "unsubscribed";
+  subscriber.unsubscribedAt = new Date();
+  await subscriber.save();
 
-    sendSuccess(res, null, "You have been unsubscribed.");
-  },
-);
+  sendSuccess(res, null, "You have been unsubscribed.");
+});
 
 // GET /api/subscribers  (admin)
 export const getAllSubscribers = asyncHandler(

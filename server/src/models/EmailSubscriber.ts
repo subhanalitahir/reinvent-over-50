@@ -1,6 +1,11 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-export type SubscriberSource = "pdf-popup" | "newsletter" | "checkout" | "event" | "other";
+export type SubscriberSource =
+  | "pdf-popup"
+  | "newsletter"
+  | "checkout"
+  | "event"
+  | "other";
 export type SubscriberStatus = "subscribed" | "unsubscribed" | "bounced";
 
 export interface IEmailSubscriber extends Document {
@@ -12,7 +17,7 @@ export interface IEmailSubscriber extends Document {
   status: SubscriberStatus;
   freeResourceDownloaded?: string; // name/key of the free resource
   tags: string[];
-  mailchimpId?: string;  // external ID from Mailchimp
+  mailchimpId?: string; // external ID from Mailchimp
   ipAddress?: string;
   unsubscribedAt?: Date;
   createdAt: Date;
