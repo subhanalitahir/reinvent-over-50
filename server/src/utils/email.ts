@@ -163,9 +163,7 @@ function emailHero(
 }
 
 /** Data row table — renders a clean info card */
-function emailDataTable(
-  rows: Array<{ label: string; value: string }>,
-): string {
+function emailDataTable(rows: Array<{ label: string; value: string }>): string {
   const rowsHtml = rows
     .map(
       (r, i) => `
@@ -237,13 +235,17 @@ function emailHighlight(
 function emailChecklist(items: string[]): string {
   return `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0 24px;">
-      ${items.map((item) => `
+      ${items
+        .map(
+          (item) => `
       <tr>
         <td width="28" style="vertical-align:top;padding:5px 0;">
           <div style="width:22px;height:22px;background:linear-gradient(135deg,#7c3aed,#db2777);border-radius:50%;text-align:center;line-height:22px;font-size:12px;color:#fff;font-weight:700;">✓</div>
         </td>
         <td style="padding:5px 0 5px 10px;font-size:14px;color:#374151;line-height:1.55;vertical-align:top;">${item}</td>
-      </tr>`).join("")}
+      </tr>`,
+        )
+        .join("")}
     </table>
   `;
 }
@@ -253,11 +255,15 @@ function emailBadges(badges: Array<{ emoji: string; text: string }>): string {
   return `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;">
       <tr>
-        ${badges.map((b) => `
+        ${badges
+          .map(
+            (b) => `
         <td style="text-align:center;padding:14px 8px;background:#faf5ff;border:1px solid #f3e8ff;border-radius:12px;width:${Math.floor(100 / badges.length)}%;">
           <div style="font-size:20px;margin-bottom:4px;">${b.emoji}</div>
           <div style="font-size:11px;font-weight:700;color:#7c3aed;letter-spacing:0.5px;text-transform:uppercase;">${b.text}</div>
-        </td>`).join('<td width="8"></td>')}
+        </td>`,
+          )
+          .join('<td width="8"></td>')}
       </tr>
     </table>
   `;
@@ -314,35 +320,55 @@ export const sendOrderConfirmationEmail = async (
   order: { _id: string; total: number; items: Array<{ name: string }> },
   bookingLink?: string,
 ) => {
-  const itemRows = order.items.map((i) => `
+  const itemRows = order.items
+    .map(
+      (i) => `
     <tr>
       <td width="28" style="vertical-align:top;padding:6px 0;">
         <div style="width:20px;height:20px;background:linear-gradient(135deg,#7c3aed,#db2777);border-radius:50%;text-align:center;line-height:20px;font-size:11px;color:#fff;">✓</div>
       </td>
       <td style="padding:6px 0 6px 10px;font-size:14px;color:#374151;vertical-align:top;">${i.name}</td>
-    </tr>`).join("");
+    </tr>`,
+    )
+    .join("");
 
   const body = `
     ${emailHero("🎉", "Order Confirmed!", "Your purchase has been processed successfully. Here's your receipt.")}
     ${emailHeading("Order Summary")}
     ${emailDataTable([
-      { label: "Order ID", value: `<span style='font-family:monospace;font-size:13px;'>#${order._id}</span>` },
-      { label: "Total Charged", value: `<span style='color:#7c3aed;font-size:18px;'>$${order.total.toFixed(2)}</span>` },
-      { label: "Status", value: `<span style='background:#dcfce7;color:#16a34a;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;'>PAID</span>` },
+      {
+        label: "Order ID",
+        value: `<span style='font-family:monospace;font-size:13px;'>#${order._id}</span>`,
+      },
+      {
+        label: "Total Charged",
+        value: `<span style='color:#7c3aed;font-size:18px;'>$${order.total.toFixed(2)}</span>`,
+      },
+      {
+        label: "Status",
+        value: `<span style='background:#dcfce7;color:#16a34a;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;'>PAID</span>`,
+      },
     ])}
     <h3 style="margin:0 0 12px;font-size:15px;font-weight:700;color:#0f0a1e;">Items Purchased</h3>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">${itemRows}</table>
-    ${bookingLink ? `
+    ${
+      bookingLink
+        ? `
     ${emailHighlight(`<strong>Book your 1-on-1 session:</strong> Your purchase includes a personalized coaching call. Use the button below to schedule it at your convenience.`, "#7c3aed", "#faf5ff")}
     ${emailButton("Schedule My Session", bookingLink)}
-    ` : ""}
+    `
+        : ""
+    }
     <p style="margin:24px 0 0;font-size:14px;color:#6b7280;line-height:1.7;">Have a question? Simply reply to this email and our team will get back to you within one business day.</p>
   `;
 
   await sendEmail({
     to: email,
     subject: `Order Confirmed – Reinvent You Over 50 (#${order._id.toString().slice(-6).toUpperCase()})`,
-    html: emailLayout(body, `Your order #${order._id.toString().slice(-6).toUpperCase()} for $${order.total.toFixed(2)} is confirmed.`),
+    html: emailLayout(
+      body,
+      `Your order #${order._id.toString().slice(-6).toUpperCase()} for $${order.total.toFixed(2)} is confirmed.`,
+    ),
     text: `Order ${order._id} confirmed. Total: $${order.total.toFixed(2)}.${bookingLink ? ` Book your session: ${bookingLink}` : ""}`,
   });
 };
@@ -388,7 +414,10 @@ export const sendMembershipWelcomeEmail = async (
   await sendEmail({
     to: email,
     subject: `Welcome to the Community, ${name.split(" ")[0]}! 🌟 – Reinvent You Over 50`,
-    html: emailLayout(body, `Your ${planTitle} membership is now active. Welcome to the community!`),
+    html: emailLayout(
+      body,
+      `Your ${planTitle} membership is now active. Welcome to the community!`,
+    ),
     text: `Welcome ${name}! Your ${planTitle} membership is active. Visit ${CLIENT()}/membership to get started.`,
   });
 };
@@ -420,7 +449,10 @@ export const sendFreeResourceEmail = async (
   await sendEmail({
     to: email,
     subject: "Your Free Guide is Ready to Download 📖 – Reinvent You Over 50",
-    html: emailLayout(body, "Your free reinvention guide is ready. Click to download it now."),
+    html: emailLayout(
+      body,
+      "Your free reinvention guide is ready. Click to download it now.",
+    ),
     text: `Your free guide is ready. Download it here: ${downloadUrl}\n\nWant to go deeper? Check out our Workbook: ${CLIENT()}/workbook`,
   });
 };
@@ -448,7 +480,9 @@ export const sendBookingConfirmationEmail = async (
     timeZoneName: "short",
   });
   const sessionLabel =
-    booking.sessionType.charAt(0).toUpperCase() + booking.sessionType.slice(1) + " Coaching";
+    booking.sessionType.charAt(0).toUpperCase() +
+    booking.sessionType.slice(1) +
+    " Coaching";
   const firstName = booking.guestName.split(" ")[0];
 
   const body = `
@@ -460,16 +494,27 @@ export const sendBookingConfirmationEmail = async (
       { label: "Time", value: formattedTime },
       { label: "Duration", value: `${booking.duration} minutes` },
       { label: "Format", value: "🎥 Video Call (Zoom)" },
-      { label: "Status", value: `<span style='background:#dcfce7;color:#16a34a;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;'>CONFIRMED</span>` },
+      {
+        label: "Status",
+        value: `<span style='background:#dcfce7;color:#16a34a;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;'>CONFIRMED</span>`,
+      },
     ])}
 
-    ${booking.meetingLink ? `
+    ${
+      booking.meetingLink
+        ? `
     <div style="background:linear-gradient(135deg,#ede9fe,#fce7f3);border-radius:14px;padding:20px 24px;margin:20px 0 28px;text-align:center;">
       <p style="margin:0 0 6px;font-size:13px;font-weight:600;color:#6b7280;letter-spacing:0.5px;text-transform:uppercase;">Your Video Call Link</p>
       ${emailButton("Join Video Call", booking.meetingLink, "135deg,#1e40af,#7c3aed")}
       <p style="margin:8px 0 0;font-size:12px;color:#9ca3af;">Save this email — your link will work on the day of your session</p>
     </div>
-    ` : emailHighlight("Your Zoom link will be emailed to you <strong>24 hours before</strong> your session. Keep an eye on your inbox!", "#1e40af", "#eff6ff")}
+    `
+        : emailHighlight(
+            "Your Zoom link will be emailed to you <strong>24 hours before</strong> your session. Keep an eye on your inbox!",
+            "#1e40af",
+            "#eff6ff",
+          )
+    }
 
     <h3 style="margin:0 0 12px;font-size:15px;font-weight:700;color:#0f0a1e;">How to prepare:</h3>
     ${emailChecklist([
@@ -485,7 +530,10 @@ export const sendBookingConfirmationEmail = async (
   await sendEmail({
     to: email,
     subject: `Session Confirmed: ${sessionLabel} on ${formattedDate} ✅`,
-    html: emailLayout(body, `Your ${sessionLabel} is confirmed for ${formattedDate} at ${formattedTime}.`),
+    html: emailLayout(
+      body,
+      `Your ${sessionLabel} is confirmed for ${formattedDate} at ${formattedTime}.`,
+    ),
     text: `Session confirmed!\n\n${sessionLabel}\n${formattedDate} at ${formattedTime}\nDuration: ${booking.duration} minutes\n\n${booking.meetingLink ? `Zoom Link: ${booking.meetingLink}` : "Your Zoom link will be sent 24 hours before your session."}`,
   });
 };
@@ -502,7 +550,10 @@ export const sendContactNotificationEmail = async (
 ) => {
   const rows: Array<{ label: string; value: string }> = [
     { label: "Full Name", value: contact.name },
-    { label: "Email", value: `<a href="mailto:${contact.email}" style="color:#7c3aed;font-weight:600;">${contact.email}</a>` },
+    {
+      label: "Email",
+      value: `<a href="mailto:${contact.email}" style="color:#7c3aed;font-weight:600;">${contact.email}</a>`,
+    },
   ];
   if (contact.phone) rows.push({ label: "Phone", value: contact.phone });
   rows.push({ label: "Subject", value: contact.subject ?? "General Inquiry" });
@@ -527,7 +578,10 @@ export const sendContactNotificationEmail = async (
   await sendEmail({
     to: adminEmail,
     subject: `📬 New Message: "${contact.subject ?? "General Inquiry"}" from ${contact.name}`,
-    html: emailLayout(body, `New contact form submission from ${contact.name} (${contact.email})`),
+    html: emailLayout(
+      body,
+      `New contact form submission from ${contact.name} (${contact.email})`,
+    ),
     text: `New contact from ${contact.name} (${contact.email})\nSubject: ${contact.subject ?? "General"}\n\n${contact.message}`,
   });
 };
@@ -550,10 +604,27 @@ export const sendContactAcknowledgementEmail = async (
     <h3 style="margin:24px 0 14px;font-size:15px;font-weight:700;color:#0f0a1e;">You might enjoy:</h3>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
       ${[
-        { emoji: "📅", label: "Upcoming Events", url: `${CLIENT()}/events`, desc: "Virtual & in-person meetups" },
-        { emoji: "📖", label: "The Workbook", url: `${CLIENT()}/workbook`, desc: "150+ pages of guided exercises" },
-        { emoji: "👥", label: "Membership Plans", url: `${CLIENT()}/membership`, desc: "Join 5,000+ members worldwide" },
-      ].map((item) => `
+        {
+          emoji: "📅",
+          label: "Upcoming Events",
+          url: `${CLIENT()}/events`,
+          desc: "Virtual & in-person meetups",
+        },
+        {
+          emoji: "📖",
+          label: "The Workbook",
+          url: `${CLIENT()}/workbook`,
+          desc: "150+ pages of guided exercises",
+        },
+        {
+          emoji: "👥",
+          label: "Membership Plans",
+          url: `${CLIENT()}/membership`,
+          desc: "Join 5,000+ members worldwide",
+        },
+      ]
+        .map(
+          (item) => `
       <tr>
         <td style="padding:8px 0;">
           <a href="${item.url}" target="_blank" style="display:block;background:#faf5ff;border:1px solid #f3e8ff;border-radius:12px;padding:14px 16px;text-decoration:none;">
@@ -569,7 +640,9 @@ export const sendContactAcknowledgementEmail = async (
             </table>
           </a>
         </td>
-      </tr>`).join("")}
+      </tr>`,
+        )
+        .join("")}
     </table>
 
     <p style="margin:20px 0 0;font-size:13px;color:#9ca3af;line-height:1.7;">— The Reinvent You Over 50 Team 💜</p>
@@ -578,7 +651,10 @@ export const sendContactAcknowledgementEmail = async (
   await sendEmail({
     to: email,
     subject: `We received your message, ${firstName} 💌 – Reinvent You Over 50`,
-    html: emailLayout(body, `Thanks for contacting us. We'll reply within 1–2 business days.`),
+    html: emailLayout(
+      body,
+      `Thanks for contacting us. We'll reply within 1–2 business days.`,
+    ),
     text: `Hi ${firstName},\n\nWe received your message and will reply within 1–2 business days.\n\nIn the meantime, explore our latest events and content at ${CLIENT()}.\n\n— The Reinvent You Over 50 Team`,
   });
 };
@@ -603,20 +679,37 @@ export const sendEventRegistrationEmail = async (
     ${emailDataTable([
       { label: "Event", value: `<strong>${event.title}</strong>` },
       { label: "Date & Time", value: event.date },
-      { label: "Location", value: `${isVirtual ? "🎥 " : "📍 "}${event.location}` },
+      {
+        label: "Location",
+        value: `${isVirtual ? "🎥 " : "📍 "}${event.location}`,
+      },
       { label: "Ticket", value: event.price },
-      { label: "Confirmation", value: `<span style='background:#dcfce7;color:#16a34a;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;'>CONFIRMED ✓</span>` },
+      {
+        label: "Confirmation",
+        value: `<span style='background:#dcfce7;color:#16a34a;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;'>CONFIRMED ✓</span>`,
+      },
     ])}
 
-    ${isVirtual
-      ? emailHighlight(`Your <strong>virtual access link</strong> will be emailed to you 24 hours before the event. Keep an eye on your inbox!`, "#7c3aed", "#faf5ff")
-      : emailHighlight(`This is an <strong>in-person event</strong>. Please arrive 10–15 minutes early. Directions will be sent one day before.`, "#0ea5e9", "#f0f9ff")
+    ${
+      isVirtual
+        ? emailHighlight(
+            `Your <strong>virtual access link</strong> will be emailed to you 24 hours before the event. Keep an eye on your inbox!`,
+            "#7c3aed",
+            "#faf5ff",
+          )
+        : emailHighlight(
+            `This is an <strong>in-person event</strong>. Please arrive 10–15 minutes early. Directions will be sent one day before.`,
+            "#0ea5e9",
+            "#f0f9ff",
+          )
     }
 
     <h3 style="margin:24px 0 12px;font-size:15px;font-weight:700;color:#0f0a1e;">Before the event:</h3>
     ${emailChecklist([
       "Save the date to your calendar now so you don't forget",
-      isVirtual ? "Test your video/audio connection in advance" : "Plan your journey — aim to arrive a little early",
+      isVirtual
+        ? "Test your video/audio connection in advance"
+        : "Plan your journey — aim to arrive a little early",
       "Come ready to connect, share, and be inspired",
       "Invite a friend — community is better together!",
     ])}
@@ -634,7 +727,10 @@ export const sendEventRegistrationEmail = async (
   await sendEmail({
     to: email,
     subject: `You're In! 🎟️ "${event.title}" – Reinvent You Over 50`,
-    html: emailLayout(body, `Your registration for "${event.title}" on ${event.date} is confirmed!`),
+    html: emailLayout(
+      body,
+      `Your registration for "${event.title}" on ${event.date} is confirmed!`,
+    ),
     text: `Registration confirmed!\n\n${event.title}\n${event.date}\n${event.location}\nTicket: ${event.price}\n\nSee you there! Visit ${CLIENT()}/events for more events.`,
   });
 };
@@ -644,7 +740,9 @@ export const sendWorkbookPurchaseEmail = async (
   plan: "workbook" | "bundle",
 ) => {
   const isBundle = plan === "bundle";
-  const planName = isBundle ? "Workbook + Coaching Bundle" : "Reinvention Workbook";
+  const planName = isBundle
+    ? "Workbook + Coaching Bundle"
+    : "Reinvention Workbook";
   const price = isBundle ? "$197" : "$47";
   const downloadUrl =
     process.env.WORKBOOK_DOWNLOAD_URL ??
@@ -665,7 +763,10 @@ export const sendWorkbookPurchaseEmail = async (
 
     ${emailDataTable([
       { label: "Product", value: planName },
-      { label: "Price Paid", value: `<strong style='color:#7c3aed;'>${price}</strong>` },
+      {
+        label: "Price Paid",
+        value: `<strong style='color:#7c3aed;'>${price}</strong>`,
+      },
       { label: "Format", value: "🔒 Digital PDF (instant access)" },
       { label: "Guarantee", value: "30-day money-back" },
     ])}
@@ -673,12 +774,16 @@ export const sendWorkbookPurchaseEmail = async (
     ${emailButton("Download My Workbook Now ⬇️", downloadUrl, isBundle ? "135deg,#f97316,#db2777" : "135deg,#7c3aed,#db2777")}
     <p style="text-align:center;margin:8px 0 28px;font-size:12px;color:#9ca3af;">This link is permanent — bookmark it for easy access any time.</p>
 
-    ${isBundle ? `
+    ${
+      isBundle
+        ? `
     <div style="background:linear-gradient(135deg,#fef3c7,#fffbeb);border:1px solid #fde68a;border-radius:14px;padding:20px 24px;margin:20px 0;">
       <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.5px;">⭐ Your Coaching Session</p>
       <p style="margin:0;font-size:14px;color:#78350f;line-height:1.7;">Your 60-minute personalized coaching session is included in your bundle. Our team will reach out within <strong>24 hours</strong> to schedule it at a time that works for you.</p>
     </div>
-    ` : ""}
+    `
+        : ""
+    }
 
     <h3 style="margin:24px 0 12px;font-size:15px;font-weight:700;color:#0f0a1e;">What's inside your workbook:</h3>
     ${emailChecklist([
@@ -704,7 +809,10 @@ export const sendWorkbookPurchaseEmail = async (
     subject: isBundle
       ? `Your Workbook + Coaching Bundle is Ready 🚀 – Reinvent You Over 50`
       : `Your Reinvention Workbook is Ready to Download 📚 – Reinvent You Over 50`,
-    html: emailLayout(body, `Your ${planName} download is ready. Click to get instant access.`),
+    html: emailLayout(
+      body,
+      `Your ${planName} download is ready. Click to get instant access.`,
+    ),
     text: `Thank you for purchasing ${planName} (${price}). Download your workbook at: ${downloadUrl}${isBundle ? "\n\nOur team will contact you within 24 hours to schedule your coaching session." : ""}`,
   });
 };
