@@ -29,8 +29,17 @@ export const createContact = asyncHandler(
     });
 
     // Notify admin and acknowledge to sender (fire-and-forget)
-    const adminEmail = process.env.ADMIN_EMAIL ?? process.env.EMAIL_FROM ?? "admin@reinventyou50.com";
-    sendContactNotificationEmail(adminEmail, { name, email, phone, subject, message }).catch(() => {});
+    const adminEmail =
+      process.env.ADMIN_EMAIL ??
+      process.env.EMAIL_FROM ??
+      "admin@reinventyou50.com";
+    sendContactNotificationEmail(adminEmail, {
+      name,
+      email,
+      phone,
+      subject,
+      message,
+    }).catch(() => {});
     sendContactAcknowledgementEmail(email, name).catch(() => {});
 
     sendCreated(

@@ -255,7 +255,8 @@ export const sendWorkbookPurchaseEmail = async (
   email: string,
   plan: "workbook" | "bundle",
 ) => {
-  const planName = plan === "bundle" ? "Workbook + Coaching Bundle" : "Workbook Only";
+  const planName =
+    plan === "bundle" ? "Workbook + Coaching Bundle" : "Workbook Only";
   const price = plan === "bundle" ? "$197" : "$47";
   const extras =
     plan === "bundle"
