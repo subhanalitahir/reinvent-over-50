@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { EmailModal } from '../components/EmailModal';
 
 export function MembershipPage() {
   const searchParams = useSearchParams();
@@ -12,6 +13,8 @@ export function MembershipPage() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [pendingPlan, setPendingPlan] = useState<string | null>(null);
 
   useEffect(() => {
     const successParam = searchParams.get('success');
@@ -27,23 +30,29 @@ export function MembershipPage() {
     if (searchParams.get('canceled') === 'true') setError('Payment was cancelled. You can try again.');
   }, [searchParams]);
 
-  const handleCheckout = async (planKey: string) => {
-    setLoadingPlan(planKey);
+  const handleCheckout = (planKey: string) => {
+    setError('');
+    setPendingPlan(planKey);
+    setModalOpen(true);
+  };
+
+  const handleModalSubmit = async (email: string) => {
+    if (!pendingPlan) return;
+    setLoadingPlan(pendingPlan);
     setError('');
     try {
-      const email = prompt('Enter your email to get started:');
-      if (!email) { setLoadingPlan(null); return; }
       const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
       const res = await fetch(`${apiUrl}/api/checkout/membership`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: planKey, billingCycle, email }),
+        body: JSON.stringify({ plan: pendingPlan, billingCycle, email }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.message ?? 'Checkout failed');
       if (data.url) window.location.href = data.url;
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
+      setModalOpen(false);
     } finally {
       setLoadingPlan(null);
     }
@@ -133,7 +142,7 @@ export function MembershipPage() {
     <div className="pt-20">
       {/* Success Banner */}
       {success && (
-        <motion.div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white py-6 text-center"
+        <motion.div className="bg-linear-to-r from-green-500 to-emerald-500 text-white py-6 text-center"
           initial={{ opacity:0, y:-20 }} animate={{ opacity:1, y:0 }}>
           <div className="max-w-3xl mx-auto px-6 flex flex-col items-center gap-3">
             <CheckCircle className="w-10 h-10" />
@@ -493,6 +502,15 @@ export function MembershipPage() {
           </motion.p>
         </div>
       </section>
+      <EmailModal
+        isOpen={modalOpen}
+        onClose={() => { setModalOpen(false); setPendingPlan(null); }}
+        onSubmit={handleModalSubmit}
+        title="Almost there!"
+        subtitle="Enter your email to activate your membership. We'll send your welcome package here."
+        ctaLabel="Join Now →"
+        loading={loadingPlan !== null}
+      />
     </div>
   );
 }

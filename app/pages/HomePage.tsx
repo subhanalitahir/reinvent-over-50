@@ -183,7 +183,7 @@ export function HomePage() {
               >
                 {benefits.map((benefit, index) => (
                   <div key={index} className="flex items-center gap-2 bg-white/70 backdrop-blur-sm px-3 py-2 rounded-lg border border-white/80 shadow-sm">
-                    <benefit.icon className="w-4 h-4 text-green-500 flex-shrink-0" />
+                    <benefit.icon className="w-4 h-4 text-green-500 shrink-0" />
                     <span className="font-medium text-xs">{benefit.text}</span>
                   </div>
                 ))}
@@ -211,7 +211,7 @@ export function HomePage() {
                   <div className="text-sm text-gray-500 font-semibold">Active Members</div>
                   <div className="flex items-center gap-1 mt-2">
                     {[...Array(5)].map((_, i) => (
-                      <div key={i} className={`w-5 h-5 rounded-full border-2 border-white bg-gradient-to-br ${['from-purple-400 to-pink-400', 'from-blue-400 to-cyan-400', 'from-green-400 to-emerald-400', 'from-orange-400 to-red-400', 'from-violet-400 to-purple-400'][i]}`} />
+                      <div key={i} className={`w-5 h-5 rounded-full border-2 border-white bg-linear-to-br ${['from-purple-400 to-pink-400', 'from-blue-400 to-cyan-400', 'from-green-400 to-emerald-400', 'from-orange-400 to-red-400', 'from-violet-400 to-purple-400'][i]}`} />
                     ))}
                     <span className="text-xs text-gray-400 ml-1">+more</span>
                   </div>
@@ -227,7 +227,7 @@ export function HomePage() {
                   <div className="text-xs text-gray-500 font-semibold mt-1">Member Rating</div>
                 </motion.div>
 
-                <motion.div className="absolute top-1/2 -right-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl shadow-2xl p-4 z-20 text-white"
+                <motion.div className="absolute top-1/2 -right-8 bg-linear-to-br from-purple-600 to-pink-600 rounded-2xl shadow-2xl p-4 z-20 text-white"
                   initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 1.6 }} whileHover={{ scale: 1.05 }}
                 >
                   <div className="text-3xl font-black font-display">98%</div>
@@ -272,9 +272,9 @@ export function HomePage() {
           <motion.div className="grid md:grid-cols-4 gap-8" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             {stats.map((stat, index) => (
               <motion.div key={index} variants={itemVariants} whileHover={{ y: -12, scale: 1.03 }} className="text-center group relative">
-                <div className={`relative inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br ${stat.color} rounded-3xl mb-6 shadow-xl group-hover:shadow-2xl transition-all`}>
+                <div className={`relative inline-flex items-center justify-center w-20 h-20 bg-linear-to-br ${stat.color} rounded-3xl mb-6 shadow-xl group-hover:shadow-2xl transition-all`}>
                   <stat.icon className="w-9 h-9 text-white" />
-                  <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} rounded-3xl blur-xl opacity-40 -z-10 group-hover:opacity-60 transition-opacity`} />
+                  <div className={`absolute inset-0 bg-linear-to-br ${stat.color} rounded-3xl blur-xl opacity-40 -z-10 group-hover:opacity-60 transition-opacity`} />
                 </div>
                 <div className="number-display text-6xl mb-3">{stat.value}</div>
                 <div className="text-gray-600 font-semibold tracking-wide">{stat.label}</div>
@@ -305,9 +305,9 @@ export function HomePage() {
               <motion.div key={index} variants={itemVariants} whileHover={{ y: -14, scale: 1.02 }}
                 className="group relative bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all border border-gray-100 overflow-hidden"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.bg} opacity-0 group-hover:opacity-60 transition-opacity duration-500 rounded-3xl`} />
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <motion.div className={`relative z-10 w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 shadow-lg`}
+                <div className={`absolute inset-0 bg-linear-to-br ${feature.bg} opacity-0 group-hover:opacity-60 transition-opacity duration-500 rounded-3xl`} />
+                <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-white/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <motion.div className={`relative z-10 w-16 h-16 bg-linear-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 shadow-lg`}
                   whileHover={{ rotate: 360 }} transition={{ duration: 0.6 }}
                 >
                   <feature.icon className="w-8 h-8 text-white" />
@@ -325,7 +325,7 @@ export function HomePage() {
 
       {/* ===== COMMUNITY ===== */}
       <section className="py-36 bg-white relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-200 to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-purple-200 to-transparent" />
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <motion.div initial={{ opacity: 0, x: -60 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }} className="relative">
@@ -340,7 +340,7 @@ export function HomePage() {
                     <p className="font-display font-bold text-gray-900 text-lg">Next Virtual Meetup</p>
                     <p className="text-sm text-gray-500">Thursday, 7PM EST · 200+ attending</p>
                   </div>
-                  <Link href="/events" className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-bold rounded-full hover:shadow-lg transition-shadow">RSVP Free</Link>
+                  <Link href="/events" className="px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 text-white text-sm font-bold rounded-full hover:shadow-lg transition-shadow">RSVP Free</Link>
                 </div>
               </motion.div>
             </motion.div>
@@ -364,7 +364,7 @@ export function HomePage() {
                   <motion.div key={index} variants={itemVariants}
                     className="flex items-start gap-5 group p-5 rounded-2xl border border-gray-100 hover:border-purple-100 hover:bg-purple-50/40 transition-all cursor-default shadow-sm hover:shadow-md"
                   >
-                    <div className={`w-12 h-12 bg-gradient-to-br ${item.color} rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg`}>
+                    <div className={`w-12 h-12 bg-linear-to-br ${item.color} rounded-xl flex items-center justify-center shrink-0 shadow-lg`}>
                       <item.icon className="w-6 h-6 text-white" />
                     </div>
                     <p className="text-lg text-gray-700 leading-relaxed pt-1">{item.text}</p>
@@ -400,7 +400,7 @@ export function HomePage() {
               <motion.div key={index} variants={itemVariants} whileHover={{ y: -14, scale: 1.02 }}
                 className="group bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all border border-gray-100 relative overflow-hidden"
               >
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500" />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-purple-500 to-pink-500" />
                 <div className="absolute top-6 right-6 text-8xl leading-none font-display italic text-purple-100 select-none">❝</div>
                 <div className="flex items-center gap-1 mb-5">
                   {[...Array(testimonial.rating)].map((_, i) => <Star key={i} className="w-5 h-5 text-amber-400 fill-amber-400" />)}
@@ -411,7 +411,7 @@ export function HomePage() {
                 <p className="text-gray-700 text-lg mb-8 leading-relaxed relative z-10">"{testimonial.text}"</p>
                 <div className="flex items-center gap-4 pt-6 border-t border-gray-100">
                   <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full blur-md opacity-50" />
+                    <div className="absolute inset-0 bg-linear-to-br from-purple-600 to-pink-600 rounded-full blur-md opacity-50" />
                     <ImageWithFallback src={testimonial.image} alt={testimonial.name} className="w-14 h-14 rounded-full object-cover border-2 border-white relative z-10 shadow-lg" />
                   </div>
                   <div>
@@ -469,7 +469,7 @@ export function HomePage() {
               <Link href="/membership" className="group inline-flex items-center gap-3 px-12 py-6 bg-white text-purple-700 rounded-full font-black text-xl shadow-2xl hover:shadow-white/30 transition-all relative overflow-hidden">
                 <span className="relative z-10">Start Your Journey Today</span>
                 <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform relative z-10" />
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-50 to-pink-50 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-linear-to-r from-purple-50 to-pink-50 opacity-0 group-hover:opacity-100 transition-opacity" />
               </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>

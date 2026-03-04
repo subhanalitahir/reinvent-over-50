@@ -31,7 +31,7 @@ export function PricingSection() {
         {plans.map((plan, index) => (
           <div 
             key={index}
-            className={`bg-gradient-to-br ${plan.color} rounded-3xl p-8 text-white`}
+            className={`bg-linear-to-br ${plan.color} rounded-3xl p-8 text-white`}
           >
             <h3 className="text-2xl mb-2">{plan.name}</h3>
             <div className="text-4xl mb-8">{plan.price}</div>

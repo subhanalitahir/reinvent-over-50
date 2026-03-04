@@ -52,7 +52,7 @@ export function BookingPage() {
   return (
     <div className="pt-20">
       {/* Hero Section */}
-      <section className="relative min-h-[45vh] flex items-center bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 overflow-hidden">
+      <section className="relative min-h-[45vh] flex items-center bg-linear-to-br from-purple-50 via-pink-50 to-orange-50 overflow-hidden">
         <motion.div className="orb orb-purple w-80 h-80 top-[-60px] right-[-40px]" animate={{ scale:[1,1.3,1], x:[0,-40,0] }} transition={{ duration:10, repeat:Infinity, ease:'easeInOut' }} />
         <motion.div className="orb orb-pink w-72 h-72 bottom-[-40px] left-[-40px]" animate={{ scale:[1,1.2,1], y:[0,-30,0] }} transition={{ duration:12, repeat:Infinity, ease:'easeInOut', delay:1 }} />
         {[...Array(6)].map((_,i) => (
@@ -70,7 +70,7 @@ export function BookingPage() {
           <motion.h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight"
             initial={{ opacity:0, y:30 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.7, delay:0.1 }}>
             <span className="block text-gray-900">Book Your</span>
-            <span className="block bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">1-on-1 Session</span>
+            <span className="block bg-linear-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">1-on-1 Session</span>
           </motion.h1>
           <motion.p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto"
             initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.7, delay:0.3 }}>
@@ -84,7 +84,7 @@ export function BookingPage() {
               <div key={i} className="flex items-center gap-3">
                 <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
                   (step === 'info' && i === 0) || (step === 'schedule' && i === 1) || (step === 'payment' && i === 2)
-                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                    ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-lg'
                     : 'bg-white/70 text-gray-500 border border-gray-200'
                 }`}>
                   <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${
@@ -114,7 +114,7 @@ export function BookingPage() {
                 </motion.div>
                 <h2 className="text-4xl md:text-5xl font-bold mb-8">
                   <span className="text-gray-900">Your Complete</span><br />
-                  <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Coaching Package</span>
+                  <span className="bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Coaching Package</span>
                 </h2>
                 <div className="space-y-5 mb-10">
                   {[
@@ -126,23 +126,23 @@ export function BookingPage() {
                   ].map((item, index) => (
                     <motion.div key={index} className="flex items-start gap-4 group"
                       initial={{ opacity:0, x:-20 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }} transition={{ duration:0.5, delay:index*0.1 }}>
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-xl transition-shadow">
+                      <div className="w-10 h-10 bg-linear-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shrink-0 shadow-lg group-hover:shadow-xl transition-shadow">
                         <item.icon className="w-5 h-5 text-white" />
                       </div>
                       <p className="text-lg text-gray-700 leading-relaxed pt-1">{item.text}</p>
                     </motion.div>
                   ))}
                 </div>
-                <motion.div className="relative bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-8 border border-purple-100 mb-8"
+                <motion.div className="relative bg-linear-to-br from-purple-50 to-pink-50 rounded-3xl p-8 border border-purple-100 mb-8"
                   whileHover={{ scale:1.02 }} transition={{ type:'spring', stiffness:300 }}>
                   <div className="flex items-baseline gap-2 mb-1">
-                    <span className="text-6xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">$150</span>
+                    <span className="text-6xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">$150</span>
                     <span className="text-gray-500">/ session</span>
                   </div>
                   <p className="text-gray-600">Includes everything listed above</p>
                 </motion.div>
                 <motion.button type="button" onClick={() => setStep('schedule')}
-                  className="group w-full relative bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-5 rounded-2xl font-bold text-lg shadow-xl flex items-center justify-center gap-3 overflow-hidden"
+                  className="group w-full relative bg-linear-to-r from-purple-600 to-pink-600 text-white px-8 py-5 rounded-2xl font-bold text-lg shadow-xl flex items-center justify-center gap-3 overflow-hidden"
                   whileHover={{ scale:1.02, boxShadow:'0 20px 60px rgba(124,58,237,0.4)' }} whileTap={{ scale:0.98 }}>
                   Schedule Your Session
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -150,7 +150,7 @@ export function BookingPage() {
               </motion.div>
 
               <motion.div className="relative" initial={{ opacity:0, x:50 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }} transition={{ duration:0.8 }}>
-                <motion.div className="absolute -inset-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl blur-2xl opacity-20"
+                <motion.div className="absolute -inset-4 bg-linear-to-r from-purple-600 to-pink-600 rounded-3xl blur-2xl opacity-20"
                   animate={{ scale:[1,1.05,1] }} transition={{ duration:4, repeat:Infinity, ease:'easeInOut' }} />
                 <ImageWithFallback
                   src="https://images.unsplash.com/photo-1634840542403-1a9b1067aaa0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsaWZlJTIwY29hY2hpbmclMjBzZXNzaW9ufGVufDF8fHx8MTc3MjM1MzU4Nnww&ixlib=rb-4.1.0&q=80&w=1080"
@@ -172,7 +172,7 @@ export function BookingPage() {
                   { name:'James R.', role:'Retired Executive', text:'My coach really listened and understood my unique situation. The action plan was spot-on.', rating:5 },
                   { name:'Carol S.', role:'Author', text:'I was hesitant at first, but this session changed my perspective and gave me hope.', rating:5 },
                 ].map((t, index) => (
-                  <motion.div key={index} className="card-shine bg-gradient-to-br from-gray-50 to-purple-50/30 rounded-3xl p-8 border border-gray-100 shadow-lg hover:shadow-xl transition-all"
+                  <motion.div key={index} className="card-shine bg-linear-to-br from-gray-50 to-purple-50/30 rounded-3xl p-8 border border-gray-100 shadow-lg hover:shadow-xl transition-all"
                     whileHover={{ y:-6, scale:1.02 }}>
                     <div className="flex gap-1 mb-4">
                       {[...Array(t.rating)].map((_,i) => <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />)}
@@ -192,7 +192,7 @@ export function BookingPage() {
 
       {/* Scheduling Section */}
       {step === 'schedule' && (
-        <section className="py-24 bg-gradient-to-br from-gray-50 to-purple-50/20 relative overflow-hidden">
+        <section className="py-24 bg-linear-to-br from-gray-50 to-purple-50/20 relative overflow-hidden">
           <div className="absolute inset-0 bg-grid-pattern opacity-30" />
           <div className="max-w-4xl mx-auto px-6 relative z-10">
             <motion.div initial={{ opacity:0, x:-20 }} animate={{ opacity:1, x:0 }} transition={{ duration:0.4 }}>
@@ -209,7 +209,7 @@ export function BookingPage() {
                 Choose Your Date & Time
               </div>
               <h2 className="text-4xl font-bold text-gray-900 mb-10">
-                <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Select Your Slot</span>
+                <span className="bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Select Your Slot</span>
               </h2>
             </motion.div>
 
@@ -217,7 +217,7 @@ export function BookingPage() {
               {/* Date Selection */}
               <motion.div initial={{ opacity:0, x:-30 }} animate={{ opacity:1, x:0 }} transition={{ duration:0.6, delay:0.1 }}>
                 <h3 className="text-xl font-bold mb-5 flex items-center gap-3 text-gray-900">
-                  <div className="w-9 h-9 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+                  <div className="w-9 h-9 bg-linear-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
                     <Calendar className="w-5 h-5 text-white" />
                   </div>
                   Choose a Date
@@ -226,7 +226,7 @@ export function BookingPage() {
                   {availableDates.map((date, i) => (
                     <motion.button key={date} type="button" onClick={() => setSelectedDate(date)}
                       className={`w-full p-4 rounded-2xl border-2 transition-all text-left font-medium flex items-center gap-3 ${
-                        selectedDate === date ? 'border-purple-600 bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 shadow-lg' : 'border-gray-200 bg-white hover:border-purple-300 hover:shadow-md text-gray-700'
+                        selectedDate === date ? 'border-purple-600 bg-linear-to-r from-purple-50 to-pink-50 text-purple-700 shadow-lg' : 'border-gray-200 bg-white hover:border-purple-300 hover:shadow-md text-gray-700'
                       }`}
                       whileHover={{ x:4 }} whileTap={{ scale:0.98 }}
                       initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }} transition={{ delay:i*0.05 }}>
@@ -241,7 +241,7 @@ export function BookingPage() {
               {/* Time Selection */}
               <motion.div initial={{ opacity:0, x:30 }} animate={{ opacity:1, x:0 }} transition={{ duration:0.6, delay:0.2 }}>
                 <h3 className="text-xl font-bold mb-5 flex items-center gap-3 text-gray-900">
-                  <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+                  <div className="w-9 h-9 bg-linear-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
                     <Clock className="w-5 h-5 text-white" />
                   </div>
                   Choose a Time
@@ -250,7 +250,7 @@ export function BookingPage() {
                   {availableTimes.map((time, i) => (
                     <motion.button key={time} type="button" onClick={() => setSelectedTime(time)} disabled={!selectedDate}
                       className={`w-full p-4 rounded-2xl border-2 transition-all text-left font-medium flex items-center gap-3 ${
-                        selectedTime === time ? 'border-purple-600 bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 shadow-lg' : 'border-gray-200 bg-white hover:border-purple-300 hover:shadow-md text-gray-700'
+                        selectedTime === time ? 'border-purple-600 bg-linear-to-r from-purple-50 to-pink-50 text-purple-700 shadow-lg' : 'border-gray-200 bg-white hover:border-purple-300 hover:shadow-md text-gray-700'
                       } ${!selectedDate ? 'opacity-40 cursor-not-allowed' : ''}`}
                       whileHover={selectedDate ? { x:4 } : {}} whileTap={selectedDate ? { scale:0.98 } : {}}
                       initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }} transition={{ delay:i*0.05+0.1 }}>
@@ -265,11 +265,11 @@ export function BookingPage() {
 
             <AnimatePresence>
               {selectedDate && selectedTime && (
-                <motion.div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-8 border border-purple-100 mb-8 shadow-lg"
+                <motion.div className="bg-linear-to-br from-purple-50 to-pink-50 rounded-3xl p-8 border border-purple-100 mb-8 shadow-lg"
                   initial={{ opacity:0, scale:0.95, y:20 }} animate={{ opacity:1, scale:1, y:0 }} exit={{ opacity:0 }}
                   transition={{ duration:0.4, type:'spring' }}>
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                    <div className="w-10 h-10 bg-linear-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
                       <Check className="w-5 h-5 text-white" />
                     </div>
                     <h3 className="text-xl font-bold text-gray-900">Your Selected Session</h3>
@@ -285,7 +285,7 @@ export function BookingPage() {
             <motion.button type="button" onClick={() => setStep('payment')} disabled={!selectedDate || !selectedTime}
               className={`w-full py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all ${
                 selectedDate && selectedTime
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-xl hover:shadow-purple-500/40 cursor-pointer'
+                  ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-xl hover:shadow-purple-500/40 cursor-pointer'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
               }`}
               whileHover={selectedDate && selectedTime ? { scale:1.02 } : {}} whileTap={selectedDate && selectedTime ? { scale:0.98 } : {}}>
@@ -311,12 +311,12 @@ export function BookingPage() {
 
             <motion.div initial={{ opacity:0, y:30 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6 }}>
               <h2 className="text-4xl font-bold mb-2">
-                <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Complete Your Booking</span>
+                <span className="bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Complete Your Booking</span>
               </h2>
               <p className="text-gray-500 mb-8">Just a few details and you&apos;re all set!</p>
             </motion.div>
 
-            <motion.div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-8 mb-8 border border-purple-100 shadow-lg"
+            <motion.div className="bg-linear-to-br from-purple-50 to-pink-50 rounded-3xl p-8 mb-8 border border-purple-100 shadow-lg"
               initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6, delay:0.1 }}>
               <h3 className="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
                 <Video className="w-5 h-5 text-purple-600" />
@@ -335,7 +335,7 @@ export function BookingPage() {
                 ))}
                 <div className="flex justify-between items-center pt-3">
                   <span className="text-xl font-bold text-gray-900">Total</span>
-                  <span className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">$150</span>
+                  <span className="text-3xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">$150</span>
                 </div>
               </div>
             </motion.div>
@@ -399,14 +399,14 @@ export function BookingPage() {
                   className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 resize-none transition-all duration-300 focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)]" />
               </div>
               <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 flex items-start gap-3">
-                <Shield className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                <Shield className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
                 <p className="text-sm text-blue-700">
                   You&apos;ll be redirected to Stripe for secure payment. A confirmation email with your session details will follow.
                 </p>
               </div>
               {error && <p className="text-red-500 text-sm text-center">{error}</p>}
               <motion.button type="submit" disabled={loading}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-5 rounded-2xl font-bold text-lg shadow-xl flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-linear-to-r from-purple-600 to-pink-600 text-white py-5 rounded-2xl font-bold text-lg shadow-xl flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
                 whileHover={loading ? {} : { scale:1.02, boxShadow:'0 20px 60px rgba(124,58,237,0.4)' }} whileTap={loading ? {} : { scale:0.98 }}>
                 {loading ? 'Redirecting to payment…' : 'Complete Booking & Pay $150'}
                 {!loading && <ArrowRight className="w-5 h-5" />}
@@ -421,17 +421,17 @@ export function BookingPage() {
         <section className="py-24 bg-white relative overflow-hidden">
           <div className="max-w-3xl mx-auto px-6 text-center">
             <motion.div initial={{ scale:0 }} animate={{ scale:1 }} transition={{ type:'spring', stiffness:200, damping:15 }}>
-              <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl">
+              <div className="w-24 h-24 bg-linear-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl">
                 <CheckCircle className="w-12 h-12 text-white" />
               </div>
             </motion.div>
             <motion.h2 className="text-4xl md:text-5xl font-bold mb-4" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.2 }}>
-              <span className="bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent">Booking Confirmed!</span>
+              <span className="bg-linear-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent">Booking Confirmed!</span>
             </motion.h2>
             <motion.p className="text-xl text-gray-600 mb-6" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.3 }}>
               Your 1-on-1 coaching session is booked. Check your email for a confirmation with all the details.
             </motion.p>
-            <motion.div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-8 border border-purple-100 shadow-lg inline-block text-left mx-auto"
+            <motion.div className="bg-linear-to-br from-purple-50 to-pink-50 rounded-3xl p-8 border border-purple-100 shadow-lg inline-block text-left mx-auto"
               initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.4 }}>
               <h3 className="text-lg font-bold text-gray-900 mb-4">What&apos;s next?</h3>
               <ul className="space-y-3 text-gray-700">
@@ -445,7 +445,7 @@ export function BookingPage() {
       )}
 
       {/* FAQ */}
-      <section className="py-24 bg-gradient-to-br from-gray-50 to-purple-50/20 relative overflow-hidden">
+      <section className="py-24 bg-linear-to-br from-gray-50 to-purple-50/20 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-30" />
         <div className="max-w-3xl mx-auto px-6 relative z-10">
           <motion.div className="text-center mb-12" initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.6 }}>
@@ -463,7 +463,7 @@ export function BookingPage() {
                 initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.5, delay:index*0.08 }}
                 whileHover={{ x:4 }}>
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-8 h-8 bg-linear-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
                     <span className="text-white text-xs font-bold">Q</span>
                   </div>
                   <div>

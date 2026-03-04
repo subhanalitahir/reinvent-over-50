@@ -6,12 +6,15 @@ import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { EmailModal } from '../components/EmailModal';
 
 export function EventsPage() {
   const searchParams = useSearchParams();
   const [loadingEvent, setLoadingEvent] = useState<string | null>(null);
   const [eventError, setEventError] = useState('');
   const [eventSuccess, setEventSuccess] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [pendingEvent, setPendingEvent] = useState<{ title: string; date: string; price: string; location?: string } | null>(null);
 
   useEffect(() => {
     const successParam = searchParams.get('success');
@@ -34,29 +37,35 @@ export function EventsPage() {
     return match ? parseFloat(match[1]) : null;
   };
 
-  const handleEventRegister = async (event: { title: string; date: string; price: string; location?: string }) => {
+  const handleEventRegister = (event: { title: string; date: string; price: string; location?: string }) => {
     const amount = parsePriceAmount(event.price);
     if (amount === null) {
       // Free for members – redirect to membership page
       window.location.href = '/membership';
       return;
     }
-    const key = event.title;
-    setLoadingEvent(key);
+    setEventError('');
+    setPendingEvent(event);
+    setModalOpen(true);
+  };
+
+  const handleModalSubmit = async (email: string) => {
+    if (!pendingEvent) return;
+    const amount = parsePriceAmount(pendingEvent.price);
+    if (!amount) return;
+    setLoadingEvent(pendingEvent.title);
     setEventError('');
     try {
-      const email = prompt(`Enter your email to register for "${event.title}":`);
-      if (!email) { setLoadingEvent(null); return; }
       const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
       const res = await fetch(`${apiUrl}/api/checkout/event`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: event.title,
+          title: pendingEvent.title,
           amount,
           email,
-          date: event.date,
-          location: event.location ?? 'Online',
+          date: pendingEvent.date,
+          location: pendingEvent.location ?? 'Online',
         }),
       });
       const data = await res.json();
@@ -64,6 +73,7 @@ export function EventsPage() {
       if (data.url) window.location.href = data.url;
     } catch (err: unknown) {
       setEventError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      setModalOpen(false);
     } finally {
       setLoadingEvent(null);
     }
@@ -502,6 +512,16 @@ export function EventsPage() {
           </motion.p>
         </div>
       </section>
+
+      <EmailModal
+        isOpen={modalOpen}
+        onClose={() => { setModalOpen(false); setPendingEvent(null); }}
+        onSubmit={handleModalSubmit}
+        title="Register for event"
+        subtitle={pendingEvent ? `Enter your email to reserve your spot for "${pendingEvent.title}".` : 'Enter your email to register.'}
+        ctaLabel="Reserve My Spot →"
+        loading={loadingEvent !== null}
+      />
     </div>
   );
 }

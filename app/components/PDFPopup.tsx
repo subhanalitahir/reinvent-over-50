@@ -80,7 +80,7 @@ export function PDFPopup() {
 
             <div className="text-center mb-6">
               <motion.div
-                className="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4"
+                className="w-20 h-20 bg-linear-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4"
                 animate={{
                   scale: [1, 1.1, 1],
                 }}
@@ -92,7 +92,7 @@ export function PDFPopup() {
               >
                 <Download className="w-10 h-10 text-white" />
               </motion.div>
-              <h3 className="text-3xl mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent font-bold">
+              <h3 className="text-3xl mb-2 bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent font-bold">
                 Free Guide: Reinvent Your Life After 50
               </h3>
               <p className="text-gray-600">
@@ -125,7 +125,7 @@ export function PDFPopup() {
                 <motion.button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl hover:shadow-2xl transition-all font-medium text-lg disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full bg-linear-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl hover:shadow-2xl transition-all font-medium text-lg disabled:opacity-70 disabled:cursor-not-allowed"
                   whileHover={{ scale: loading ? 1 : 1.02 }}
                   whileTap={{ scale: loading ? 1 : 0.98 }}
                 >

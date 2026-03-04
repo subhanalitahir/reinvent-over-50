@@ -102,7 +102,7 @@ export function Footer() {
                   >
                     <stat.icon className="w-5 h-5 text-purple-300" />
                   </motion.div>
-                  <div className="text-2xl font-bold bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">{stat.value}</div>
+                  <div className="text-2xl font-bold bg-linear-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">{stat.value}</div>
                   <div className="text-xs text-gray-500 uppercase tracking-widest font-medium">{stat.label}</div>
                 </motion.div>
               ))}
@@ -131,7 +131,7 @@ export function Footer() {
                   </div>
                 </motion.div>
                 <div>
-                  <div className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  <div className="text-xl font-bold bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                     Reinvent You Over 50
                   </div>
                   <div className="text-xs text-gray-500 font-medium tracking-wide">Transform Your Life</div>
@@ -157,7 +157,7 @@ export function Footer() {
                     transition={{ delay: index * 0.08 }}
                   >
                     <motion.div
-                      className={`absolute inset-0 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                      className={`absolute inset-0 bg-linear-to-br ${color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
                     />
                     <Icon className="w-4 h-4 relative z-10 text-gray-400 group-hover:text-white transition-colors" />
                   </motion.a>
@@ -182,7 +182,7 @@ export function Footer() {
                   >
                     <Link href={link.to} className="text-gray-500 hover:text-white transition-colors text-sm flex items-center gap-2 group">
                       <motion.span
-                        className="w-1 h-1 rounded-full bg-purple-500 flex-shrink-0"
+                        className="w-1 h-1 rounded-full bg-purple-500 shrink-0"
                         initial={{ scale: 0, opacity: 0 }}
                         whileHover={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.15 }}
@@ -211,7 +211,7 @@ export function Footer() {
                   >
                     <Link href={link.to} className="text-gray-500 hover:text-white transition-colors text-sm flex items-center gap-2 group">
                       <motion.span
-                        className="w-1 h-1 rounded-full bg-pink-500 flex-shrink-0"
+                        className="w-1 h-1 rounded-full bg-pink-500 shrink-0"
                         initial={{ scale: 0, opacity: 0 }}
                         whileHover={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.15 }}
@@ -244,7 +244,7 @@ export function Footer() {
                     transition={{ duration: 0.2 }}
                   >
                     <motion.div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 transition-all"
+                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 transition-all"
                       style={{ background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.25)' }}
                       whileHover={{ scale: 1.1, background: 'rgba(124,58,237,0.3)' }}
                     >

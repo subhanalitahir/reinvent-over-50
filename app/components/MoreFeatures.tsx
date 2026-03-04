@@ -28,7 +28,7 @@ export function MoreFeatures() {
         {features.map((feature, index) => (
           <div 
             key={index}
-            className={`bg-gradient-to-br ${feature.color} text-white rounded-3xl p-8`}
+            className={`bg-linear-to-br ${feature.color} text-white rounded-3xl p-8`}
           >
             <feature.icon className="w-12 h-12 mb-4" />
             <h3 className="text-2xl mb-3">{feature.title}</h3>

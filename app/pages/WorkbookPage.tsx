@@ -6,12 +6,15 @@ import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { EmailModal } from '../components/EmailModal';
 
 export function WorkbookPage() {
   const searchParams = useSearchParams();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState('');
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [pendingPlan, setPendingPlan] = useState<'workbook' | 'bundle' | null>(null);
 
   useEffect(() => {
     const successParam = searchParams.get('success');
@@ -27,23 +30,29 @@ export function WorkbookPage() {
     if (searchParams.get('canceled') === 'true') setCheckoutError('Payment was cancelled. You can try again.');
   }, [searchParams]);
 
-  const handleWorkbookCheckout = async (plan: 'workbook' | 'bundle') => {
-    setLoadingPlan(plan);
+  const handleWorkbookCheckout = (plan: 'workbook' | 'bundle') => {
+    setCheckoutError('');
+    setPendingPlan(plan);
+    setModalOpen(true);
+  };
+
+  const handleModalSubmit = async (email: string) => {
+    if (!pendingPlan) return;
+    setLoadingPlan(pendingPlan);
     setCheckoutError('');
     try {
-      const email = prompt('Enter your email address to proceed to checkout:');
-      if (!email) { setLoadingPlan(null); return; }
       const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
       const res = await fetch(`${apiUrl}/api/checkout/workbook`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan, email }),
+        body: JSON.stringify({ plan: pendingPlan, email }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.message ?? 'Checkout failed');
       if (data.url) window.location.href = data.url;
     } catch (err: unknown) {
       setCheckoutError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      setModalOpen(false);
     } finally {
       setLoadingPlan(null);
     }
@@ -72,7 +81,7 @@ export function WorkbookPage() {
         </div>
       )}
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 overflow-hidden">
+      <section className="relative min-h-screen flex items-center bg-linear-to-br from-purple-50 via-pink-50 to-orange-50 overflow-hidden">
         <motion.div className="orb orb-purple w-96 h-96 top-[-100px] right-[-60px]" animate={{ scale:[1,1.3,1], x:[0,-50,0] }} transition={{ duration:14, repeat:Infinity, ease:'easeInOut' }} />
         <motion.div className="orb orb-pink w-80 h-80 bottom-[-80px] left-[-40px]" animate={{ scale:[1,1.2,1], y:[0,-40,0] }} transition={{ duration:10, repeat:Infinity, ease:'easeInOut', delay:2 }} />
         {[...Array(6)].map((_,i) => (
@@ -91,7 +100,7 @@ export function WorkbookPage() {
               </motion.div>
               <motion.h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.8, delay:0.3 }}>
                 <span className="block text-gray-900">The Reinvention</span>
-                <span className="block bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">Workbook</span>
+                <span className="block bg-linear-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">Workbook</span>
               </motion.h1>
               <motion.p className="text-xl text-gray-600 mb-10 leading-relaxed" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.8, delay:0.5 }}>
                 A comprehensive guide to discovering your purpose, setting meaningful goals, and creating an action plan for the life you've always dreamed of.
@@ -105,7 +114,7 @@ export function WorkbookPage() {
                 ))}
               </motion.div>
               <motion.div className="flex flex-col sm:flex-row gap-4" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.8, delay:0.7 }}>
-                <motion.a href="#pricing" className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-bold text-lg shadow-2xl" whileHover={{ scale:1.05, boxShadow:'0 20px 60px rgba(124,58,237,0.4)' }} whileTap={{ scale:0.95 }}>
+                <motion.a href="#pricing" className="group inline-flex items-center gap-2 px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-full font-bold text-lg shadow-2xl" whileHover={{ scale:1.05, boxShadow:'0 20px 60px rgba(124,58,237,0.4)' }} whileTap={{ scale:0.95 }}>
                   Get the Workbook
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </motion.a>
@@ -115,7 +124,7 @@ export function WorkbookPage() {
               </motion.div>
             </motion.div>
             <motion.div className="relative" initial={{ opacity:0, scale:0.8 }} animate={{ opacity:1, scale:1 }} transition={{ duration:0.8, delay:0.4 }}>
-              <motion.div className="absolute -inset-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl blur-2xl opacity-20" animate={{ scale:[1,1.05,1] }} transition={{ duration:5, repeat:Infinity }} />
+              <motion.div className="absolute -inset-4 bg-linear-to-r from-purple-600 to-pink-600 rounded-3xl blur-2xl opacity-20" animate={{ scale:[1,1.05,1] }} transition={{ duration:5, repeat:Infinity }} />
               <ImageWithFallback
                 src="https://images.unsplash.com/photo-1654542645844-590f5b8c146a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxqb3VybmFsJTIwbm90ZWJvb2slMjB3cml0aW5nfGVufDF8fHx8MTc3MjI4ODE1Nnww&ixlib=rb-4.1.0&q=80&w=1080"
                 alt="Reinvention workbook"
@@ -134,7 +143,7 @@ export function WorkbookPage() {
             <div className="inline-block px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6">12 Transformative Modules</div>
             <h2 className="text-5xl md:text-6xl font-bold mb-6">
               <span className="block text-gray-900">What's Inside</span>
-              <span className="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">the Workbook</span>
+              <span className="block bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">the Workbook</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">12 comprehensive modules designed to guide you through every step of your transformation</p>
           </motion.div>
@@ -154,10 +163,10 @@ export function WorkbookPage() {
               { num:'12', title:'Progress Tracking & Celebration' },
             ].map((module, index) => (
               <motion.div key={index}
-                className="card-shine group flex items-center gap-4 bg-gradient-to-br from-purple-50 to-pink-50/50 rounded-2xl p-5 border border-purple-100/50 shadow-sm hover:shadow-xl hover:border-purple-200 transition-all"
+                className="card-shine group flex items-center gap-4 bg-linear-to-br from-purple-50 to-pink-50/50 rounded-2xl p-5 border border-purple-100/50 shadow-sm hover:shadow-xl hover:border-purple-200 transition-all"
                 initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.4, delay:index*0.04 }}
                 whileHover={{ y:-4, scale:1.02 }}>
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0 text-white text-sm font-bold shadow-md group-hover:shadow-lg transition-shadow">
+                <div className="w-10 h-10 bg-linear-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shrink-0 text-white text-sm font-bold shadow-md group-hover:shadow-lg transition-shadow">
                   {module.num}
                 </div>
                 <span className="text-gray-800 font-medium group-hover:text-purple-700 transition-colors">{module.title}</span>
@@ -168,14 +177,14 @@ export function WorkbookPage() {
       </section>
 
       {/* Pricing Options */}
-      <section className="py-24 bg-gradient-to-br from-gray-50 to-purple-50/20 relative overflow-hidden" id="pricing">
+      <section className="py-24 bg-linear-to-br from-gray-50 to-purple-50/20 relative overflow-hidden" id="pricing">
         <div className="absolute inset-0 bg-grid-pattern opacity-30" />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <motion.div className="text-center mb-16" initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.6 }}>
             <div className="inline-block px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6">Simple Pricing</div>
             <h2 className="text-5xl md:text-6xl font-bold mb-6">
               <span className="text-gray-900">Choose Your </span>
-              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Option</span>
+              <span className="bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Option</span>
             </h2>
           </motion.div>
           <div className="grid md:grid-cols-2 gap-8">
@@ -183,19 +192,19 @@ export function WorkbookPage() {
             <motion.div className="card-shine bg-white rounded-3xl shadow-2xl p-10 border border-gray-100 hover:border-purple-200 hover:shadow-purple-100 transition-all"
               initial={{ opacity:0, x:-30 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }} transition={{ duration:0.6 }}
               whileHover={{ y:-8 }}>
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+              <div className="w-16 h-16 bg-linear-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                 <BookOpen className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-1">Workbook Only</h3>
               <p className="text-gray-500 mb-6">Perfect for self-guided transformation</p>
               <div className="flex items-baseline gap-2 mb-8">
-                <span className="text-6xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">$47</span>
+                <span className="text-6xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">$47</span>
                 <span className="text-gray-500">one-time</span>
               </div>
               <ul className="space-y-4 mb-10">
                 {['Digital PDF workbook (150+ pages)', 'Printable worksheets & templates', '12 comprehensive modules', 'Lifetime access & updates', 'Bonus: Goal-setting templates'].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <div className="w-5 h-5 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-5 h-5 bg-linear-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                       <Check className="w-3 h-3 text-white" />
                     </div>
                     <span className="text-gray-700">{item}</span>
@@ -213,7 +222,7 @@ export function WorkbookPage() {
             </motion.div>
 
             {/* Bundle */}
-            <motion.div className="relative card-shine bg-gradient-to-br from-purple-600 via-pink-600 to-purple-700 text-white rounded-3xl shadow-2xl p-10 overflow-hidden"
+            <motion.div className="relative card-shine bg-linear-to-br from-purple-600 via-pink-600 to-purple-700 text-white rounded-3xl shadow-2xl p-10 overflow-hidden"
               initial={{ opacity:0, x:30 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }} transition={{ duration:0.6, delay:0.1 }}
               whileHover={{ y:-8 }}>
               <motion.div className="absolute -top-20 -right-20 w-60 h-60 bg-white/10 rounded-full" animate={{ scale:[1,1.3,1] }} transition={{ duration:8, repeat:Infinity }} />
@@ -236,7 +245,7 @@ export function WorkbookPage() {
                 <ul className="space-y-4 mb-10">
                   {['Everything in Workbook Only', '60-minute personalized coaching session', 'Custom action plan creation', 'Follow-up email support (30 days)', 'Priority scheduling', 'Bonus: Accountability check-ins'].map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
-                      <div className="w-5 h-5 bg-white/30 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div className="w-5 h-5 bg-white/30 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="w-3 h-3 text-white" />
                       </div>
                       <span className="text-white">{item}</span>
@@ -265,7 +274,7 @@ export function WorkbookPage() {
             <div className="inline-block px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6">Sneak Peek</div>
             <h2 className="text-5xl font-bold mb-4">
               <span className="text-gray-900">Sample </span>
-              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Exercises</span>
+              <span className="bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Exercises</span>
             </h2>
             <p className="text-xl text-gray-600">Get a glimpse of what's inside</p>
           </motion.div>
@@ -275,10 +284,10 @@ export function WorkbookPage() {
               { num:'02', title:'Life Vision Board', desc:'Create a visual representation of your ideal future.', quote:'Seeing my goals visually made them feel so much more achievable!', gradient:'from-blue-500 to-cyan-500' },
               { num:'03', title:'90-Day Action Plan', desc:'Break down your goals into manageable steps with clear milestones.', quote:'The action plan made my transformation feel doable, not overwhelming.', gradient:'from-orange-500 to-red-500' },
             ].map((ex, index) => (
-              <motion.div key={index} className="card-shine group bg-gradient-to-br from-gray-50 to-purple-50/20 rounded-3xl p-8 border border-gray-100 shadow-lg hover:shadow-2xl transition-all"
+              <motion.div key={index} className="card-shine group bg-linear-to-br from-gray-50 to-purple-50/20 rounded-3xl p-8 border border-gray-100 shadow-lg hover:shadow-2xl transition-all"
                 initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.5, delay:index*0.1 }}
                 whileHover={{ y:-8, scale:1.02 }}>
-                <div className={`w-12 h-12 bg-gradient-to-br ${ex.gradient} rounded-2xl flex items-center justify-center text-white font-bold text-sm mb-5 shadow-lg group-hover:shadow-xl transition-shadow`}>
+                <div className={`w-12 h-12 bg-linear-to-br ${ex.gradient} rounded-2xl flex items-center justify-center text-white font-bold text-sm mb-5 shadow-lg group-hover:shadow-xl transition-shadow`}>
                   {ex.num}
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">{ex.title}</h3>
@@ -293,14 +302,14 @@ export function WorkbookPage() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-24 bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden">
+      <section className="py-24 bg-linear-to-br from-purple-50 to-pink-50 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-30" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div className="text-center mb-16" initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.6 }}>
             <div className="inline-block px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6">Real Results</div>
             <h2 className="text-5xl font-bold">
               <span className="text-gray-900">What Customers </span>
-              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Say</span>
+              <span className="bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Say</span>
             </h2>
           </motion.div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -317,7 +326,7 @@ export function WorkbookPage() {
                 </div>
                 <p className="text-gray-700 text-lg italic mb-6 leading-relaxed">&#34;{t.text}&#34;</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                  <div className="w-12 h-12 bg-linear-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
                     {t.name[0]}
                   </div>
                   <div>
@@ -335,13 +344,13 @@ export function WorkbookPage() {
       <section className="py-24 bg-white relative overflow-hidden">
         <div className="absolute inset-0 bg-dot-pattern opacity-30" />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
-          <motion.div className="relative bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-12 border border-green-100 shadow-2xl text-center overflow-hidden"
+          <motion.div className="relative bg-linear-to-br from-green-50 to-emerald-50 rounded-3xl p-12 border border-green-100 shadow-2xl text-center overflow-hidden"
             initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.6 }}
             whileHover={{ scale:1.01 }}>
             <motion.div className="absolute -top-20 -right-20 w-60 h-60 bg-green-100 rounded-full opacity-50" animate={{ scale:[1,1.2,1] }} transition={{ duration:6, repeat:Infinity }} />
             <motion.div className="absolute -bottom-10 -left-10 w-40 h-40 bg-emerald-100 rounded-full opacity-50" animate={{ scale:[1,1.15,1] }} transition={{ duration:5, repeat:Infinity, delay:1 }} />
             <div className="relative z-10">
-              <motion.div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl"
+              <motion.div className="w-20 h-20 bg-linear-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl"
                 animate={{ rotate:[0,10,-10,0] }} transition={{ duration:4, repeat:Infinity, ease:'easeInOut' }}>
                 <Shield className="w-10 h-10 text-white" />
               </motion.div>
@@ -361,6 +370,16 @@ export function WorkbookPage() {
           </motion.div>
         </div>
       </section>
+
+      <EmailModal
+        isOpen={modalOpen}
+        onClose={() => { setModalOpen(false); setPendingPlan(null); }}
+        onSubmit={handleModalSubmit}
+        title="One last step!"
+        subtitle="Enter your email to get your workbook. Your download link will be sent there instantly."
+        ctaLabel="Proceed to Checkout →"
+        loading={loadingPlan !== null}
+      />
     </div>
   );
 }
