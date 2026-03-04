@@ -190,8 +190,13 @@ export function MembershipPage() {
       </section>
 
       {/* Billing Toggle + Pricing */}
-      <section className="py-20 bg-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-dot-pattern opacity-20" />
+      <section className="py-24 relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #faf5ff 0%, #fdf2f8 40%, #fff7ed 80%, #ffffff 100%)' }}>
+        <div className="absolute inset-0 bg-dot-pattern opacity-25" />
+        {/* Decorative orbs */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full pointer-events-none opacity-20 blur-3xl"
+          style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.5), transparent 70%)' }} />
+        <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full pointer-events-none opacity-20 blur-3xl"
+          style={{ background: 'radial-gradient(circle, rgba(219,39,119,0.4), transparent 70%)' }} />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div className="flex justify-center items-center gap-4 mb-16"
             initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6 }}>
@@ -216,85 +221,203 @@ export function MembershipPage() {
           </motion.div>
 
           {/* Pricing Cards */}
-          <motion.div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+          <motion.div className="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto items-end"
             variants={containerVariants} initial="hidden" animate="visible">
             {plans.map((plan, index) => (
               <motion.div key={index} variants={itemVariants}
-                whileHover={{ y:-12, scale:1.02 }}
+                whileHover={{ y: plan.popular ? -8 : -14, scale: plan.popular ? 1.01 : 1.03 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                 className="relative"
                 style={{ zIndex: plan.popular ? 10 : 1 }}>
+
+                {/* Glow blob behind card */}
+                <div className="absolute -inset-1 rounded-[28px] blur-2xl opacity-30 pointer-events-none"
+                  style={{ background: `radial-gradient(ellipse, ${plan.glow}, transparent 70%)`, transform: 'translateY(12px) scale(0.92)' }} />
+
+                {/* Popular badge */}
                 {plan.popular && (
-                  <motion.div className="absolute -top-5 left-1/2 -translate-x-1/2 z-20"
-                    initial={{ scale:0, y:10 }} animate={{ scale:1, y:0 }}
-                    transition={{ delay:0.5, type:'spring' }}>
+                  <motion.div className="absolute -top-5 left-1/2 -translate-x-1/2 z-30"
+                    initial={{ scale: 0, y: 10 }} animate={{ scale: 1, y: 0 }}
+                    transition={{ delay: 0.6, type: 'spring', stiffness: 400 }}>
                     <div className="relative">
-                      <div className="absolute inset-0 bg-linear-to-r from-purple-600 to-pink-600 rounded-full blur-md opacity-60" />
-                      <div className="relative bg-linear-to-r from-purple-600 to-pink-600 text-white px-5 py-1.5 rounded-full text-sm font-bold flex items-center gap-1.5 shadow-xl">
+                      <div className="absolute inset-0 rounded-full blur-lg opacity-80"
+                        style={{ background: 'linear-gradient(135deg,#7c3aed,#db2777)' }} />
+                      <div className="relative text-white px-6 py-2 rounded-full text-sm font-black flex items-center gap-1.5 shadow-2xl tracking-wide"
+                        style={{ background: 'linear-gradient(135deg,#7c3aed,#db2777)' }}>
                         <Star className="w-3.5 h-3.5 fill-current" />
                         Most Popular
                       </div>
                     </div>
                   </motion.div>
                 )}
-                <div className={`relative h-full rounded-3xl overflow-hidden shadow-2xl ${plan.popular ? 'border-2 border-purple-600 ring-4 ring-purple-100' : 'border-2 border-gray-100'}`}>
-                  <div className={`h-1.5 bg-linear-to-r ${plan.gradient}`} />
-                  <div className={`p-8 h-full ${plan.popular ? 'bg-linear-to-b from-purple-50/50 to-white' : 'bg-white'}`}>
-                    <div className="flex items-start gap-4 mb-6">
-                      <motion.div className={`w-14 h-14 bg-linear-to-br ${plan.gradient} rounded-2xl flex items-center justify-center shadow-xl shrink-0`}
-                        whileHover={{ rotate:15, scale:1.1 }}>
-                        <plan.icon className="w-7 h-7 text-white" />
-                      </motion.div>
-                      <div>
-                        <h3 className="font-display text-2xl font-bold text-gray-900">{plan.name}</h3>
-                        <p className="text-gray-500 text-sm">{plan.description}</p>
+
+                {/* Card */}
+                <div className={`relative h-full rounded-3xl overflow-hidden ${
+                  plan.popular
+                    ? 'shadow-[0_32px_80px_rgba(124,58,237,0.40)]'
+                    : 'shadow-[0_8px_40px_rgba(0,0,0,0.10)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.16)]'
+                } transition-shadow duration-300`}>
+
+                  {/* Popular = dark gradient card; others = white card with coloured top bar */}
+                  {plan.popular ? (
+                    <div className="relative h-full" style={{ background: 'linear-gradient(160deg,#1e0a3c 0%,#3b0764 45%,#6d1d5a 100%)' }}>
+                      {/* Mesh noise overlay */}
+                      <div className="absolute inset-0 opacity-10"
+                        style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(219,39,119,0.2) 0%, transparent 50%)' }} />
+                      {/* Top accent line */}
+                      <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg,#7c3aed,#db2777,#f59e0b)' }} />
+
+                      <div className="p-8 relative z-10">
+                        {/* Icon + name */}
+                        <div className="flex items-center gap-4 mb-6">
+                          <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-2xl"
+                            style={{ background: 'linear-gradient(135deg,#7c3aed,#db2777)' }}>
+                            <plan.icon className="w-7 h-7 text-white" />
+                          </div>
+                          <div>
+                            <h3 className="font-display text-2xl font-bold text-white">{plan.name}</h3>
+                            <p className="text-purple-300 text-sm">{plan.description}</p>
+                          </div>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="h-px mb-6" style={{ background: 'linear-gradient(90deg,rgba(255,255,255,0.15),transparent)' }} />
+
+                        {/* Price */}
+                        <div className="mb-7">
+                          <AnimatePresence mode="wait">
+                            <motion.div key={billingCycle}
+                              initial={{ opacity: 0, y: 10, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10 }}
+                              transition={{ duration: 0.3 }}>
+                              <div className="flex items-baseline gap-1.5">
+                                <span className="text-7xl font-black font-display text-white tracking-tight">
+                                  ${billingCycle === 'monthly' ? plan.monthlyPrice : plan.annualPrice}
+                                </span>
+                                <span className="text-purple-300 text-xl font-semibold">/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
+                              </div>
+                              {billingCycle === 'annual' && (
+                                <p className="text-purple-300 text-sm mt-1">${(plan.annualPrice / 12).toFixed(0)}/mo billed annually</p>
+                              )}
+                            </motion.div>
+                          </AnimatePresence>
+                          <div className="mt-3 inline-flex items-center gap-1.5 bg-white/10 border border-white/20 px-3 py-1 rounded-full">
+                            <Zap className="w-3 h-3 text-yellow-400" />
+                            <span className="text-xs text-white/80 font-semibold">14-day free trial</span>
+                          </div>
+                        </div>
+
+                        {/* Features */}
+                        <ul className="space-y-3.5 mb-8">
+                          {plan.features.map((feature, idx) => (
+                            <motion.li key={idx} className="flex items-start gap-3"
+                              initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }}
+                              transition={{ duration: 0.4, delay: idx * 0.06 + 0.2 }}>
+                              <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                                style={{ background: 'linear-gradient(135deg,#7c3aed,#db2777)' }}>
+                                <Check className="w-3 h-3 text-white" />
+                              </div>
+                              <span className="text-purple-100 text-sm leading-relaxed">{feature}</span>
+                            </motion.li>
+                          ))}
+                        </ul>
+
+                        {/* CTA */}
+                        <motion.button
+                          onClick={() => handleCheckout(plan.name.toLowerCase())}
+                          disabled={loadingPlan === plan.name.toLowerCase()}
+                          whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                          className="relative w-full py-4 rounded-2xl font-black text-base flex items-center justify-center gap-2 overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed text-white shadow-2xl"
+                          style={{ background: 'linear-gradient(135deg,#7c3aed,#db2777,#f59e0b)' }}>
+                          <span className="relative z-10">{loadingPlan === plan.name.toLowerCase() ? 'Redirecting…' : (plan.cta ?? 'Get Started')}</span>
+                          {loadingPlan !== plan.name.toLowerCase() && <ArrowRight className="w-4 h-4 relative z-10" />}
+                          <div className="btn-shimmer" />
+                        </motion.button>
+
+                        <p className="text-center text-purple-400 text-xs mt-3 font-medium">Cancel anytime · No lock-in</p>
                       </div>
                     </div>
-                    <div className="mb-7">
-                      <AnimatePresence mode="wait">
-                        <motion.div key={billingCycle}
-                          initial={{ opacity:0, y:10, scale:0.9 }} animate={{ opacity:1, y:0, scale:1 }} exit={{ opacity:0, y:-10 }}
-                          transition={{ duration:0.3 }}>
-                          <div className="flex items-baseline gap-1">
-                            <span className={`text-6xl font-bold font-display bg-linear-to-r ${plan.gradient} bg-clip-text text-transparent`}>
-                              ${billingCycle === 'monthly' ? plan.monthlyPrice : plan.annualPrice}
-                            </span>
-                            <span className="text-gray-400 text-lg">/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
+
+                  ) : (
+                    /* Light card for Community & VIP */
+                    <div className="relative h-full bg-white">
+                      {/* Coloured top bar */}
+                      <div className={`h-1.5 bg-linear-to-r ${plan.gradient}`} />
+
+                      {/* Subtle coloured wash in top area */}
+                      <div className="absolute top-1.5 left-0 right-0 h-32 opacity-5"
+                        style={{ background: `linear-gradient(180deg, ${plan.glow}, transparent)` }} />
+
+                      <div className="p-8 relative z-10 h-full flex flex-col">
+                        {/* Icon + name */}
+                        <div className="flex items-center gap-4 mb-6">
+                          <motion.div className={`w-14 h-14 bg-linear-to-br ${plan.gradient} rounded-2xl flex items-center justify-center shadow-lg shrink-0`}
+                            whileHover={{ rotate: 10, scale: 1.1 }}>
+                            <plan.icon className="w-7 h-7 text-white" />
+                          </motion.div>
+                          <div>
+                            <h3 className="font-display text-2xl font-bold text-gray-900">{plan.name}</h3>
+                            <p className="text-gray-400 text-sm">{plan.description}</p>
                           </div>
-                          {billingCycle === 'annual' && (
-                            <p className="text-sm text-gray-400 mt-1">${(plan.annualPrice/12).toFixed(0)}/month billed annually</p>
+                        </div>
+
+                        {/* Price */}
+                        <div className="mb-7">
+                          <AnimatePresence mode="wait">
+                            <motion.div key={billingCycle}
+                              initial={{ opacity: 0, y: 10, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10 }}
+                              transition={{ duration: 0.3 }}>
+                              <div className="flex items-baseline gap-1">
+                                <span className={`text-6xl font-black font-display bg-linear-to-r ${plan.gradient} bg-clip-text text-transparent tracking-tight`}>
+                                  ${billingCycle === 'monthly' ? plan.monthlyPrice : plan.annualPrice}
+                                </span>
+                                <span className="text-gray-400 text-lg font-semibold">/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
+                              </div>
+                              {billingCycle === 'annual' && (
+                                <p className="text-sm text-gray-400 mt-1">${(plan.annualPrice / 12).toFixed(0)}/mo billed annually</p>
+                              )}
+                            </motion.div>
+                          </AnimatePresence>
+                          <div className="mt-3 inline-flex items-center gap-1.5 bg-gray-50 border border-gray-100 px-3 py-1 rounded-full">
+                            <Zap className="w-3 h-3 text-gray-400" />
+                            <span className="text-xs text-gray-500 font-semibold">14-day free trial</span>
+                          </div>
+                        </div>
+
+                        {/* Separator */}
+                        <div className="h-px bg-gray-100 mb-6" />
+
+                        {/* Features */}
+                        <ul className="space-y-3.5 mb-8 flex-1">
+                          {plan.features.map((feature, idx) => (
+                            <motion.li key={idx} className="flex items-start gap-3"
+                              initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }}
+                              transition={{ duration: 0.4, delay: idx * 0.06 + index * 0.1 }}>
+                              <div className={`w-5 h-5 bg-linear-to-br ${plan.gradient} rounded-full flex items-center justify-center shrink-0 mt-0.5 shadow-sm`}>
+                                <Check className="w-3 h-3 text-white" />
+                              </div>
+                              <span className="text-gray-600 text-sm leading-relaxed">{feature}</span>
+                            </motion.li>
+                          ))}
+                        </ul>
+
+                        {/* CTA */}
+                        <motion.button
+                          onClick={() => handleCheckout(plan.name.toLowerCase())}
+                          disabled={loadingPlan === plan.name.toLowerCase()}
+                          whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                          className={`relative w-full py-4 rounded-2xl font-black text-base flex items-center justify-center gap-2 overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed transition-all group`}
+                          style={{ background: `linear-gradient(135deg, ${plan.glow.replace('0.25','0.08').replace('0.35','0.08')}, transparent)`, border: `2px solid ${plan.glow.replace('0.25','0.4').replace('0.35','0.6')}` }}>
+                          <span className={`bg-linear-to-r ${plan.gradient} bg-clip-text text-transparent font-black text-base`}>
+                            {loadingPlan === plan.name.toLowerCase() ? 'Redirecting…' : (plan.cta ?? 'Get Started')}
+                          </span>
+                          {loadingPlan !== plan.name.toLowerCase() && (
+                            <ArrowRight className={`w-4 h-4 bg-linear-to-r ${plan.gradient} bg-clip-text text-transparent`} style={{ color: index === 0 ? '#3b82f6' : '#f59e0b' }} />
                           )}
-                        </motion.div>
-                      </AnimatePresence>
+                        </motion.button>
+                        <p className="text-center text-gray-400 text-xs mt-3 font-medium">Cancel anytime · No lock-in</p>
+                      </div>
                     </div>
-                    <ul className="space-y-3.5 mb-8">
-                      {plan.features.map((feature, idx) => (
-                        <motion.li key={idx} className="flex items-start gap-3"
-                          initial={{ opacity:0, x:-15 }} animate={{ opacity:1, x:0 }}
-                          transition={{ duration:0.4, delay:idx*0.06+index*0.1 }}>
-                          <div className={`w-5 h-5 bg-linear-to-br ${plan.gradient} rounded-full flex items-center justify-center shrink-0 mt-0.5 shadow-sm`}>
-                            <Check className="w-3 h-3 text-white" />
-                          </div>
-                          <span className="text-gray-700 text-sm leading-relaxed">{feature}</span>
-                        </motion.li>
-                      ))}
-                    </ul>
-                    <motion.div whileHover={{ scale:1.03 }} whileTap={{ scale:0.97 }}>
-                      <button
-                        onClick={() => handleCheckout(plan.name.toLowerCase())}
-                        disabled={loadingPlan === plan.name.toLowerCase()}
-                        className={`relative w-full py-4 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2 overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed ${
-                        plan.popular ? 'text-white shadow-xl' : 'border-2 border-gray-200 text-gray-800 hover:border-purple-400 hover:text-purple-600'
-                      }`}
-                        style={plan.popular ? { background:'linear-gradient(135deg,#7c3aed,#db2777)' } : {}}>
-                        {loadingPlan === plan.name.toLowerCase() ? 'Redirecting…' : (plan.cta ?? 'Get Started')}
-                        {loadingPlan !== plan.name.toLowerCase() && <ArrowRight className="w-4 h-4" />}
-                        {plan.popular && <div className="btn-shimmer" />}
-                      </button>
-                    </motion.div>
-                    {error && loadingPlan === null && (
-                      <p className="text-red-500 text-xs text-center mt-2">{error}</p>
-                    )}
-                  </div>
+                  )}
                 </div>
               </motion.div>
             ))}
