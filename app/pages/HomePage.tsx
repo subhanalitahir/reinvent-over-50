@@ -3,14 +3,9 @@
 import Link from 'next/link';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { Users, Calendar, BookOpen, Video, Award, Heart, ArrowRight, Star, CheckCircle, TrendingUp, Shield, Zap, Quote, Sparkles, Play } from 'lucide-react';
-import { motion, useScroll, useTransform } from 'motion/react';
-import { useRef } from 'react';
+import { motion } from 'motion/react';
 
 export function HomePage() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
-  const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
-
   const features = [
     {
       icon: Users,
@@ -101,7 +96,6 @@ export function HomePage() {
 
       {/* ===== HERO ===== */}
       <section
-        ref={heroRef}
         className="relative min-h-screen flex items-center overflow-hidden"
         style={{ background: 'linear-gradient(145deg, #faf5ff 0%, #fdf2f8 40%, #fff7ed 70%, #f0fdf4 100%)' }}
       >
@@ -125,7 +119,7 @@ export function HomePage() {
           />
         ))}
 
-        <motion.div className="max-w-7xl mx-auto px-6 py-20 relative z-10 w-full" style={{ y: heroY }}>
+        <div className="max-w-7xl mx-auto px-6 py-20 relative z-10 w-full">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
 
             {/* Left */}
@@ -236,7 +230,7 @@ export function HomePage() {
               </div>
             </motion.div>
           </div>
-        </motion.div>
+        </div>
 
         <motion.div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}
