@@ -329,7 +329,7 @@ export const sendEmail = async (options: EmailOptions): Promise<void> => {
       headers: {
         "List-Unsubscribe": `<mailto:${unsubscribeEmail}?subject=unsubscribe>`,
         "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-        "Precedence": "bulk",
+        Precedence: "bulk",
         "X-Mailer": "Reinvent-You-50-Mailer",
       },
     });
