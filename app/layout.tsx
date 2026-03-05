@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { PDFPopup } from "./components/PDFPopup";
+import { AuthProvider } from "./context/AuthContext";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -39,12 +40,14 @@ export default function RootLayout({
         className={`${playfair.variable} ${jakarta.variable} ${geistMono.variable} antialiased`}
       >
         <div className="min-h-screen bg-white">
-          <Header />
-          <main>
-            {children}
-          </main>
-          <Footer />
-          <PDFPopup />
+          <AuthProvider>
+            <Header />
+            <main>
+              {children}
+            </main>
+            <Footer />
+            <PDFPopup />
+          </AuthProvider>
         </div>
       </body>
     </html>

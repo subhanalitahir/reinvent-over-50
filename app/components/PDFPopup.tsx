@@ -28,8 +28,7 @@ export function PDFPopup() {
     setLoading(true);
     setError('');
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
-      const res = await fetch(`${apiUrl}/api/subscribers`, {
+      const res = await fetch(`/api/subscribers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, source: 'pdf-popup' }),

@@ -1,4 +1,4 @@
-ï»¿'use client';
+'use client';
 
 import { Mail, Phone, MapPin, Send, Clock, MessageCircle, CheckCircle, Sparkles, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
@@ -22,8 +22,7 @@ export function ContactPage() {
     setLoading(true);
     setSubmitError('');
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
-      const res = await fetch(`${apiUrl}/api/contacts`, {
+      const res = await fetch(`/api/contacts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -48,9 +47,9 @@ export function ContactPage() {
 
   const contactCards = [
     { icon: Mail, title: 'Email Us', detail: 'info@reinventyou.com', sub: 'Response within 24 hours', gradient: 'from-purple-500 to-pink-500', bg: 'from-purple-50 to-pink-50' },
-    { icon: Phone, title: 'Call Us', detail: '(555) 123-4567', sub: 'Mon-Fri, 9 AM â€“ 5 PM ET', gradient: 'from-blue-500 to-cyan-500', bg: 'from-blue-50 to-cyan-50' },
+    { icon: Phone, title: 'Call Us', detail: '(555) 123-4567', sub: 'Mon-Fri, 9 AM – 5 PM ET', gradient: 'from-blue-500 to-cyan-500', bg: 'from-blue-50 to-cyan-50' },
     { icon: MapPin, title: 'Visit Us', detail: '123 Transformation St', sub: 'Suite 500, City, State 12345', gradient: 'from-orange-500 to-red-500', bg: 'from-orange-50 to-red-50' },
-    { icon: Clock, title: 'Office Hours', detail: 'Monâ€“Fri: 9 AM â€“ 5 PM', sub: 'Sat: 10 AM â€“ 2 PM Â· Sun: Closed', gradient: 'from-green-500 to-emerald-500', bg: 'from-green-50 to-emerald-50' },
+    { icon: Clock, title: 'Office Hours', detail: 'Mon–Fri: 9 AM – 5 PM', sub: 'Sat: 10 AM – 2 PM · Sun: Closed', gradient: 'from-green-500 to-emerald-500', bg: 'from-green-50 to-emerald-50' },
   ];
 
   const faqs = [
@@ -84,7 +83,7 @@ export function ContactPage() {
             <span className="block bg-linear-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">Touch</span>
           </motion.h1>
           <motion.p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.7, delay:0.3 }}>
-            Have a question? We're friendly, real humans â€” and we reply fast.
+            Have a question? We're friendly, real humans — and we reply fast.
           </motion.p>
         </div>
       </section>
@@ -154,7 +153,7 @@ export function ContactPage() {
                         <select id="subject" name="subject" value={formData.subject} onChange={handleChange}
                           onFocus={() => setFocusedField('subject')} onBlur={() => setFocusedField(null)} required
                           className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl text-gray-900 transition-all duration-300 focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)]">
-                          <option value="">Select a topicâ€¦</option>
+                          <option value="">Select a topic…</option>
                           <option value="membership">Membership Question</option>
                           <option value="workbook">Workbook Question</option>
                           <option value="events">Events Question</option>
@@ -168,7 +167,7 @@ export function ContactPage() {
                         <textarea id="message" name="message" value={formData.message} onChange={handleChange}
                           onFocus={() => setFocusedField('message')} onBlur={() => setFocusedField(null)} required rows={5}
                           className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 resize-none transition-all duration-300 focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)]"
-                          placeholder="Tell us how we can help youâ€¦" />
+                          placeholder="Tell us how we can help you…" />
                       </motion.div>
                       {submitError && (
                         <p className="text-red-500 text-sm text-center font-medium">{submitError}</p>
@@ -176,7 +175,7 @@ export function ContactPage() {
                       <motion.button type="submit" disabled={loading} className="w-full relative overflow-hidden bg-linear-to-r from-purple-600 to-pink-600 text-white py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
                         whileHover={loading ? {} : { scale:1.02, boxShadow:'0 20px 60px rgba(124,58,237,0.4)' }} whileTap={loading ? {} : { scale:0.98 }}>
                         <Send className="w-5 h-5" />
-                        {loading ? 'Sendingâ€¦' : 'Send Message'}
+                        {loading ? 'Sending…' : 'Send Message'}
                         {!loading && <motion.div className="absolute inset-0 bg-white/20" initial={{ x:'-100%', skewX:-20 }} whileHover={{ x:'200%' }} transition={{ duration:0.5 }} />}
                       </motion.button>
                     </motion.form>
@@ -211,7 +210,7 @@ export function ContactPage() {
                 <motion.div className="absolute -bottom-6 -left-6 w-28 h-28 bg-white/10 rounded-full" animate={{ scale:[1,1.2,1] }} transition={{ duration:5, repeat:Infinity, delay:1 }} />
                 <Sparkles className="w-8 h-8 mb-4 text-yellow-300" />
                 <h3 className="text-2xl font-bold mb-3">Ready to Transform?</h3>
-                <p className="text-purple-100 mb-6 text-sm leading-relaxed">Skip the wait â€” dive straight into our community and start your reinvention today.</p>
+                <p className="text-purple-100 mb-6 text-sm leading-relaxed">Skip the wait — dive straight into our community and start your reinvention today.</p>
                 <Link href="/membership">
                   <motion.div className="inline-flex items-center gap-2 bg-white text-purple-600 px-6 py-3 rounded-xl font-bold hover:bg-purple-50 transition-colors" whileHover={{ x:4 }}>
                     Join Now <ArrowRight className="w-4 h-4" />

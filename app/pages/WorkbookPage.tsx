@@ -7,9 +7,11 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EmailModal } from '../components/EmailModal';
+import { useAuth } from '../context/AuthContext';
 
 export function WorkbookPage() {
   const searchParams = useSearchParams();
+  const { user, token } = useAuth();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState('');
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
@@ -23,39 +25,53 @@ export function WorkbookPage() {
       setPurchaseSuccess(true);
       // Verify with backend so the download email is sent
       if (sessionId) {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
-        fetch(`${apiUrl}/api/checkout/verify?session_id=${sessionId}`).catch(() => {});
+        fetch(`/api/checkout/verify?session_id=${sessionId}`).catch(() => {});
       }
     }
     if (searchParams.get('canceled') === 'true') setCheckoutError('Payment was cancelled. You can try again.');
   }, [searchParams]);
 
-  const handleWorkbookCheckout = (plan: 'workbook' | 'bundle') => {
-    setCheckoutError('');
-    setPendingPlan(plan);
-    setModalOpen(true);
-  };
-
-  const handleModalSubmit = async (email: string) => {
-    if (!pendingPlan) return;
-    setLoadingPlan(pendingPlan);
+  const doCheckout = async (plan: 'workbook' | 'bundle', email?: string) => {
+    setLoadingPlan(plan);
     setCheckoutError('');
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
-      const res = await fetch(`${apiUrl}/api/checkout/workbook`, {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const body: Record<string, string> = { plan };
+      if (email) body.email = email;
+      const res = await fetch('/api/checkout/workbook', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: pendingPlan, email }),
+        headers,
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.message ?? 'Checkout failed');
-      if (data.url) window.location.href = data.url;
+      if (data.data?.url) window.location.href = data.data.url;
+      else if (data.url) window.location.href = data.url;
     } catch (err: unknown) {
       setCheckoutError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
       setModalOpen(false);
     } finally {
       setLoadingPlan(null);
     }
+  };
+
+  const handleWorkbookCheckout = (plan: 'workbook' | 'bundle') => {
+    setCheckoutError('');
+    if (user && token) {
+      // Authenticated: call API directly with the Bearer token
+      doCheckout(plan);
+    } else {
+      // Guest: collect email via modal
+      setPendingPlan(plan);
+      setModalOpen(true);
+    }
+  };
+
+  const handleModalSubmit = async (email: string) => {
+    if (!pendingPlan) return;
+    setModalOpen(false);
+    await doCheckout(pendingPlan, email);
   };
 
   return (
@@ -82,8 +98,8 @@ export function WorkbookPage() {
       )}
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center bg-linear-to-br from-purple-50 via-pink-50 to-orange-50 overflow-hidden">
-        <motion.div className="orb orb-purple w-96 h-96 top-[-100px] right-[-60px]" animate={{ scale:[1,1.3,1], x:[0,-50,0] }} transition={{ duration:14, repeat:Infinity, ease:'easeInOut' }} />
-        <motion.div className="orb orb-pink w-80 h-80 bottom-[-80px] left-[-40px]" animate={{ scale:[1,1.2,1], y:[0,-40,0] }} transition={{ duration:10, repeat:Infinity, ease:'easeInOut', delay:2 }} />
+        <motion.div className="orb orb-purple w-96 h-96 -top-25 -right-15" animate={{ scale:[1,1.3,1], x:[0,-50,0] }} transition={{ duration:14, repeat:Infinity, ease:'easeInOut' }} />
+        <motion.div className="orb orb-pink w-80 h-80 -bottom-20 -left-10" animate={{ scale:[1,1.2,1], y:[0,-40,0] }} transition={{ duration:10, repeat:Infinity, ease:'easeInOut', delay:2 }} />
         {[...Array(6)].map((_,i) => (
           <motion.div key={i} className="absolute w-3 h-3 rounded-full"
             style={{ background:`hsl(${260+i*18},70%,65%)`, left:`${5+i*17}%`, top:`${15+(i%3)*30}%`, opacity:0.4 }}

@@ -5,9 +5,11 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { Calendar, Clock, Video, Check, Star, ArrowRight, Sparkles, Shield, Award, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useSearchParams } from 'next/navigation';
+import { useAuth } from '../context/AuthContext';
 
 export function BookingPage() {
   const searchParams = useSearchParams();
+  const { user, token } = useAuth();
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [step, setStep] = useState<'info' | 'schedule' | 'payment' | 'success'>('info');
@@ -22,14 +24,24 @@ export function BookingPage() {
     if (success === 'true' && sessionId) {
       setStep('success');
       // Verify with backend (fires email)
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
-      fetch(`${apiUrl}/api/checkout/verify?session_id=${sessionId}`).catch(() => {});
+      fetch(`/api/checkout/verify?session_id=${sessionId}`).catch(() => {});
     }
     if (searchParams.get('canceled') === 'true') {
       setStep('payment');
       setError('Payment was cancelled. You can try again.');
     }
   }, [searchParams]);
+
+  // Pre-fill form for authenticated users
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: prev.name || user.name,
+        email: prev.email || user.email,
+      }));
+    }
+  }, [user]);
 
   const availableDates = [
     'March 5, 2026',
@@ -53,8 +65,8 @@ export function BookingPage() {
     <div className="pt-20">
       {/* Hero Section */}
       <section className="relative min-h-[45vh] flex items-center bg-linear-to-br from-purple-50 via-pink-50 to-orange-50 overflow-hidden">
-        <motion.div className="orb orb-purple w-80 h-80 top-[-60px] right-[-40px]" animate={{ scale:[1,1.3,1], x:[0,-40,0] }} transition={{ duration:10, repeat:Infinity, ease:'easeInOut' }} />
-        <motion.div className="orb orb-pink w-72 h-72 bottom-[-40px] left-[-40px]" animate={{ scale:[1,1.2,1], y:[0,-30,0] }} transition={{ duration:12, repeat:Infinity, ease:'easeInOut', delay:1 }} />
+        <motion.div className="orb orb-purple w-80 h-80 -top-15 -right-10" animate={{ scale:[1,1.3,1], x:[0,-40,0] }} transition={{ duration:10, repeat:Infinity, ease:'easeInOut' }} />
+        <motion.div className="orb orb-pink w-72 h-72 -bottom-10 -left-10" animate={{ scale:[1,1.2,1], y:[0,-30,0] }} transition={{ duration:12, repeat:Infinity, ease:'easeInOut', delay:1 }} />
         {[...Array(6)].map((_,i) => (
           <motion.div key={i} className="absolute w-2.5 h-2.5 rounded-full"
             style={{ background:`hsl(${280+i*15},70%,60%)`, left:`${8+i*16}%`, top:`${15+(i%2)*50}%`, opacity:0.35 }}
@@ -350,11 +362,12 @@ export function BookingPage() {
                   const dateStr = selectedDate; // e.g. "March 5, 2026"
                   const timeStr = selectedTime.replace(' ET', ''); // e.g. "9:00 AM"
                   const scheduledAt = new Date(`${dateStr} ${timeStr}`).toISOString();
-
-                  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
-                  const res = await fetch(`${apiUrl}/api/checkout/booking`, {
+                  const res = await fetch(`/api/checkout/booking`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                      'Content-Type': 'application/json',
+                      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+                    },
                     body: JSON.stringify({
                       guestName: formData.name,
                       guestEmail: formData.email,

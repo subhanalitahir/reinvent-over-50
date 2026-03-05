@@ -7,9 +7,11 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EmailModal } from '../components/EmailModal';
+import { useAuth } from '../context/AuthContext';
 
 export function EventsPage() {
   const searchParams = useSearchParams();
+  const { user, token } = useAuth();
   const [loadingEvent, setLoadingEvent] = useState<string | null>(null);
   const [eventError, setEventError] = useState('');
   const [eventSuccess, setEventSuccess] = useState(false);
@@ -23,8 +25,7 @@ export function EventsPage() {
       setEventSuccess(true);
       // Verify with backend so the registration confirmation email is sent
       if (sessionId) {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
-        fetch(`${apiUrl}/api/checkout/verify?session_id=${sessionId}`).catch(() => {});
+        fetch(`/api/checkout/verify?session_id=${sessionId}`).catch(() => {});
       }
     }
     if (searchParams.get('canceled') === 'true') setEventError('Payment was cancelled. Please try again.');
@@ -37,6 +38,38 @@ export function EventsPage() {
     return match ? parseFloat(match[1]) : null;
   };
 
+  const doEventCheckout = async (event: { title: string; date: string; price: string; location?: string }, email?: string) => {
+    const amount = parsePriceAmount(event.price);
+    if (!amount) return;
+    setLoadingEvent(event.title);
+    setEventError('');
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const body: Record<string, unknown> = {
+        title: event.title,
+        amount,
+        date: event.date,
+        location: event.location ?? 'Online',
+      };
+      if (email) body.email = email;
+      const res = await fetch('/api/checkout/event', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message ?? 'Registration failed');
+      if (data.data?.url) window.location.href = data.data.url;
+      else if (data.url) window.location.href = data.url;
+    } catch (err: unknown) {
+      setEventError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      setModalOpen(false);
+    } finally {
+      setLoadingEvent(null);
+    }
+  };
+
   const handleEventRegister = (event: { title: string; date: string; price: string; location?: string }) => {
     const amount = parsePriceAmount(event.price);
     if (amount === null) {
@@ -45,38 +78,20 @@ export function EventsPage() {
       return;
     }
     setEventError('');
-    setPendingEvent(event);
-    setModalOpen(true);
+    if (user && token) {
+      // Authenticated: call API directly
+      doEventCheckout(event);
+    } else {
+      // Guest: collect email via modal
+      setPendingEvent(event);
+      setModalOpen(true);
+    }
   };
 
   const handleModalSubmit = async (email: string) => {
     if (!pendingEvent) return;
-    const amount = parsePriceAmount(pendingEvent.price);
-    if (!amount) return;
-    setLoadingEvent(pendingEvent.title);
-    setEventError('');
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
-      const res = await fetch(`${apiUrl}/api/checkout/event`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: pendingEvent.title,
-          amount,
-          email,
-          date: pendingEvent.date,
-          location: pendingEvent.location ?? 'Online',
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.message ?? 'Registration failed');
-      if (data.url) window.location.href = data.url;
-    } catch (err: unknown) {
-      setEventError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
-      setModalOpen(false);
-    } finally {
-      setLoadingEvent(null);
-    }
+    setModalOpen(false);
+    await doEventCheckout(pendingEvent, email);
   };
   const virtualEvents = [
     {

@@ -1,19 +1,42 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Menu, X, Sparkles, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useAuth } from '@/app/context/AuthContext';
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const { user, logout, loading: authLoading } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    setUserMenuOpen(false);
+    setIsOpen(false);
+    router.push('/');
+  };
 
   const navLinks = [
     { to: '/', label: 'Home' },
@@ -36,7 +59,7 @@ export function Header() {
       animate={{ y: 0 }}
       transition={{ duration: 0.6, type: "spring" }}
     >
-      <nav className="max-w-screen-xl mx-auto px-4 py-3">
+      <nav className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group shrink-0">
@@ -76,20 +99,77 @@ export function Header() {
                 </Link>
               </motion.div>
             ))}
-            <motion.div
-              className="ml-4 shrink-0"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <Link
-                href="/membership"
-                className="relative overflow-hidden inline-flex items-center px-5 py-2.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-full text-sm font-semibold shadow-lg hover:shadow-purple-500/40 hover:shadow-xl transition-all hover:scale-105 group whitespace-nowrap"
+
+            {/* Auth buttons */}
+            {!authLoading && (
+              <motion.div
+                className="ml-4 flex items-center gap-2 shrink-0"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
               >
-                <span className="relative z-10">Get Started</span>
-                <div className="btn-shimmer" />
-              </Link>
-            </motion.div>
+                {user ? (
+                  /* Authenticated: avatar dropdown */
+                  <div className="relative" ref={userMenuRef}>
+                    <button
+                      onClick={() => setUserMenuOpen(v => !v)}
+                      className="flex items-center gap-2 px-3 py-1.5 bg-linear-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 border border-purple-200 rounded-full transition-all group"
+                    >
+                      <div className="w-7 h-7 rounded-full bg-linear-to-br from-purple-600 to-pink-600 flex items-center justify-center text-white text-xs font-bold shadow">
+                        {user.name.charAt(0).toUpperCase()}
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 max-w-24 truncate">{user.name.split(' ')[0]}</span>
+                    </button>
+
+                    <AnimatePresence>
+                      {userMenuOpen && (
+                        <motion.div
+                          className="absolute right-0 top-full mt-2 w-52 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50"
+                          initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                          transition={{ duration: 0.18 }}
+                        >
+                          <div className="px-4 py-3 border-b border-gray-100">
+                            <p className="font-semibold text-gray-800 text-sm">{user.name}</p>
+                            <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                          </div>
+                          <Link
+                            href="/dashboard"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-3 text-sm text-gray-700 hover:text-purple-600 hover:bg-purple-50 transition-colors"
+                          >
+                            <LayoutDashboard className="w-4 h-4" /> Dashboard
+                          </Link>
+                          <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                          >
+                            <LogOut className="w-4 h-4" /> Sign Out
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : (
+                  /* Unauthenticated */
+                  <>
+                    <Link
+                      href="/login"
+                      className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-purple-600 transition-colors"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/signup"
+                      className="relative overflow-hidden inline-flex items-center px-5 py-2.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-full text-sm font-semibold shadow-lg hover:shadow-purple-500/40 hover:shadow-xl transition-all hover:scale-105 whitespace-nowrap"
+                    >
+                      Get Started
+                    </Link>
+                  </>
+                )}
+              </motion.div>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -133,15 +213,51 @@ export function Header() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
-                className="mt-4"
+                className="mt-4 space-y-2"
               >
-                <Link
-                  href="/membership"
-                  className="block w-full px-6 py-3 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium text-center shadow-lg"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Get Started
-                </Link>
+                {user ? (
+                  <>
+                    <div className="flex items-center gap-3 px-4 py-3 bg-purple-50 rounded-lg">
+                      <div className="w-8 h-8 rounded-full bg-linear-to-br from-purple-600 to-pink-600 flex items-center justify-center text-white text-sm font-bold">
+                        {user.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-800 text-sm">{user.name}</p>
+                        <p className="text-xs text-gray-500">{user.email}</p>
+                      </div>
+                    </div>
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center gap-2 w-full px-4 py-3 text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors font-medium"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <LayoutDashboard className="w-4 h-4" /> Dashboard
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-2 w-full px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
+                    >
+                      <LogOut className="w-4 h-4" /> Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      className="block w-full px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium text-center transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/signup"
+                      className="block w-full px-6 py-3 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium text-center shadow-lg"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Get Started
+                    </Link>
+                  </>
+                )}
               </motion.div>
             </motion.div>
           )}

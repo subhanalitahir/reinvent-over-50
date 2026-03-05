@@ -6,9 +6,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { EmailModal } from '../components/EmailModal';
+import { useAuth } from '../context/AuthContext';
 
 export function MembershipPage() {
   const searchParams = useSearchParams();
+  const { user, token } = useAuth();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [error, setError] = useState('');
@@ -23,39 +25,53 @@ export function MembershipPage() {
       setSuccess(true);
       // Verify with backend so the welcome email is sent
       if (sessionId) {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
-        fetch(`${apiUrl}/api/checkout/verify?session_id=${sessionId}`).catch(() => {});
+        fetch(`/api/checkout/verify?session_id=${sessionId}`).catch(() => {});
       }
     }
     if (searchParams.get('canceled') === 'true') setError('Payment was cancelled. You can try again.');
   }, [searchParams]);
 
-  const handleCheckout = (planKey: string) => {
-    setError('');
-    setPendingPlan(planKey);
-    setModalOpen(true);
-  };
-
-  const handleModalSubmit = async (email: string) => {
-    if (!pendingPlan) return;
-    setLoadingPlan(pendingPlan);
+  const doCheckout = async (planKey: string, email?: string) => {
+    setLoadingPlan(planKey);
     setError('');
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
-      const res = await fetch(`${apiUrl}/api/checkout/membership`, {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const body: Record<string, string> = { plan: planKey, billingCycle };
+      if (email) body.email = email;
+      const res = await fetch('/api/checkout/membership', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: pendingPlan, billingCycle, email }),
+        headers,
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.message ?? 'Checkout failed');
-      if (data.url) window.location.href = data.url;
+      if (data.data?.url) window.location.href = data.data.url;
+      else if (data.url) window.location.href = data.url;
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
       setModalOpen(false);
     } finally {
       setLoadingPlan(null);
     }
+  };
+
+  const handleCheckout = (planKey: string) => {
+    setError('');
+    if (user && token) {
+      // Authenticated: call API directly with the Bearer token
+      doCheckout(planKey);
+    } else {
+      // Guest: collect email via modal
+      setPendingPlan(planKey);
+      setModalOpen(true);
+    }
+  };
+
+  const handleModalSubmit = async (email: string) => {
+    if (!pendingPlan) return;
+    setModalOpen(false);
+    await doCheckout(pendingPlan, email);
   };
 
   const plans = [
