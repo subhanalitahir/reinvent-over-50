@@ -1,1 +1,0 @@
-{"level":"error","message":"MongoDB connection failed: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","service":"reinvent-over-50-api","timestamp":"2026-03-05 05:30:34"}

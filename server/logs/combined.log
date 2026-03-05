@@ -1,6 +1,0 @@
-{"level":"info","message":"Email sent to test@example.com: ✅ MailHog Test — Basic Email","service":"reinvent-over-50-api","timestamp":"2026-03-04 11:35:36"}
-{"level":"info","message":"Email sent to test@example.com: Order Confirmation – Reinvent You 50+","service":"reinvent-over-50-api","timestamp":"2026-03-04 11:35:37"}
-{"level":"info","message":"Email sent to test@example.com: Welcome to Reinvent You 50+ Membership!","service":"reinvent-over-50-api","timestamp":"2026-03-04 11:35:37"}
-{"level":"info","message":"Email sent to test@example.com: Your Free Resource – Reinvent You 50+","service":"reinvent-over-50-api","timestamp":"2026-03-04 11:35:37"}
-{"level":"info","message":"Server running in development mode on port 5000","service":"reinvent-over-50-api","timestamp":"2026-03-05 05:30:29"}
-{"level":"error","message":"MongoDB connection failed: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","service":"reinvent-over-50-api","timestamp":"2026-03-05 05:30:34"}
