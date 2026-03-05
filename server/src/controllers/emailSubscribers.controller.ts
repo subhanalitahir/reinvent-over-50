@@ -31,7 +31,7 @@ export const subscribe = asyncHandler(async (req: Request, res: Response) => {
     // Re-send the free resource email even for existing subscribers
     if (process.env.FREE_PDF_DOWNLOAD_URL) {
       sendFreeResourceEmail(email, process.env.FREE_PDF_DOWNLOAD_URL).catch(
-        () => void 0,
+        (err: unknown) => console.error("[EMAIL ERROR] free resource:", err),
       );
     }
 
@@ -57,7 +57,7 @@ export const subscribe = asyncHandler(async (req: Request, res: Response) => {
   // Fire-and-forget: send the free resource download email
   if (process.env.FREE_PDF_DOWNLOAD_URL) {
     sendFreeResourceEmail(email, process.env.FREE_PDF_DOWNLOAD_URL).catch(
-      () => void 0,
+      (err: unknown) => console.error("[EMAIL ERROR] free resource:", err),
     );
   }
 });

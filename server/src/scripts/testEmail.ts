@@ -1,21 +1,14 @@
 /**
- * Quick smoke-test for the MailHog local SMTP setup.
+ * Quick smoke-test for the SMTP email setup.
  *
  * Usage (from the `server/` directory):
  *   npx ts-node src/scripts/testEmail.ts
  *
- * Requires MailHog running on localhost:1025 (default docker-compose config).
- * Open http://localhost:8025 after running to see the captured email.
+ * Reads SMTP credentials from the .env file (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, EMAIL_FROM).
  */
 
 import dotenv from "dotenv";
 dotenv.config();
-
-// Override SMTP settings to use MailHog on localhost (for running outside Docker)
-process.env.SMTP_HOST = process.env.SMTP_HOST || "localhost";
-process.env.SMTP_PORT = process.env.SMTP_PORT || "1025";
-process.env.SMTP_USER = "";
-process.env.SMTP_PASS = "";
 
 import {
   sendEmail,
@@ -27,14 +20,16 @@ import {
 async function main() {
   const recipient = "test@example.com";
 
-  console.log("Sending test emails to MailHog at localhost:1025 …\n");
+  console.log(
+    `Sending test emails via SMTP (${process.env.SMTP_HOST}:${process.env.SMTP_PORT}) …\n`,
+  );
 
   // 1. Plain email
   await sendEmail({
     to: recipient,
-    subject: "✅ MailHog Test — Basic Email",
-    html: "<h1>Hello from Reinvent You 50+!</h1><p>MailHog is working.</p>",
-    text: "Hello from Reinvent You 50+! MailHog is working.",
+    subject: "✅ SMTP Test — Basic Email",
+    html: "<h1>Hello from Reinvent You 50+!</h1><p>SMTP is working.</p>",
+    text: "Hello from Reinvent You 50+! SMTP is working.",
   });
   console.log("1/4  Basic email sent.");
 
@@ -61,9 +56,7 @@ async function main() {
   );
   console.log("4/4  Free resource email sent.");
 
-  console.log(
-    "\n✅  All 4 emails delivered to MailHog.\n   Open http://localhost:8025 to inspect them.",
-  );
+  console.log(`\n✅  All 4 emails delivered via SMTP to ${recipient}.`);
 }
 
 main().catch((err) => {

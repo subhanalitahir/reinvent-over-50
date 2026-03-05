@@ -22,17 +22,6 @@ services:
       retries: 5
       start_period: 30s
 
-  # ─── MailHog (local SMTP + web UI) ─────────────────────────────────────────
-  mailhog:
-    image: mailhog/mailhog:latest
-    container_name: reinvent_mailhog
-    restart: unless-stopped
-    ports:
-      - "1025:1025" # SMTP
-      - "8025:8025" # Web UI  →  http://localhost:8025
-    networks:
-      - reinvent-network
-
   # ─── Express API ────────────────────────────────────────────────────────────
   api:
     build:
@@ -47,18 +36,11 @@ services:
       NODE_ENV: production
       PORT: 5000
       MONGODB_URI: mongodb://reinventapp:reinventpass@mongodb:27017/reinventdb
-      # Override SMTP to point at the in-stack MailHog container
-      SMTP_HOST: mailhog
-      SMTP_PORT: "1025"
-      SMTP_USER: ""
-      SMTP_PASS: ""
     ports:
       - "5000:5000"
     depends_on:
       mongodb:
         condition: service_healthy
-      mailhog:
-        condition: service_started
     volumes:
       - api_logs:/app/logs
     networks:

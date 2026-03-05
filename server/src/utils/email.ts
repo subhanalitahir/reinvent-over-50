@@ -283,10 +283,25 @@ const createTransporter = () => {
 
   return nodemailer.createTransport({
     host: SMTP_HOST,
-    port: parseInt(SMTP_PORT ?? "587"),
-    secure: SMTP_PORT === "465",
+    port: parseInt(SMTP_PORT ?? "465"),
+    secure: SMTP_PORT !== "587",
+    tls: { rejectUnauthorized: false },
     ...authConfig,
   });
+};
+
+/**
+ * Builds a properly-formatted SMTP "From" header.
+ * Ensures the address always matches the authenticated SMTP_USER to
+ * prevent Zoho (and other providers) from silently dropping the email.
+ */
+const buildFromAddress = (): string => {
+  const user = process.env.SMTP_USER ?? "";
+  const configured = process.env.EMAIL_FROM ?? user;
+  // If it already contains angle-brackets it's already fully formatted
+  if (configured.includes("<")) return configured;
+  const address = configured || user || "noreply@reinventyou50.com";
+  return `"Reinvent You Over 50" <${address}>`;
 };
 
 export const sendEmail = async (options: EmailOptions): Promise<void> => {
@@ -299,18 +314,32 @@ export const sendEmail = async (options: EmailOptions): Promise<void> => {
     return;
   }
 
-  await transporter.sendMail({
-    from:
-      options.from ??
-      process.env.EMAIL_FROM ??
-      `"Reinvent You 50+" <noreply@reinventyou50.com>`,
-    to: options.to,
-    subject: options.subject,
-    html: options.html,
-    text: options.text,
-  });
+  try {
+    const from = options.from ?? buildFromAddress();
+    const replyTo = process.env.SMTP_USER ?? "";
+    const unsubscribeEmail = process.env.SMTP_USER ?? "";
 
-  logger.info(`Email sent to ${options.to}: ${options.subject}`);
+    await transporter.sendMail({
+      from,
+      replyTo,
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+      text: options.text,
+      headers: {
+        "List-Unsubscribe": `<mailto:${unsubscribeEmail}?subject=unsubscribe>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        "Precedence": "bulk",
+        "X-Mailer": "Reinvent-You-50-Mailer",
+      },
+    });
+    logger.info(`Email sent to ${options.to}: ${options.subject}`);
+  } catch (err: unknown) {
+    logger.error(
+      `Failed to send email to ${options.to}: ${(err as Error).message}`,
+    );
+    throw err;
+  }
 };
 
 // ─── Pre-built email templates ────────────────────────────────────────────────
@@ -448,12 +477,12 @@ export const sendFreeResourceEmail = async (
 
   await sendEmail({
     to: email,
-    subject: "Your Free Guide is Ready to Download 📖 – Reinvent You Over 50",
+    subject: `Your Free Guide is Ready to Download - Reinvent You Over 50`,
     html: emailLayout(
       body,
       "Your free reinvention guide is ready. Click to download it now.",
     ),
-    text: `Your free guide is ready. Download it here: ${downloadUrl}\n\nWant to go deeper? Check out our Workbook: ${CLIENT()}/workbook`,
+    text: `Your free guide is ready. Download it here: ${downloadUrl}\n\nWant to go deeper? Check out our Workbook: ${CLIENT()}/workbook\n\nTo unsubscribe, reply with subject: unsubscribe`,
   });
 };
 
