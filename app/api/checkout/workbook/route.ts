@@ -30,8 +30,7 @@ export async function POST(req: NextRequest) {
       throw new AppError("Product not found", 404);
 
     // Check if free for this user
-    const isMember =
-      user?.role === "member" || user?.role === "admin";
+    const isMember = user?.role === "member" || user?.role === "admin";
     if (product.price === 0 || (product.isFreeForMembers && isMember)) {
       throw new AppError(
         "This product is free for you — no checkout needed",
@@ -56,7 +55,9 @@ export async function POST(req: NextRequest) {
             currency: "usd",
             product_data: {
               name: product.name,
-              description: product.description?.slice(0, 500) ?? "Reinvent Over 50 Product",
+              description:
+                product.description?.slice(0, 500) ??
+                "Reinvent Over 50 Product",
             },
             unit_amount: unitAmount,
           },

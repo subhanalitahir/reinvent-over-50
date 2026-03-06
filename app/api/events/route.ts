@@ -30,10 +30,12 @@ export async function GET(req: NextRequest) {
 
     const filter: Record<string, unknown> = {};
     if (!isAdmin) filter.status = "published";
-    else if (searchParams.get("status")) filter.status = searchParams.get("status");
+    else if (searchParams.get("status"))
+      filter.status = searchParams.get("status");
     if (searchParams.get("type")) filter.type = searchParams.get("type");
     if (searchParams.get("tag")) filter.tags = searchParams.get("tag");
-    if (!searchParams.get("past") && !isAdmin) filter.startDate = { $gte: new Date() };
+    if (!searchParams.get("past") && !isAdmin)
+      filter.startDate = { $gte: new Date() };
 
     const [events, total] = await Promise.all([
       Event.find(filter).sort({ startDate: 1 }).skip(skip).limit(limit),
