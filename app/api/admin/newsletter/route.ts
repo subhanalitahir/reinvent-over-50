@@ -51,8 +51,7 @@ export async function POST(req: NextRequest) {
     }
 
     const emails = Array.from(emailSet);
-    if (emails.length === 0)
-      throw new AppError("No recipients found", 400);
+    if (emails.length === 0) throw new AppError("No recipients found", 400);
 
     // Send in batches of 10 with 100ms delay to avoid SMTP rate limits
     const BATCH_SIZE = 10;
