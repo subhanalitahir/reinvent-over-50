@@ -8,6 +8,13 @@ import { useSearchParams } from 'next/navigation';
 import { EmailModal } from '../components/EmailModal';
 import { useAuth } from '../context/AuthContext';
 
+interface ApiMembershipPrices {
+  community?: { monthly?: number; annual?: number };
+  growth?: { monthly?: number; annual?: number };
+  transformation?: { monthly?: number; annual?: number };
+  vip?: { monthly?: number; annual?: number };
+}
+
 export function MembershipPage() {
   const searchParams = useSearchParams();
   const { user, token } = useAuth();
@@ -17,6 +24,14 @@ export function MembershipPage() {
   const [success, setSuccess] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [pendingPlan, setPendingPlan] = useState<string | null>(null);
+  const [apiPrices, setApiPrices] = useState<ApiMembershipPrices | null>(null);
+
+  useEffect(() => {
+    fetch('/api/pricing')
+      .then(r => r.json())
+      .then(j => { if (j?.data?.membership) setApiPrices(j.data.membership); })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const successParam = searchParams.get('success');
@@ -77,8 +92,9 @@ export function MembershipPage() {
   const plans = [
     {
       name: 'Community',
-      monthlyPrice: 29,
-      annualPrice: 290,
+      key: 'community',
+      monthlyPrice: apiPrices?.community?.monthly != null ? apiPrices.community.monthly / 100 : 29,
+      annualPrice: apiPrices?.community?.annual != null ? apiPrices.community.annual / 100 : 290,
       description: 'Perfect for getting started',
       features: [
         'Access to community forum',
@@ -95,9 +111,10 @@ export function MembershipPage() {
     },
     {
       name: 'Transformation',
+      key: 'transformation',
       icon: Sparkles,
-      monthlyPrice: 59,
-      annualPrice: 590,
+      monthlyPrice: apiPrices?.transformation?.monthly != null ? apiPrices.transformation.monthly / 100 : 59,
+      annualPrice: apiPrices?.transformation?.annual != null ? apiPrices.transformation.annual / 100 : 590,
       description: 'Our most popular plan',
       features: [
         'Everything in Community',
@@ -114,9 +131,10 @@ export function MembershipPage() {
     },
     {
       name: 'VIP',
+      key: 'vip',
       icon: Crown,
-      monthlyPrice: 99,
-      annualPrice: 990,
+      monthlyPrice: apiPrices?.vip?.monthly != null ? apiPrices.vip.monthly / 100 : 99,
+      annualPrice: apiPrices?.vip?.annual != null ? apiPrices.vip.annual / 100 : 990,
       description: 'Complete transformation package',
       features: [
         'Everything in Transformation',

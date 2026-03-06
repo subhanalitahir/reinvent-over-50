@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import Stripe from "stripe";
 import connectDB from "@/lib/db";
 import Member from "@/lib/models/Member";
+import PricingConfig from "@/lib/models/PricingConfig";
 import {
   getAuthUser,
   requireAuth,
@@ -15,7 +16,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 type PlanKey = "community" | "transformation" | "vip";
 type BillingKey = "monthly" | "annual";
 
-// Price map in cents
+// Fallback prices in cents (used if DB is unavailable)
 const PRICES: Record<PlanKey, Record<BillingKey, number>> = {
   community: { monthly: 2900, annual: 29000 },
   transformation: { monthly: 5900, annual: 59000 },
@@ -38,7 +39,10 @@ export async function POST(req: NextRequest) {
     if (!["monthly", "annual"].includes(billingCycle))
       throw new AppError("billingCycle must be 'monthly' or 'annual'", 400);
 
-    const unitAmount = PRICES[plan][billingCycle];
+    // Prefer DB pricing; fall back to hardcoded constants
+    const pricingConfig = await PricingConfig.findOne();
+    const dbMembership = pricingConfig?.membership as Record<string, Record<string, number>> | undefined;
+    const unitAmount = dbMembership?.[plan]?.[billingCycle] ?? PRICES[plan][billingCycle];
     const clientUrl = process.env.CLIENT_URL ?? "http://localhost:3000";
 
     const session = await stripe.checkout.sessions.create({

@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import Stripe from "stripe";
 import connectDB from "@/lib/db";
 import Booking from "@/lib/models/Booking";
+import PricingConfig from "@/lib/models/PricingConfig";
 import { apiSuccess, handleError } from "@/lib/auth";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -32,6 +33,11 @@ export async function POST(req: NextRequest) {
 
     const clientUrl = process.env.CLIENT_URL ?? "http://localhost:3000";
 
+    // Prefer DB pricing; fall back to $150 hardcoded default
+    const pricingConfig = await PricingConfig.findOne();
+    const dbBookings = pricingConfig?.bookings as Record<string, number> | undefined;
+    const unitAmount = dbBookings?.[sessionType] ?? 15000;
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -44,7 +50,7 @@ export async function POST(req: NextRequest) {
               name: "Coaching Session",
               description: `${sessionType} session with Reinvent Over 50`,
             },
-            unit_amount: 15000, // $150
+            unit_amount: unitAmount,
           },
           quantity: 1,
         },

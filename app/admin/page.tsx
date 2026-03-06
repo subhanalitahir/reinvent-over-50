@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
@@ -6,6 +6,7 @@ import { motion } from 'motion/react';
 import {
   Users, Crown, Calendar, ShoppingBag, MapPin, Mail,
   Bell, TrendingUp, DollarSign, Clock, AlertCircle,
+  ArrowUpRight, Activity, Zap,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -38,11 +39,18 @@ interface RecentItem {
 }
 
 export default function AdminOverviewPage() {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentOrders, setRecentOrders] = useState<RecentItem[]>([]);
   const [recentContacts, setRecentContacts] = useState<RecentItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const greeting = () => {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good morning';
+    if (h < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
 
   useEffect(() => {
     if (!token) return;
@@ -80,170 +88,293 @@ export default function AdminOverviewPage() {
     }).catch(() => setLoading(false));
   }, [token]);
 
-  const statCards = stats ? [
-    { label: 'Total Users', value: stats.users, icon: Users, color: 'from-blue-500 to-cyan-500', bg: 'from-blue-50 to-cyan-50', href: '/admin/users' },
-    { label: 'Active Members', value: stats.activeMembers, icon: Crown, color: 'from-purple-500 to-pink-500', bg: 'from-purple-50 to-pink-50', href: '/admin/members' },
-    { label: 'Total Bookings', value: stats.bookings, icon: Calendar, color: 'from-orange-500 to-red-500', bg: 'from-orange-50 to-red-50', href: '/admin/bookings' },
-    { label: 'Total Revenue', value: `$${stats.revenue.toFixed(0)}`, icon: DollarSign, color: 'from-green-500 to-emerald-500', bg: 'from-green-50 to-emerald-50', href: '/admin/orders' },
-    { label: 'Paid Orders', value: stats.paidOrders, icon: ShoppingBag, color: 'from-indigo-500 to-purple-500', bg: 'from-indigo-50 to-purple-50', href: '/admin/orders' },
-    { label: 'Events', value: stats.events, icon: MapPin, color: 'from-pink-500 to-rose-500', bg: 'from-pink-50 to-rose-50', href: '/admin/events' },
-    { label: 'Subscribers', value: stats.subscribers, icon: Bell, color: 'from-yellow-500 to-orange-500', bg: 'from-yellow-50 to-orange-50', href: '/admin/subscribers' },
-    { label: 'New Contacts', value: stats.newContacts, icon: Mail, color: 'from-teal-500 to-cyan-500', bg: 'from-teal-50 to-cyan-50', href: '/admin/contacts' },
-  ] : [];
-
-  const alertCards = stats ? [
-    { label: 'Pending Bookings', value: stats.pendingBookings, icon: Clock, color: 'text-orange-600', bg: 'bg-orange-50 border-orange-200', href: '/admin/bookings' },
-    { label: 'Unread Messages', value: stats.newContacts, icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-50 border-red-200', href: '/admin/contacts' },
-  ] : [];
-
   if (loading) {
     return (
       <div className="space-y-6">
+        <div className="h-32 rounded-2xl animate-pulse" style={{ background: 'linear-gradient(135deg,#e9d5ff,#fce7f3)' }} />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="h-28 bg-gray-200 rounded-2xl animate-pulse" />
+            <div key={i} className="h-28 bg-white rounded-2xl animate-pulse shadow-sm" />
           ))}
+        </div>
+        <div className="grid lg:grid-cols-2 gap-6">
+          <div className="h-64 bg-white rounded-2xl animate-pulse shadow-sm" />
+          <div className="h-64 bg-white rounded-2xl animate-pulse shadow-sm" />
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">Dashboard Overview</h2>
-        <p className="text-gray-500 text-sm mt-1">Welcome back! Here&apos;s what&apos;s happening.</p>
-      </div>
+  const statCards = stats ? [
+    { label: 'Total Users', value: stats.users, icon: Users, gradient: 'from-blue-500 to-cyan-400', shadow: 'shadow-blue-200', href: '/admin/users', change: '+12%' },
+    { label: 'Active Members', value: stats.activeMembers, icon: Crown, gradient: 'from-violet-500 to-purple-400', shadow: 'shadow-violet-200', href: '/admin/members', change: '+8%' },
+    { label: 'Total Bookings', value: stats.bookings, icon: Calendar, gradient: 'from-orange-500 to-amber-400', shadow: 'shadow-orange-200', href: '/admin/bookings', change: '+5%' },
+    { label: 'Revenue', value: `$${stats.revenue.toFixed(0)}`, icon: DollarSign, gradient: 'from-emerald-500 to-green-400', shadow: 'shadow-emerald-200', href: '/admin/orders', change: '+18%' },
+    { label: 'Paid Orders', value: stats.paidOrders, icon: ShoppingBag, gradient: 'from-indigo-500 to-blue-400', shadow: 'shadow-indigo-200', href: '/admin/orders', change: '+3%' },
+    { label: 'Live Events', value: stats.events, icon: MapPin, gradient: 'from-pink-500 to-rose-400', shadow: 'shadow-pink-200', href: '/admin/events', change: '0%' },
+    { label: 'Subscribers', value: stats.subscribers, icon: Bell, gradient: 'from-yellow-500 to-orange-400', shadow: 'shadow-yellow-200', href: '/admin/subscribers', change: '+21%' },
+    { label: 'Messages', value: stats.contacts, icon: Mail, gradient: 'from-teal-500 to-cyan-400', shadow: 'shadow-teal-200', href: '/admin/contacts', change: '+2%' },
+  ] : [];
 
-      {/* Alert strip */}
-      {alertCards.some(a => a.value > 0) && (
-        <div className="flex flex-wrap gap-3">
-          {alertCards.filter(a => a.value > 0).map(a => (
-            <Link key={a.label} href={a.href}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold shadow-sm hover:shadow-md transition-all ${a.bg} ${a.color}`}>
-              <a.icon className="w-4 h-4" />
-              {a.value} {a.label}
-            </Link>
-          ))}
+  return (
+    <div className="space-y-7 max-w-7xl">
+      {/* Hero banner */}
+      <motion.div
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="relative overflow-hidden rounded-2xl p-6 lg:p-8 text-white"
+        style={{ background: 'linear-gradient(135deg, #4f0d9a 0%, #7c3aed 40%, #c026d3 80%, #db2777 100%)' }}
+      >
+        {/* Background decoration */}
+        <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10 pointer-events-none"
+          style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(30%,-40%)' }} />
+        <div className="absolute bottom-0 left-1/3 w-48 h-48 rounded-full opacity-10 pointer-events-none"
+          style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translateY(40%)' }} />
+
+        <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <p className="text-purple-200 text-sm font-medium mb-1">{greeting()}, {user?.name?.split(' ')[0] ?? 'Admin'} ðŸ‘‹</p>
+            <h2 className="text-2xl lg:text-3xl font-bold tracking-tight">Dashboard Overview</h2>
+            <p className="text-purple-200 text-sm mt-1.5">
+              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {stats && stats.pendingBookings > 0 && (
+              <Link href="/admin/bookings"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 text-sm font-semibold hover:bg-white/25 transition-all">
+                <Clock className="w-4 h-4 text-amber-300" />
+                <span>{stats.pendingBookings} pending</span>
+              </Link>
+            )}
+            {stats && stats.newContacts > 0 && (
+              <Link href="/admin/contacts"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 text-sm font-semibold hover:bg-white/25 transition-all">
+                <AlertCircle className="w-4 h-4 text-red-300" />
+                <span>{stats.newContacts} new messages</span>
+              </Link>
+            )}
+          </div>
         </div>
-      )}
+
+        {/* KPI quick strips */}
+        {stats && (
+          <div className="relative mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { label: 'Members', val: stats.activeMembers, icon: Activity },
+              { label: 'Revenue', val: `$${stats.revenue.toFixed(0)}`, icon: TrendingUp },
+              { label: 'Bookings', val: stats.bookings, icon: Zap },
+              { label: 'Subscribers', val: stats.subscribers, icon: Bell },
+            ].map(k => (
+              <div key={k.label} className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl px-4 py-3">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <k.icon className="w-3.5 h-3.5 text-purple-200" />
+                  <span className="text-purple-200 text-[11px] font-medium">{k.label}</span>
+                </div>
+                <div className="text-white text-xl font-bold">{k.val}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </motion.div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {statCards.map((card, i) => (
-          <motion.div key={card.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-            <Link href={card.href}
-              className={`block bg-linear-to-br ${card.bg} rounded-2xl p-5 border border-white shadow-md hover:shadow-xl transition-all group`}>
-              <div className={`w-10 h-10 bg-linear-to-br ${card.color} rounded-xl flex items-center justify-center mb-3 shadow-md group-hover:scale-110 transition-transform`}>
-                <card.icon className="w-5 h-5 text-white" />
-              </div>
-              <div className="text-2xl font-bold text-gray-900">{card.value}</div>
-              <div className="text-xs font-medium text-gray-500 mt-0.5">{card.label}</div>
-            </Link>
-          </motion.div>
-        ))}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider">Key Metrics</h3>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {statCards.map((card, i) => (
+            <motion.div
+              key={card.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06, duration: 0.4 }}
+            >
+              <Link href={card.href}
+                className="group block bg-white rounded-2xl p-5 border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
+                <div className={`absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r ${card.gradient}`} />
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`w-10 h-10 bg-linear-to-br ${card.gradient} rounded-xl flex items-center justify-center shadow-md ${card.shadow} group-hover:scale-110 transition-transform duration-300`}>
+                    <card.icon className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="flex items-center gap-0.5 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                    <ArrowUpRight className="w-3 h-3" />{card.change}
+                  </span>
+                </div>
+                <div className="text-2xl font-bold text-gray-900 tabular-nums">{card.value}</div>
+                <div className="text-xs font-semibold text-gray-400 mt-1">{card.label}</div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
       </div>
 
       {/* Recent activity */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Recent Orders */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-            <h3 className="font-bold text-gray-900 flex items-center gap-2">
-              <ShoppingBag className="w-4 h-4 text-purple-600" /> Recent Orders
-            </h3>
-            <Link href="/admin/orders" className="text-xs text-purple-600 hover:text-purple-800 font-semibold">View all →</Link>
-          </div>
-          <div className="divide-y divide-gray-50">
-            {recentOrders.length === 0 && (
-              <p className="text-sm text-gray-400 text-center py-8">No orders yet</p>
-            )}
-            {recentOrders.map(order => (
-              <div key={order._id} className="flex items-center justify-between px-6 py-3 hover:bg-gray-50 transition-colors">
-                <div>
-                  <div className="text-sm font-semibold text-gray-800">{order.guestName ?? 'Guest'}</div>
-                  <div className="text-xs text-gray-400">{order.guestEmail ?? order.email}</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm font-bold text-gray-900">${order.total?.toFixed(2)}</div>
-                  <StatusBadge status={order.status} />
-                </div>
-              </div>
-            ))}
-          </div>
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider">Recent Activity</h3>
+          <div className="flex-1 h-px bg-gray-200" />
         </div>
-
-        {/* Recent Contacts */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-            <h3 className="font-bold text-gray-900 flex items-center gap-2">
-              <Mail className="w-4 h-4 text-purple-600" /> Recent Messages
-            </h3>
-            <Link href="/admin/contacts" className="text-xs text-purple-600 hover:text-purple-800 font-semibold">View all →</Link>
-          </div>
-          <div className="divide-y divide-gray-50">
-            {recentContacts.length === 0 && (
-              <p className="text-sm text-gray-400 text-center py-8">No messages yet</p>
-            )}
-            {recentContacts.map(contact => (
-              <div key={contact._id} className="flex items-center justify-between px-6 py-3 hover:bg-gray-50 transition-colors">
-                <div>
-                  <div className="text-sm font-semibold text-gray-800">{contact.name}</div>
-                  <div className="text-xs text-gray-400 capitalize">{contact.subject}</div>
+        <div className="grid lg:grid-cols-2 gap-5">
+          {/* Recent Orders */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+            className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+          >
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-linear-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-sm">
+                  <ShoppingBag className="w-3.5 h-3.5 text-white" />
                 </div>
-                <StatusBadge status={contact.status} />
+                <h3 className="font-bold text-gray-900 text-sm">Recent Orders</h3>
               </div>
-            ))}
-          </div>
+              <Link href="/admin/orders"
+                className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-bold hover:underline transition-colors">
+                View all <ArrowUpRight className="w-3 h-3" />
+              </Link>
+            </div>
+            <div className="divide-y divide-gray-50">
+              {recentOrders.length === 0 ? (
+                <div className="py-12 text-center">
+                  <ShoppingBag className="w-8 h-8 mx-auto mb-2 text-gray-200" />
+                  <p className="text-sm text-gray-400">No orders yet</p>
+                </div>
+              ) : recentOrders.map((order, i) => (
+                <motion.div
+                  key={order._id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 + i * 0.05 }}
+                  className="flex items-center justify-between px-5 py-3 hover:bg-gray-50/80 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-full bg-linear-to-br from-gray-100 to-gray-200 flex items-center justify-center text-xs font-bold text-gray-500 shrink-0">
+                      {(order.guestName ?? 'G').charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-gray-800 leading-tight">{order.guestName ?? 'Guest'}</div>
+                      <div className="text-[11px] text-gray-400">{order.guestEmail ?? order.email}</div>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0 ml-2">
+                    <div className="text-sm font-bold text-gray-900">${order.total?.toFixed(2)}</div>
+                    <StatusBadge status={order.status} />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Recent Contacts */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+            className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+          >
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-linear-to-br from-teal-500 to-cyan-500 flex items-center justify-center shadow-sm">
+                  <Mail className="w-3.5 h-3.5 text-white" />
+                </div>
+                <h3 className="font-bold text-gray-900 text-sm">Recent Messages</h3>
+                {stats && stats.newContacts > 0 && (
+                  <span className="px-1.5 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full">{stats.newContacts}</span>
+                )}
+              </div>
+              <Link href="/admin/contacts"
+                className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-bold hover:underline transition-colors">
+                View all <ArrowUpRight className="w-3 h-3" />
+              </Link>
+            </div>
+            <div className="divide-y divide-gray-50">
+              {recentContacts.length === 0 ? (
+                <div className="py-12 text-center">
+                  <Mail className="w-8 h-8 mx-auto mb-2 text-gray-200" />
+                  <p className="text-sm text-gray-400">No messages yet</p>
+                </div>
+              ) : recentContacts.map((contact, i) => (
+                <motion.div
+                  key={contact._id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 + i * 0.05 }}
+                  className="flex items-center justify-between px-5 py-3 hover:bg-gray-50/80 transition-colors"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-7 h-7 rounded-full bg-linear-to-br from-teal-100 to-cyan-100 flex items-center justify-center text-xs font-bold text-teal-600 shrink-0">
+                      {(contact.name ?? 'G').charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-sm font-semibold text-gray-800 leading-tight truncate">{contact.name}</div>
+                      <div className="text-[11px] text-gray-400 capitalize truncate">{contact.subject}</div>
+                    </div>
+                  </div>
+                  <StatusBadge status={contact.status} />
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </div>
 
-      {/* Quick links */}
-      <div className="bg-linear-to-br from-purple-600 via-pink-600 to-purple-700 rounded-2xl p-6 text-white">
+      {/* Quick Actions */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.65 }}
+        className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+      >
         <div className="flex items-center gap-2 mb-4">
-          <TrendingUp className="w-5 h-5" />
-          <h3 className="font-bold text-lg">Quick Actions</h3>
+          <Zap className="w-4 h-4 text-purple-600" />
+          <h3 className="font-bold text-gray-800 text-sm">Quick Actions</h3>
         </div>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2">
           {[
-            { label: '+ New Event', href: '/admin/events' },
-            { label: '+ New Banner', href: '/admin/banners' },
-            { label: '+ New Product', href: '/admin/products' },
-            { label: 'View Contacts', href: '/admin/contacts' },
+            { label: '+ New Event', href: '/admin/events', color: 'hover:bg-pink-50 hover:border-pink-200 hover:text-pink-700' },
+            { label: '+ New Banner', href: '/admin/banners', color: 'hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700' },
+            { label: '+ New Product', href: '/admin/products', color: 'hover:bg-green-50 hover:border-green-200 hover:text-green-700' },
+            { label: 'Manage Pricing', href: '/admin/pricing', color: 'hover:bg-amber-50 hover:border-amber-200 hover:text-amber-700' },
+            { label: 'View Contacts', href: '/admin/contacts', color: 'hover:bg-teal-50 hover:border-teal-200 hover:text-teal-700' },
+            { label: 'All Orders', href: '/admin/orders', color: 'hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700' },
           ].map(a => (
             <Link key={a.href} href={a.href}
-              className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl text-sm font-semibold transition-all border border-white/20">
+              className={`px-4 py-2 bg-gray-50 border border-gray-200 text-gray-600 rounded-xl text-sm font-semibold transition-all duration-200 ${a.color}`}>
               {a.label}
             </Link>
           ))}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
-    active: 'bg-green-100 text-green-700',
-    paid: 'bg-green-100 text-green-700',
-    confirmed: 'bg-green-100 text-green-700',
-    published: 'bg-green-100 text-green-700',
-    trial: 'bg-blue-100 text-blue-700',
-    pending: 'bg-yellow-100 text-yellow-700',
-    new: 'bg-blue-100 text-blue-700',
-    read: 'bg-gray-100 text-gray-600',
-    replied: 'bg-purple-100 text-purple-700',
-    cancelled: 'bg-red-100 text-red-700',
-    failed: 'bg-red-100 text-red-700',
-    expired: 'bg-red-100 text-red-700',
-    completed: 'bg-indigo-100 text-indigo-700',
-    archived: 'bg-gray-100 text-gray-500',
-    refunded: 'bg-orange-100 text-orange-700',
-    draft: 'bg-gray-100 text-gray-600',
-    inactive: 'bg-gray-100 text-gray-500',
+    active: 'bg-emerald-50 text-emerald-700 border border-emerald-100',
+    paid: 'bg-emerald-50 text-emerald-700 border border-emerald-100',
+    confirmed: 'bg-emerald-50 text-emerald-700 border border-emerald-100',
+    published: 'bg-emerald-50 text-emerald-700 border border-emerald-100',
+    trial: 'bg-blue-50 text-blue-700 border border-blue-100',
+    pending: 'bg-amber-50 text-amber-700 border border-amber-100',
+    new: 'bg-violet-50 text-violet-700 border border-violet-100',
+    read: 'bg-gray-50 text-gray-500 border border-gray-100',
+    replied: 'bg-purple-50 text-purple-700 border border-purple-100',
+    cancelled: 'bg-red-50 text-red-600 border border-red-100',
+    failed: 'bg-red-50 text-red-600 border border-red-100',
+    completed: 'bg-indigo-50 text-indigo-700 border border-indigo-100',
+    archived: 'bg-gray-50 text-gray-400 border border-gray-100',
+    refunded: 'bg-orange-50 text-orange-700 border border-orange-100',
+    draft: 'bg-gray-50 text-gray-500 border border-gray-100',
+    inactive: 'bg-gray-50 text-gray-400 border border-gray-100',
   };
   return (
-    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${map[status] ?? 'bg-gray-100 text-gray-500'}`}>
+    <span className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-bold whitespace-nowrap shrink-0 ${map[status] ?? 'bg-gray-50 text-gray-500 border border-gray-100'}`}>
       {status}
     </span>
   );
