@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Menu, X, Sparkles, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '@/app/context/AuthContext';
+import Image from 'next/image';
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -59,26 +60,11 @@ export function Header() {
       animate={{ y: 0 }}
       transition={{ duration: 0.6, type: "spring" }}
     >
-      <nav className="max-w-7xl mx-auto px-4 py-3">
+      <nav className="max-w-7xl mx-auto px-4 py-0">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-            <motion.div
-              className="relative"
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.6 }}
-            >
-              <div className="absolute inset-0 bg-linear-to-r from-purple-600 to-pink-600 rounded-xl blur-md opacity-40 group-hover:opacity-70 transition-opacity" />
-              <div className="relative w-9 h-9 bg-linear-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-md">
-                <Sparkles className="w-4.5 h-4.5 text-white" />
-              </div>
-            </motion.div>
-            <div className="leading-tight">
-              <span className="block font-display text-base font-bold bg-linear-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent whitespace-nowrap">
-                Reinvent You Over 50
-              </span>
-              <span className="block text-[10px] text-gray-400 font-medium tracking-widest uppercase">Transform Your Life</span>
-            </div>
+          <Link href="/" className="flex items-center">
+          <img src="/img/logo.png" alt="" className='w-33 h-20'/>
           </Link>
 
           {/* Desktop Navigation */}

@@ -117,7 +117,7 @@ export function AboutPage() {
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 />
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1580938223816-e4061844d6ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlbXBvd2VyZWQlMjBzZW5pb3IlMjB3b21hbnxlbnwxfHx8fDE3NzIzNTM1ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080"
+                  src="/img/founder.png"
                   alt="Founder"
                   className="rounded-3xl shadow-2xl w-full relative z-10"
                 />

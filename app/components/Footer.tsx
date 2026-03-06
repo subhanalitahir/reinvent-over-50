@@ -122,20 +122,7 @@ export function Footer() {
               transition={{ duration: 0.7 }}
             >
               <Link href="/" className="flex items-center gap-3 group mb-6 w-fit">
-                <motion.div className="relative" whileHover={{ rotate: 360 }} transition={{ duration: 0.6 }}>
-                  <div className="absolute inset-0 rounded-2xl blur-lg opacity-60 group-hover:opacity-90 transition-opacity"
-                    style={{ background: 'linear-gradient(135deg, #7c3aed, #ec4899)' }} />
-                  <div className="relative w-12 h-12 rounded-2xl flex items-center justify-center shadow-xl"
-                    style={{ background: 'linear-gradient(135deg, #7c3aed, #ec4899)' }}>
-                    <Sparkles className="w-6 h-6 text-white" />
-                  </div>
-                </motion.div>
-                <div>
-                  <div className="text-xl font-bold bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                    Reinvent You Over 50
-                  </div>
-                  <div className="text-xs text-gray-500 font-medium tracking-wide">Transform Your Life</div>
-                </div>
+                <img src="/img/logo.png" alt="Reinvent You Logo" className='w-50 h-40' />
               </Link>
               <p className="text-gray-500 leading-relaxed mb-8 text-sm">
                 Empowering individuals over 50 to discover their purpose, build meaningful connections, and create the extraordinary life they deserve.
