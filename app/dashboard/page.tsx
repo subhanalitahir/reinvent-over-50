@@ -53,10 +53,10 @@ interface IEvent {
   title: string;
   description?: string;
   type: 'virtual' | 'in-person' | 'hybrid';
-  date: string;
+  startDate: string;
   time?: string;
   location?: string;
-  meetingLink?: string;
+  virtualLink?: string;
   price: number;
   isFree: boolean;
   isFreeForMembers: boolean;
@@ -1364,7 +1364,7 @@ function EventsTab({
   const canAccess = (e: IEvent) =>
     e.isFree || (e.isFreeForMembers && isMember) || purchasedEventIds.has(e._id);
 
-  const upcoming = events.filter(e => new Date(e.date) >= new Date());
+  const upcoming = events.filter(e => new Date(e.startDate) >= new Date());
   const accessible = upcoming.filter(canAccess);
   const locked = upcoming.filter(e => !canAccess(e));
 
@@ -1443,7 +1443,7 @@ function EventsTab({
                 <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
                   <span className="flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5" />
-                    {fmt(event.date)}{event.time ? ` · ${event.time}` : ''}
+                    {fmt(event.startDate)}{event.time ? ` · ${event.time}` : ''}
                   </span>
                   {event.type !== 'virtual' && event.location && (
                     <span className="flex items-center gap-1">
@@ -1458,7 +1458,7 @@ function EventsTab({
                   </span>
                   {event.type === 'virtual' && event.meetingLink ? (
                     <a
-                      href={event.meetingLink}
+                      href={event.virtualLink}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs font-semibold px-3 py-1.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-lg flex items-center gap-1 hover:opacity-90 transition-opacity"
@@ -1494,7 +1494,7 @@ function EventsTab({
                   <Lock className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
                 </div>
                 <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
-                  <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{fmt(event.date)}</span>
+                  <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{fmt(event.startDate)}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-gray-500">${event.price.toFixed(2)}</span>

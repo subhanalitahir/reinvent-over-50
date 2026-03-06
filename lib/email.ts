@@ -647,3 +647,33 @@ export const sendWorkbookPurchaseEmail = async (
     text: `Thank you for purchasing ${planName} (${price}). Download your workbook at: ${downloadUrl}`,
   });
 };
+
+// ─── Newsletter broadcast ──────────────────────────────────────────────────────
+
+export const sendNewsletterEmail = async (
+  to: string,
+  subject: string,
+  htmlContent: string,
+  unsubscribeToken: string,
+): Promise<void> => {
+  const unsubscribeUrl = `${CLIENT()}/api/subscribers/unsubscribe?token=${encodeURIComponent(unsubscribeToken)}`;
+
+  const body = `
+    <div style="margin-bottom:32px;">
+      ${htmlContent}
+    </div>
+    <div style="margin-top:32px;padding-top:24px;border-top:1px solid #f3f4f6;text-align:center;">
+      <p style="margin:0;font-size:12px;color:#9ca3af;line-height:1.6;">
+        Don't want to receive these emails?
+        <a href="${unsubscribeUrl}" style="color:#7c3aed;text-decoration:underline;font-weight:600;">Unsubscribe here</a>
+      </p>
+    </div>
+  `;
+
+  await sendEmail({
+    to,
+    subject,
+    html: emailLayout(body, subject),
+    text: `${subject}\n\nTo unsubscribe, visit: ${unsubscribeUrl}`,
+  });
+};

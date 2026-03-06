@@ -7,7 +7,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import {
   LayoutDashboard, Users, Crown, Calendar, ShoppingBag,
   MapPin, Mail, Bell, Image, Package, LogOut, Menu, X,
-  Shield, Loader2, DollarSign, Sparkles,
+  Shield, Loader2, DollarSign, Sparkles, Send,
 } from 'lucide-react';
 
 const NAV_GROUPS = [
@@ -39,6 +39,7 @@ const NAV_GROUPS = [
     items: [
       { href: '/admin/contacts', label: 'Contacts', icon: Mail },
       { href: '/admin/subscribers', label: 'Subscribers', icon: Bell },
+      { href: '/admin/newsletter', label: 'Newsletter', icon: Send },
     ],
   },
   {

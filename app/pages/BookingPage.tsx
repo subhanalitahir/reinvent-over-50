@@ -369,13 +369,12 @@ export function BookingPage() {
                       ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
                     },
                     body: JSON.stringify({
-                      guestName: formData.name,
-                      guestEmail: formData.email,
-                      guestPhone: formData.phone || undefined,
+                      name: formData.name,
+                      email: formData.email,
+                      phone: formData.phone || undefined,
                       sessionType: 'coaching',
-                      scheduledAt,
-                      duration: 60,
-                      notes: formData.notes || undefined,
+                      preferredDate: scheduledAt,
+                      message: formData.notes || undefined,
                     }),
                   });
                   const data = await res.json();
