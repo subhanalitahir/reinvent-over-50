@@ -17,6 +17,7 @@ interface IProduct {
   tags: string[];
   isDigital: boolean;
   includesBooking: boolean;
+  isFreeForMembers: boolean;
   createdAt: string;
 }
 
@@ -26,7 +27,7 @@ const STATUS_COLORS: Record<string, string> = {
   archived: 'bg-red-100 text-red-600',
 };
 
-const EMPTY: Partial<IProduct> = { name: '', slug: '', description: '', type: 'workbook', status: 'active', price: 0, isDigital: true, includesBooking: false, tags: [] };
+const EMPTY: Partial<IProduct> = { name: '', slug: '', description: '', type: 'workbook', status: 'active', price: 0, isDigital: true, includesBooking: false, isFreeForMembers: false, tags: [] };
 
 export default function AdminProductsPage() {
   const { token } = useAuth();
@@ -277,7 +278,7 @@ export default function AdminProductsPage() {
                   onChange={e => setSelected(prev => ({ ...prev, description: e.target.value }))}
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none" />
               </div>
-              <div className="flex items-center gap-4">
+              <div className="sm:col-span-2 flex flex-wrap items-center gap-6">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
                   <input type="checkbox" checked={selected.isDigital ?? true} onChange={e => setSelected(prev => ({ ...prev, isDigital: e.target.checked }))} className="rounded" />
                   Digital Product
@@ -285,6 +286,10 @@ export default function AdminProductsPage() {
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
                   <input type="checkbox" checked={selected.includesBooking ?? false} onChange={e => setSelected(prev => ({ ...prev, includesBooking: e.target.checked }))} className="rounded" />
                   Includes Booking
+                </label>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
+                  <input type="checkbox" checked={selected.isFreeForMembers ?? false} onChange={e => setSelected(prev => ({ ...prev, isFreeForMembers: e.target.checked }))} className="rounded" />
+                  Free for Members
                 </label>
               </div>
             </div>

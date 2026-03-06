@@ -19,10 +19,21 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") ?? "12");
     const skip = (page - 1) * limit;
 
-    const filter: Record<string, unknown> = { status: "published" };
+    // Admin can view all statuses
+    let isAdmin = false;
+    try {
+      const user = await getAuthUser(req);
+      isAdmin = user?.role === "admin";
+    } catch {
+      // unauthenticated – fine
+    }
+
+    const filter: Record<string, unknown> = {};
+    if (!isAdmin) filter.status = "published";
+    else if (searchParams.get("status")) filter.status = searchParams.get("status");
     if (searchParams.get("type")) filter.type = searchParams.get("type");
     if (searchParams.get("tag")) filter.tags = searchParams.get("tag");
-    if (!searchParams.get("past")) filter.startDate = { $gte: new Date() };
+    if (!searchParams.get("past") && !isAdmin) filter.startDate = { $gte: new Date() };
 
     const [events, total] = await Promise.all([
       Event.find(filter).sort({ startDate: 1 }).skip(skip).limit(limit),

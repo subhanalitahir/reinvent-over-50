@@ -15,7 +15,18 @@ export async function GET(req: NextRequest) {
   try {
     await connectDB();
     const { searchParams } = new URL(req.url);
-    const filter: Record<string, unknown> = { status: "active" };
+
+    // Admin can view all statuses
+    let isAdmin = false;
+    try {
+      const user = await getAuthUser(req);
+      isAdmin = user?.role === "admin";
+    } catch {
+      // unauthenticated – fine
+    }
+
+    const filter: Record<string, unknown> = {};
+    if (!isAdmin) filter.status = "active";
     if (searchParams.get("type")) filter.type = searchParams.get("type");
     const products = await Product.find(filter).sort({ createdAt: -1 });
     return apiSuccess(products, "Products fetched");

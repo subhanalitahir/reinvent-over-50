@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
       user: user?._id ?? undefined,
       guestName: user ? undefined : guestName,
       guestEmail: user ? user.email : guestEmail,
-      items: [{ name: event.title, price: unitAmount, quantity: 1 }],
+      items: [{ event: event._id, name: event.title, price: unitAmount, quantity: 1 }],
       total: unitAmount,
       stripeSessionId: session.id,
       status: "pending",

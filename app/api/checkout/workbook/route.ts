@@ -1,28 +1,11 @@
 import { NextRequest } from "next/server";
 import Stripe from "stripe";
 import connectDB from "@/lib/db";
+import Product from "@/lib/models/Product";
 import Order from "@/lib/models/Order";
 import { getAuthUser, apiSuccess, handleError, AppError } from "@/lib/auth";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
-type WorkbookPlan = "workbook" | "bundle";
-
-const WORKBOOK_PRICES: Record<
-  WorkbookPlan,
-  { amount: number; label: string; description: string }
-> = {
-  workbook: {
-    amount: 4700,
-    label: "Workbook",
-    description: "Reinvent Over 50 Workbook (digital download)",
-  },
-  bundle: {
-    amount: 19700,
-    label: "Workbook + Coaching Bundle",
-    description: "Reinvent Over 50 Workbook + 1-on-1 Coaching Session",
-  },
-};
 
 // POST /api/checkout/workbook
 export async function POST(req: NextRequest) {
@@ -31,23 +14,37 @@ export async function POST(req: NextRequest) {
     const user = await getAuthUser(req); // optional auth
 
     const {
-      plan,
+      productId,
       email: guestEmail,
       name: guestName,
     } = (await req.json()) as {
-      plan: WorkbookPlan;
+      productId: string;
       email?: string;
       name?: string;
     };
 
-    const priceInfo = WORKBOOK_PRICES[plan];
-    if (!priceInfo) throw new AppError("Invalid workbook plan", 400);
+    if (!productId) throw new AppError("productId is required", 400);
+
+    const product = await Product.findById(productId);
+    if (!product || product.status !== "active")
+      throw new AppError("Product not found", 404);
+
+    // Check if free for this user
+    const isMember =
+      user?.role === "member" || user?.role === "admin";
+    if (product.price === 0 || (product.isFreeForMembers && isMember)) {
+      throw new AppError(
+        "This product is free for you — no checkout needed",
+        400,
+      );
+    }
 
     const customerEmail = user?.email ?? guestEmail;
     if (!customerEmail)
       throw new AppError("Email is required for guest checkout", 400);
 
     const clientUrl = process.env.CLIENT_URL ?? "http://localhost:3000";
+    const unitAmount = Math.round(product.price * 100); // dollars → cents
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -58,17 +55,18 @@ export async function POST(req: NextRequest) {
           price_data: {
             currency: "usd",
             product_data: {
-              name: priceInfo.label,
-              description: priceInfo.description,
+              name: product.name,
+              description: product.description?.slice(0, 500) ?? "Reinvent Over 50 Product",
             },
-            unit_amount: priceInfo.amount,
+            unit_amount: unitAmount,
           },
           quantity: 1,
         },
       ],
       metadata: {
         type: "workbook",
-        plan,
+        productId: product._id.toString(),
+        productSlug: product.slug,
         userId: user?._id?.toString() ?? "",
         guestEmail: guestEmail ?? "",
         guestName: guestName ?? "",
@@ -82,8 +80,15 @@ export async function POST(req: NextRequest) {
       user: user?._id ?? undefined,
       guestName: user ? undefined : guestName,
       guestEmail: user ? user.email : guestEmail,
-      items: [{ name: priceInfo.label, price: priceInfo.amount, quantity: 1 }],
-      total: priceInfo.amount,
+      items: [
+        {
+          product: product._id,
+          name: product.name,
+          price: unitAmount,
+          quantity: 1,
+        },
+      ],
+      total: unitAmount,
       stripeSessionId: session.id,
       status: "pending",
     });

@@ -17,6 +17,7 @@ interface IEvent {
   maxAttendees?: number;
   price: number;
   isFree: boolean;
+  isFreeForMembers: boolean;
   hostedBy: string;
   tags: string[];
   imageUrl?: string;
@@ -30,7 +31,7 @@ const STATUS_COLORS: Record<string, string> = {
   completed: 'bg-indigo-100 text-indigo-700',
 };
 
-const EMPTY: Partial<IEvent> = { title: '', description: '', type: 'virtual', status: 'draft', hostedBy: '', isFree: true, price: 0, tags: [] };
+const EMPTY: Partial<IEvent> = { title: '', description: '', type: 'virtual', status: 'draft', hostedBy: '', isFree: true, isFreeForMembers: false, price: 0, tags: [] };
 
 export default function AdminEventsPage() {
   const { token } = useAuth();
@@ -274,11 +275,19 @@ export default function AdminEventsPage() {
                   onChange={e => setSelected(prev => ({ ...prev, description: e.target.value }))}
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none" />
               </div>
-              <div className="sm:col-span-2 flex items-center gap-2">
-                <input type="checkbox" id="isFree" checked={selected.isFree ?? true}
-                  onChange={e => setSelected(prev => ({ ...prev, isFree: e.target.checked }))}
-                  className="rounded" />
-                <label htmlFor="isFree" className="text-sm font-medium text-gray-700">Free Event</label>
+              <div className="sm:col-span-2 flex items-center gap-6">
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
+                  <input type="checkbox" checked={selected.isFree ?? true}
+                    onChange={e => setSelected(prev => ({ ...prev, isFree: e.target.checked }))}
+                    className="rounded" />
+                  Free for Everyone
+                </label>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
+                  <input type="checkbox" checked={selected.isFreeForMembers ?? false}
+                    onChange={e => setSelected(prev => ({ ...prev, isFreeForMembers: e.target.checked }))}
+                    className="rounded" />
+                  Free for Members
+                </label>
               </div>
             </div>
             <div className="flex gap-3 p-6 border-t border-gray-100">

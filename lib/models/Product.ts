@@ -15,6 +15,7 @@ export interface IProduct extends Document {
   imageUrl?: string;
   fileUrl?: string;
   includesBooking: boolean;
+  isFreeForMembers: boolean;
   stripeProductId?: string;
   stripePriceId?: string;
   tags: string[];
@@ -63,6 +64,7 @@ const ProductSchema = new Schema<IProduct>(
     imageUrl: String,
     fileUrl: String,
     includesBooking: { type: Boolean, default: false },
+    isFreeForMembers: { type: Boolean, default: false },
     stripeProductId: String,
     stripePriceId: String,
     tags: { type: [String], default: [] },

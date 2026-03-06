@@ -9,6 +9,7 @@ import {
   AlertCircle, Loader2, CheckCircle, Eye, EyeOff, Clock,
   ChevronRight, Shield, Edit3, Check, X, Bell, LayoutDashboard,
   ChevronLeft, TrendingUp, Activity, Menu, Sparkles, Zap, Star,
+  BookOpen, Video, MapPin, Lock, ExternalLink, Users,
 } from 'lucide-react';
 import { useAuth, IUser } from '@/app/context/AuthContext';
 
@@ -39,10 +40,43 @@ interface IOrder {
   status: string;
   total: number;
   createdAt: string;
-  items: { product: { name: string; type: string } | null; quantity: number; price: number }[];
+  items: {
+    product: { _id: string; name: string; type: string } | null;
+    event: { _id: string; title: string } | null;
+    quantity: number;
+    price: number;
+  }[];
 }
 
-type Tab = 'overview' | 'sessions' | 'orders' | 'settings';
+interface IEvent {
+  _id: string;
+  title: string;
+  description?: string;
+  type: 'virtual' | 'in-person' | 'hybrid';
+  date: string;
+  time?: string;
+  location?: string;
+  meetingLink?: string;
+  price: number;
+  isFree: boolean;
+  isFreeForMembers: boolean;
+  status: string;
+  imageUrl?: string;
+}
+
+interface IDashboardProduct {
+  _id: string;
+  name: string;
+  description?: string;
+  type: string;
+  price: number;
+  isFreeForMembers: boolean;
+  status: string;
+  imageUrl?: string;
+  downloadLink?: string;
+}
+
+type Tab = 'overview' | 'sessions' | 'orders' | 'events' | 'workbooks' | 'settings';
 
 /* ─────────── Helpers ─────────── */
 const planColors: Record<string, string> = {
@@ -89,6 +123,8 @@ const navSections = [
     heading: 'COACHING',
     items: [
       { id: 'sessions' as Tab, label: 'My Sessions', Icon: Calendar },
+      { id: 'events' as Tab, label: 'Events', Icon: Users },
+      { id: 'workbooks' as Tab, label: 'Workbooks', Icon: BookOpen },
       { id: 'orders' as Tab, label: 'Orders', Icon: ShoppingBag },
     ],
   },
@@ -419,6 +455,8 @@ export default function DashboardPage() {
   const [membership, setMembership] = useState<IMembership | null>(null);
   const [bookings, setBookings] = useState<IBooking[]>([]);
   const [orders, setOrders] = useState<IOrder[]>([]);
+  const [events, setEvents] = useState<IEvent[]>([]);
+  const [dashProducts, setDashProducts] = useState<IDashboardProduct[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
 
   // Profile editing
@@ -444,14 +482,25 @@ export default function DashboardPage() {
     setDataLoading(true);
     const headers = { Authorization: `Bearer ${token}` };
     try {
-      const [memberRes, bookingsRes, ordersRes] = await Promise.all([
+      const [memberRes, bookingsRes, ordersRes, eventsRes, productsRes] = await Promise.all([
         fetch('/api/members/me', { headers }),
         fetch('/api/bookings/my', { headers }),
         fetch('/api/orders/my', { headers }),
+        fetch('/api/events?limit=50', { headers }),
+        fetch('/api/products?limit=50', { headers }),
       ]);
       if (memberRes.ok) setMembership((await memberRes.json()).data);
       if (bookingsRes.ok) setBookings((await bookingsRes.json()).data ?? []);
       if (ordersRes.ok) setOrders((await ordersRes.json()).data ?? []);
+      if (eventsRes.ok) {
+        const evData = await eventsRes.json();
+        setEvents((evData.data ?? evData.events ?? []).filter((e: IEvent) => e.status === 'published'));
+      }
+      if (productsRes.ok) {
+        const prData = await productsRes.json();
+        const all: IDashboardProduct[] = prData.data ?? prData.products ?? [];
+        setDashProducts(all.filter(p => p.type === 'workbook' || p.type === 'bundle'));
+      }
     } catch { /* ignore */ }
     finally { setDataLoading(false); }
   }, [token]);
@@ -543,6 +592,8 @@ export default function DashboardPage() {
     overview: 'Overview',
     sessions: 'My Sessions',
     orders: 'Order History',
+    events: 'Events',
+    workbooks: 'Workbooks',
     settings: 'Settings',
   };
 
@@ -649,6 +700,24 @@ export default function DashboardPage() {
               )}
               {tab === 'orders' && (
                 <OrdersTab key="orders" orders={orders} loading={dataLoading} />
+              )}
+              {tab === 'events' && (
+                <EventsTab
+                  key="events"
+                  events={events}
+                  orders={orders}
+                  userRole={user.role}
+                  loading={dataLoading}
+                />
+              )}
+              {tab === 'workbooks' && (
+                <WorkbooksTab
+                  key="workbooks"
+                  products={dashProducts}
+                  orders={orders}
+                  userRole={user.role}
+                  loading={dataLoading}
+                />
               )}
               {tab === 'settings' && (
                 <SettingsTab
@@ -1264,6 +1333,339 @@ function OrdersTab({ orders, loading }: { orders: IOrder[]; loading: boolean }) 
               </motion.tbody>
             </table>
           </div>
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════
+   Events Tab
+═══════════════════════════════ */
+function EventsTab({
+  events, orders, userRole, loading,
+}: {
+  events: IEvent[];
+  orders: IOrder[];
+  userRole: string;
+  loading: boolean;
+}) {
+  if (loading) return <TabSkeleton />;
+
+  const isMember = userRole === 'member' || userRole === 'admin';
+  const purchasedEventIds = new Set(
+    orders.flatMap(o =>
+      o.items
+        .filter(i => i.event)
+        .map(i => i.event!._id)
+    )
+  );
+
+  const canAccess = (e: IEvent) =>
+    e.isFree || (e.isFreeForMembers && isMember) || purchasedEventIds.has(e._id);
+
+  const upcoming = events.filter(e => new Date(e.date) >= new Date());
+  const accessible = upcoming.filter(canAccess);
+  const locked = upcoming.filter(e => !canAccess(e));
+
+  const futureOnly = (e: IEvent) => new Date(e.date) >= new Date();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -15 }}
+      className="space-y-6"
+    >
+      {/* Header */}
+      <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-purple-500 to-pink-500" />
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+              <span className="w-7 h-7 rounded-lg bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white">
+                <Users className="w-3.5 h-3.5" />
+              </span>
+              Upcoming Events
+            </h2>
+            <p className="text-sm text-gray-500 mt-0.5">
+              {accessible.length} event{accessible.length !== 1 ? 's' : ''} accessible to you
+            </p>
+          </div>
+          <a
+            href="/events"
+            className="text-xs font-semibold px-3 py-1.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-lg shadow-sm hover:opacity-90 transition-opacity flex items-center gap-1"
+          >
+            Browse All <ExternalLink className="w-3 h-3" />
+          </a>
+        </div>
+      </div>
+
+      {/* Accessible events */}
+      {accessible.length === 0 && locked.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center py-16 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center mb-4">
+            <Calendar className="w-7 h-7 text-purple-300" />
+          </div>
+          <p className="text-sm font-semibold text-gray-600">No upcoming events</p>
+          <p className="text-xs text-gray-400 mt-1">Check back soon for new events</p>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {accessible.filter(futureOnly).map(event => (
+            <motion.div
+              key={event._id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+            >
+              {event.imageUrl && (
+                <div className="h-36 overflow-hidden">
+                  <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
+                </div>
+              )}
+              <div className="p-4">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <h3 className="font-semibold text-gray-800 text-sm leading-snug">{event.title}</h3>
+                  <span className={`shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    event.type === 'virtual'
+                      ? 'bg-blue-100 text-blue-700'
+                      : event.type === 'hybrid'
+                        ? 'bg-purple-100 text-purple-700'
+                        : 'bg-green-100 text-green-700'
+                  }`}>
+                    {event.type}
+                  </span>
+                </div>
+                {event.description && (
+                  <p className="text-xs text-gray-500 mb-3 line-clamp-2">{event.description}</p>
+                )}
+                <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5" />
+                    {fmt(event.date)}{event.time ? ` · ${event.time}` : ''}
+                  </span>
+                  {event.type !== 'virtual' && event.location && (
+                    <span className="flex items-center gap-1">
+                      <MapPin className="w-3.5 h-3.5" />
+                      {event.location}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-green-600">
+                    {event.isFree ? 'Free' : event.isFreeForMembers && isMember ? 'Free for Members' : purchasedEventIds.has(event._id) ? 'Purchased' : `$${event.price.toFixed(2)}`}
+                  </span>
+                  {event.type === 'virtual' && event.meetingLink ? (
+                    <a
+                      href={event.meetingLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-semibold px-3 py-1.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-lg flex items-center gap-1 hover:opacity-90 transition-opacity"
+                    >
+                      Join <Video className="w-3 h-3" />
+                    </a>
+                  ) : (
+                    <span className="text-xs text-gray-400 flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />{event.location ?? 'In-Person'}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+
+          {/* Locked events */}
+          {locked.map(event => (
+            <motion.div
+              key={event._id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden opacity-70"
+            >
+              {event.imageUrl && (
+                <div className="h-36 overflow-hidden grayscale">
+                  <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
+                </div>
+              )}
+              <div className="p-4">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <h3 className="font-semibold text-gray-700 text-sm leading-snug">{event.title}</h3>
+                  <Lock className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
+                </div>
+                <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
+                  <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{fmt(event.date)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-gray-500">${event.price.toFixed(2)}</span>
+                  <a
+                    href="/events"
+                    className="text-xs font-semibold px-3 py-1.5 border border-purple-300 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
+                  >
+                    Register
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════
+   Workbooks Tab
+═══════════════════════════════ */
+function WorkbooksTab({
+  products, orders, userRole, loading,
+}: {
+  products: IDashboardProduct[];
+  orders: IOrder[];
+  userRole: string;
+  loading: boolean;
+}) {
+  if (loading) return <TabSkeleton />;
+
+  const isMember = userRole === 'member' || userRole === 'admin';
+  const purchasedProductIds = new Set(
+    orders.flatMap(o =>
+      o.items
+        .filter(i => i.product)
+        .map(i => i.product!._id)
+    )
+  );
+
+  const canAccess = (p: IDashboardProduct) =>
+    p.price === 0 || (p.isFreeForMembers && isMember) || purchasedProductIds.has(p._id);
+
+  const accessible = products.filter(canAccess);
+  const locked = products.filter(p => !canAccess(p));
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -15 }}
+      className="space-y-6"
+    >
+      {/* Header */}
+      <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-indigo-500 to-purple-500" />
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+              <span className="w-7 h-7 rounded-lg bg-linear-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white">
+                <BookOpen className="w-3.5 h-3.5" />
+              </span>
+              My Workbooks
+            </h2>
+            <p className="text-sm text-gray-500 mt-0.5">
+              {accessible.length} workbook{accessible.length !== 1 ? 's' : ''} accessible to you
+            </p>
+          </div>
+          <a
+            href="/workbook"
+            className="text-xs font-semibold px-3 py-1.5 bg-linear-to-r from-indigo-600 to-purple-600 text-white rounded-lg shadow-sm hover:opacity-90 transition-opacity flex items-center gap-1"
+          >
+            Browse All <ExternalLink className="w-3 h-3" />
+          </a>
+        </div>
+      </div>
+
+      {products.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center py-16 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center mb-4">
+            <BookOpen className="w-7 h-7 text-indigo-300" />
+          </div>
+          <p className="text-sm font-semibold text-gray-600">No workbooks available yet</p>
+          <p className="text-xs text-gray-400 mt-1">Check back soon</p>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {accessible.map(product => (
+            <motion.div
+              key={product._id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+            >
+              {product.imageUrl ? (
+                <div className="h-32 overflow-hidden">
+                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div className="h-32 bg-linear-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
+                  <BookOpen className="w-10 h-10 text-indigo-200" />
+                </div>
+              )}
+              <div className="p-4">
+                <div className="flex items-start justify-between gap-2 mb-1">
+                  <h3 className="font-semibold text-gray-800 text-sm leading-snug">{product.name}</h3>
+                  <span className={`shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${product.type === 'bundle' ? 'bg-amber-100 text-amber-700' : 'bg-indigo-100 text-indigo-700'}`}>
+                    {product.type}
+                  </span>
+                </div>
+                {product.description && (
+                  <p className="text-xs text-gray-500 mb-3 line-clamp-2">{product.description}</p>
+                )}
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-xs font-semibold text-green-600">
+                    {product.price === 0 ? 'Free' : product.isFreeForMembers && isMember ? 'Free for Members' : `$${product.price.toFixed(2)}`}
+                  </span>
+                  {product.downloadLink ? (
+                    <a
+                      href={product.downloadLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-semibold px-3 py-1.5 bg-linear-to-r from-indigo-600 to-purple-600 text-white rounded-lg flex items-center gap-1 hover:opacity-90 transition-opacity"
+                    >
+                      Download
+                    </a>
+                  ) : (
+                    <span className="text-xs text-green-600 font-medium flex items-center gap-1">
+                      <CheckCircle className="w-3.5 h-3.5" /> Accessible
+                    </span>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+
+          {/* Locked workbooks */}
+          {locked.map(product => (
+            <motion.div
+              key={product._id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden opacity-60"
+            >
+              {product.imageUrl ? (
+                <div className="h-32 overflow-hidden grayscale">
+                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div className="h-32 bg-gray-50 flex items-center justify-center">
+                  <Lock className="w-10 h-10 text-gray-200" />
+                </div>
+              )}
+              <div className="p-4">
+                <div className="flex items-start justify-between gap-2 mb-1">
+                  <h3 className="font-semibold text-gray-600 text-sm leading-snug">{product.name}</h3>
+                  <Lock className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
+                </div>
+                <div className="flex items-center justify-between mt-3">
+                  <span className="text-xs font-semibold text-gray-500">${product.price.toFixed(2)}</span>
+                  <a
+                    href="/workbook"
+                    className="text-xs font-semibold px-3 py-1.5 border border-indigo-300 text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors"
+                  >
+                    {isMember ? 'Purchase' : product.isFreeForMembers ? 'Upgrade to Access' : 'Purchase'}
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
       )}
     </motion.div>

@@ -17,6 +17,7 @@ export interface IEvent extends Document {
   attendees: mongoose.Types.ObjectId[];
   price: number;
   isFree: boolean;
+  isFreeForMembers: boolean;
   imageUrl?: string;
   tags: string[];
   hostedBy: string;
@@ -56,6 +57,7 @@ const EventSchema = new Schema<IEvent>(
     attendees: [{ type: Schema.Types.ObjectId, ref: "User" }],
     price: { type: Number, default: 0, min: 0 },
     isFree: { type: Boolean, default: true },
+    isFreeForMembers: { type: Boolean, default: false },
     imageUrl: String,
     tags: [{ type: String, lowercase: true, trim: true }],
     hostedBy: {

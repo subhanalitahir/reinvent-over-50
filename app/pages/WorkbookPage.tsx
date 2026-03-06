@@ -1,49 +1,84 @@
-'use client';
+﻿'use client';
 
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import { Check, BookOpen, Video, ArrowRight, Star, Sparkles, Shield, Award, Zap, CheckCircle } from 'lucide-react';
+import { Check, BookOpen, Video, ArrowRight, Star, Sparkles, Shield, Award, Zap, CheckCircle, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EmailModal } from '../components/EmailModal';
 import { useAuth } from '../context/AuthContext';
 
+interface IProduct {
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  type: string;
+  price: number;
+  compareAtPrice?: number;
+  imageUrl?: string;
+  isFreeForMembers: boolean;
+  includesBooking: boolean;
+  isDigital: boolean;
+  status: string;
+}
+
 export function WorkbookPage() {
   const searchParams = useSearchParams();
   const { user, token } = useAuth();
+  const [products, setProducts] = useState<IProduct[]>([]);
+  const [productsLoading, setProductsLoading] = useState(true);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState('');
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [pendingPlan, setPendingPlan] = useState<'workbook' | 'bundle' | null>(null);
+  const [pendingProductId, setPendingProductId] = useState<string | null>(null);
+
+  const loadProducts = useCallback(async () => {
+    setProductsLoading(true);
+    try {
+      const res = await fetch('/api/products?type=workbook');
+      const json = await res.json();
+      // Also fetch bundles
+      const res2 = await fetch('/api/products?type=bundle');
+      const json2 = await res2.json();
+      const combined = [...(json?.data ?? []), ...(json2?.data ?? [])];
+      setProducts(combined);
+    } catch {
+      setProducts([]);
+    } finally {
+      setProductsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { loadProducts(); }, [loadProducts]);
 
   useEffect(() => {
     const successParam = searchParams.get('success');
     const sessionId = searchParams.get('session_id');
     if (successParam === 'true') {
       setPurchaseSuccess(true);
-      // Verify with backend so the download email is sent
-      if (sessionId) {
-        fetch(`/api/checkout/verify?session_id=${sessionId}`).catch(() => {});
-      }
+      if (sessionId) fetch(`/api/checkout/verify?session_id=${sessionId}`).catch(() => {});
     }
     if (searchParams.get('canceled') === 'true') setCheckoutError('Payment was cancelled. You can try again.');
   }, [searchParams]);
 
-  const doCheckout = async (plan: 'workbook' | 'bundle', email?: string) => {
-    setLoadingPlan(plan);
+  const isFreeForCurrentUser = (product: IProduct): boolean => {
+    if (product.price === 0) return true;
+    if (product.isFreeForMembers && (user?.role === 'member' || user?.role === 'admin')) return true;
+    return false;
+  };
+
+  const doCheckout = async (productId: string, email?: string) => {
+    setLoadingPlan(productId);
     setCheckoutError('');
     try {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
-      const body: Record<string, string> = { plan };
+      const body: Record<string, string> = { productId };
       if (email) body.email = email;
-      const res = await fetch('/api/checkout/workbook', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(body),
-      });
+      const res = await fetch('/api/checkout/workbook', { method: 'POST', headers, body: JSON.stringify(body) });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.message ?? 'Checkout failed');
       if (data.data?.url) window.location.href = data.data.url;
@@ -56,23 +91,31 @@ export function WorkbookPage() {
     }
   };
 
-  const handleWorkbookCheckout = (plan: 'workbook' | 'bundle') => {
+  const handleWorkbookCheckout = (product: IProduct) => {
+    if (isFreeForCurrentUser(product)) {
+      if (product.isFreeForMembers && product.price > 0 && user?.role !== 'member' && user?.role !== 'admin') {
+        window.location.href = '/membership';
+        return;
+      }
+      window.location.href = '/dashboard';
+      return;
+    }
     setCheckoutError('');
     if (user && token) {
-      // Authenticated: call API directly with the Bearer token
-      doCheckout(plan);
+      doCheckout(product._id);
     } else {
-      // Guest: collect email via modal
-      setPendingPlan(plan);
+      setPendingProductId(product._id);
       setModalOpen(true);
     }
   };
 
   const handleModalSubmit = async (email: string) => {
-    if (!pendingPlan) return;
+    if (!pendingProductId) return;
     setModalOpen(false);
-    await doCheckout(pendingPlan, email);
+    await doCheckout(pendingProductId, email);
   };
+
+  const pendingProduct = products.find(p => p._id === pendingProductId);
 
   return (
     <div className="pt-20">
@@ -203,85 +246,75 @@ export function WorkbookPage() {
               <span className="bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Option</span>
             </h2>
           </motion.div>
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Workbook Only */}
-            <motion.div className="card-shine bg-white rounded-3xl shadow-2xl p-10 border border-gray-100 hover:border-purple-200 hover:shadow-purple-100 transition-all"
-              initial={{ opacity:0, x:-30 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }} transition={{ duration:0.6 }}
-              whileHover={{ y:-8 }}>
-              <div className="w-16 h-16 bg-linear-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                <BookOpen className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-1">Workbook Only</h3>
-              <p className="text-gray-500 mb-6">Perfect for self-guided transformation</p>
-              <div className="flex items-baseline gap-2 mb-8">
-                <span className="text-6xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">$47</span>
-                <span className="text-gray-500">one-time</span>
-              </div>
-              <ul className="space-y-4 mb-10">
-                {['Digital PDF workbook (150+ pages)', 'Printable worksheets & templates', '12 comprehensive modules', 'Lifetime access & updates', 'Bonus: Goal-setting templates'].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <div className="w-5 h-5 bg-linear-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shrink-0 mt-0.5">
-                      <Check className="w-3 h-3 text-white" />
-                    </div>
-                    <span className="text-gray-700">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <motion.button
-                onClick={() => handleWorkbookCheckout('workbook')}
-                disabled={loadingPlan !== null}
-                className="w-full border-2 border-purple-600 text-purple-600 py-5 rounded-2xl font-bold text-lg hover:bg-purple-600 hover:text-white transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-                whileHover={{ scale: loadingPlan ? 1 : 1.02 }}
-                whileTap={{ scale: loadingPlan ? 1 : 0.98 }}>
-                {loadingPlan === 'workbook' ? 'Redirecting…' : 'Purchase Workbook'}
-              </motion.button>
-            </motion.div>
-
-            {/* Bundle */}
-            <motion.div className="relative card-shine bg-linear-to-br from-purple-600 via-pink-600 to-purple-700 text-white rounded-3xl shadow-2xl p-10 overflow-hidden"
-              initial={{ opacity:0, x:30 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }} transition={{ duration:0.6, delay:0.1 }}
-              whileHover={{ y:-8 }}>
-              <motion.div className="absolute -top-20 -right-20 w-60 h-60 bg-white/10 rounded-full" animate={{ scale:[1,1.3,1] }} transition={{ duration:8, repeat:Infinity }} />
-              <motion.div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full" animate={{ scale:[1,1.2,1] }} transition={{ duration:6, repeat:Infinity, delay:1 }} />
-              <motion.div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-400 text-gray-900 px-6 py-1.5 rounded-full text-sm font-bold shadow-lg"
-                animate={{ y:[0,-4,0] }} transition={{ duration:2, repeat:Infinity, ease:'easeInOut' }}>
-                Most Popular
-              </motion.div>
-              <div className="relative z-10">
-                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-6">
-                  <Video className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold mb-1">Workbook + Coaching Bundle</h3>
-                <p className="text-purple-100 mb-6">Accelerate your transformation with expert guidance</p>
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-6xl font-bold">$197</span>
-                  <span className="text-purple-200">one-time</span>
-                </div>
-                <p className="text-sm text-purple-200 line-through mb-8">$247 value — save $50</p>
-                <ul className="space-y-4 mb-10">
-                  {['Everything in Workbook Only', '60-minute personalized coaching session', 'Custom action plan creation', 'Follow-up email support (30 days)', 'Priority scheduling', 'Bonus: Accountability check-ins'].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <div className="w-5 h-5 bg-white/30 rounded-full flex items-center justify-center shrink-0 mt-0.5">
-                        <Check className="w-3 h-3 text-white" />
+          {productsLoading ? (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+            </div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-16 text-gray-400">
+              <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-40" />
+              <p className="text-lg font-medium">No products available yet.</p>
+              <p className="text-sm mt-1">Check back soon!</p>
+            </div>
+          ) : (
+            <div className={`grid gap-8 ${products.length === 1 ? 'max-w-md mx-auto' : products.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'}`}>
+              {products.map((product, index) => {
+                const isFeatured = product.type === 'bundle' || product.includesBooking;
+                const freeForUser = isFreeForCurrentUser(product);
+                const priceDisplay = freeForUser ? (product.isFreeForMembers && product.price > 0 ? 'Free for Members' : 'Free') : `$${product.price.toFixed(2)}`;
+                return (
+                  <motion.div key={product._id}
+                    className={`relative card-shine rounded-3xl shadow-2xl p-10 overflow-hidden ${isFeatured ? 'bg-linear-to-br from-purple-600 via-pink-600 to-purple-700 text-white' : 'bg-white border border-gray-100 hover:border-purple-200 hover:shadow-purple-100'}`}
+                    initial={{ opacity:0, x: index % 2 === 0 ? -30 : 30 }}
+                    whileInView={{ opacity:1, x:0 }} viewport={{ once:true }}
+                    transition={{ duration:0.6, delay: index * 0.1 }}
+                    whileHover={{ y:-8 }}>
+                    {isFeatured && (
+                      <>
+                        <motion.div className="absolute -top-20 -right-20 w-60 h-60 bg-white/10 rounded-full" animate={{ scale:[1,1.3,1] }} transition={{ duration:8, repeat:Infinity }} />
+                        <motion.div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full" animate={{ scale:[1,1.2,1] }} transition={{ duration:6, repeat:Infinity, delay:1 }} />
+                        <motion.div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-400 text-gray-900 px-6 py-1.5 rounded-full text-sm font-bold shadow-lg"
+                          animate={{ y:[0,-4,0] }} transition={{ duration:2, repeat:Infinity, ease:'easeInOut' }}>
+                          Most Popular
+                        </motion.div>
+                      </>
+                    )}
+                    {(freeForUser || product.isFreeForMembers) && (
+                      <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold ${isFeatured ? 'bg-white/20 text-white' : 'bg-green-100 text-green-700'}`}>
+                        {product.price === 0 ? 'Free' : 'Member Free'}
                       </div>
-                      <span className="text-white">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <motion.button
-                  onClick={() => handleWorkbookCheckout('bundle')}
-                  disabled={loadingPlan !== null}
-                  className="w-full bg-white text-purple-600 py-5 rounded-2xl font-bold text-lg shadow-xl hover:bg-purple-50 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-                  whileHover={{ scale: loadingPlan ? 1 : 1.02 }}
-                  whileTap={{ scale: loadingPlan ? 1 : 0.98 }}>
-                  {loadingPlan === 'bundle' ? 'Redirecting…' : 'Get the Bundle'}
-                </motion.button>
-              </div>
-            </motion.div>
-          </div>
+                    )}
+                    <div className="relative z-10">
+                      <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg ${isFeatured ? 'bg-white/20' : 'bg-linear-to-br from-purple-500 to-pink-500'}`}>
+                        {product.includesBooking ? <Video className="w-8 h-8 text-white" /> : <BookOpen className="w-8 h-8 text-white" />}
+                      </div>
+                      <h3 className={`text-2xl font-bold mb-1 ${isFeatured ? 'text-white' : 'text-gray-900'}`}>{product.name}</h3>
+                      <p className={`mb-6 text-sm line-clamp-2 ${isFeatured ? 'text-purple-100' : 'text-gray-500'}`}>{product.description}</p>
+                      <div className="flex items-baseline gap-2 mb-2">
+                        <span className={`text-5xl font-bold ${isFeatured ? 'text-white' : 'bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent'}`}>
+                          {priceDisplay}
+                        </span>
+                        {product.price > 0 && !freeForUser && <span className={isFeatured ? 'text-purple-200' : 'text-gray-500'}>one-time</span>}
+                      </div>
+                      {product.compareAtPrice && product.compareAtPrice > product.price && (
+                        <p className={`text-sm line-through mb-4 ${isFeatured ? 'text-purple-200' : 'text-gray-400'}`}>${product.compareAtPrice.toFixed(2)} value</p>
+                      )}
+                      <motion.button
+                        onClick={() => handleWorkbookCheckout(product)}
+                        disabled={loadingPlan !== null}
+                        className={`w-full mt-8 py-5 rounded-2xl font-bold text-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed ${isFeatured ? 'bg-white text-purple-600 shadow-xl hover:bg-purple-50' : 'border-2 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white'}`}
+                        whileHover={{ scale: loadingPlan ? 1 : 1.02 }}
+                        whileTap={{ scale: loadingPlan ? 1 : 0.98 }}>
+                        {loadingPlan === product._id ? 'Redirectingâ€¦' : freeForUser ? (user ? 'Access Now' : 'Get Free Access') : `Get ${product.name}`}
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
-
       {/* Sample Preview */}
       <section className="py-24 bg-white relative overflow-hidden">
         <div className="absolute inset-0 bg-dot-pattern opacity-30" />
@@ -347,7 +380,7 @@ export function WorkbookPage() {
                   </div>
                   <div>
                     <div className="font-bold text-gray-900">{t.name}</div>
-                    <div className="text-sm text-gray-500">{t.role} • Age {t.age}</div>
+                    <div className="text-sm text-gray-500">{t.role} â€¢ Age {t.age}</div>
                   </div>
                 </div>
               </motion.div>
@@ -372,7 +405,7 @@ export function WorkbookPage() {
               </motion.div>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">30-Day Money-Back Guarantee</h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                We're confident this workbook will transform your life. If you're not completely satisfied within 30 days, we'll refund your purchase — no questions asked.
+                We're confident this workbook will transform your life. If you're not completely satisfied within 30 days, we'll refund your purchase â€” no questions asked.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-6 text-gray-600">
                 {['No questions asked', 'Full refund within 24hrs', '100% risk-free'].map((item, i) => (
@@ -389,11 +422,11 @@ export function WorkbookPage() {
 
       <EmailModal
         isOpen={modalOpen}
-        onClose={() => { setModalOpen(false); setPendingPlan(null); }}
+        onClose={() => { setModalOpen(false); setPendingProductId(null); }}
         onSubmit={handleModalSubmit}
         title="One last step!"
-        subtitle="Enter your email to get your workbook. Your download link will be sent there instantly."
-        ctaLabel="Proceed to Checkout →"
+        subtitle={pendingProduct ? `Enter your email to get "${pendingProduct.name}". Your download link will be sent there instantly.` : 'Enter your email to proceed to checkout.'}
+        ctaLabel="Proceed to Checkout "
         loading={loadingPlan !== null}
       />
     </div>

@@ -11,6 +11,7 @@ export async function GET(req: NextRequest) {
     requireAuth(user);
     const orders = await Order.find({ user: user._id })
       .populate("items.product", "name imageUrl type")
+      .populate("items.event", "title")
       .sort({ createdAt: -1 });
     return apiSuccess(orders, "Orders fetched");
   } catch (err) {
