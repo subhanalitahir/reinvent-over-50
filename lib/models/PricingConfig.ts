@@ -23,10 +23,22 @@ export interface IPricingConfig extends Document {
 const PricingConfigSchema = new Schema<IPricingConfig>(
   {
     membership: {
-      community: { monthly: { type: Number, default: 2900 }, annual: { type: Number, default: 29000 } },
-      growth: { monthly: { type: Number, default: 4900 }, annual: { type: Number, default: 49000 } },
-      transformation: { monthly: { type: Number, default: 5900 }, annual: { type: Number, default: 59000 } },
-      vip: { monthly: { type: Number, default: 9900 }, annual: { type: Number, default: 99000 } },
+      community: {
+        monthly: { type: Number, default: 2900 },
+        annual: { type: Number, default: 29000 },
+      },
+      growth: {
+        monthly: { type: Number, default: 4900 },
+        annual: { type: Number, default: 49000 },
+      },
+      transformation: {
+        monthly: { type: Number, default: 5900 },
+        annual: { type: Number, default: 59000 },
+      },
+      vip: {
+        monthly: { type: Number, default: 9900 },
+        annual: { type: Number, default: 99000 },
+      },
     },
     bookings: {
       discovery: { type: Number, default: 0 },
@@ -38,5 +50,6 @@ const PricingConfigSchema = new Schema<IPricingConfig>(
   { timestamps: true },
 );
 
-export default (mongoose.models.PricingConfig as mongoose.Model<IPricingConfig>) ||
+export default (mongoose.models
+  .PricingConfig as mongoose.Model<IPricingConfig>) ||
   mongoose.model<IPricingConfig>("PricingConfig", PricingConfigSchema);

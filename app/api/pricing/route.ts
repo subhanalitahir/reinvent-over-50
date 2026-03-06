@@ -40,14 +40,20 @@ export async function PUT(req: NextRequest) {
       if (body.membership) {
         for (const plan of Object.keys(body.membership)) {
           if (body.membership[plan].monthly !== undefined)
-            (config.membership as Record<string, Record<string, number>>)[plan].monthly = Number(body.membership[plan].monthly);
+            (config.membership as Record<string, Record<string, number>>)[
+              plan
+            ].monthly = Number(body.membership[plan].monthly);
           if (body.membership[plan].annual !== undefined)
-            (config.membership as Record<string, Record<string, number>>)[plan].annual = Number(body.membership[plan].annual);
+            (config.membership as Record<string, Record<string, number>>)[
+              plan
+            ].annual = Number(body.membership[plan].annual);
         }
       }
       if (body.bookings) {
         for (const key of Object.keys(body.bookings)) {
-          (config.bookings as Record<string, number>)[key] = Number(body.bookings[key]);
+          (config.bookings as Record<string, number>)[key] = Number(
+            body.bookings[key],
+          );
         }
       }
       config.markModified("membership");

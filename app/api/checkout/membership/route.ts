@@ -41,8 +41,11 @@ export async function POST(req: NextRequest) {
 
     // Prefer DB pricing; fall back to hardcoded constants
     const pricingConfig = await PricingConfig.findOne();
-    const dbMembership = pricingConfig?.membership as Record<string, Record<string, number>> | undefined;
-    const unitAmount = dbMembership?.[plan]?.[billingCycle] ?? PRICES[plan][billingCycle];
+    const dbMembership = pricingConfig?.membership as
+      | Record<string, Record<string, number>>
+      | undefined;
+    const unitAmount =
+      dbMembership?.[plan]?.[billingCycle] ?? PRICES[plan][billingCycle];
     const clientUrl = process.env.CLIENT_URL ?? "http://localhost:3000";
 
     const session = await stripe.checkout.sessions.create({

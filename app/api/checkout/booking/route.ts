@@ -35,7 +35,9 @@ export async function POST(req: NextRequest) {
 
     // Prefer DB pricing; fall back to $150 hardcoded default
     const pricingConfig = await PricingConfig.findOne();
-    const dbBookings = pricingConfig?.bookings as Record<string, number> | undefined;
+    const dbBookings = pricingConfig?.bookings as
+      | Record<string, number>
+      | undefined;
     const unitAmount = dbBookings?.[sessionType] ?? 15000;
 
     const session = await stripe.checkout.sessions.create({
