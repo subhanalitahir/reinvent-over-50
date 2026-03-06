@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useSpring, useTransform, useInView } from 'motion/react';
 import {
-  User, Calendar, ShoppingBag, Settings, LogOut, Crown, Sparkles,
-  AlertCircle, Loader2, CheckCircle, Eye, EyeOff, Star, Clock,
-  Package, ChevronRight, Shield, Edit3, Check, X,
+  User, Calendar, ShoppingBag, Settings, LogOut, Crown,
+  AlertCircle, Loader2, CheckCircle, Eye, EyeOff, Clock,
+  ChevronRight, Shield, Edit3, Check, X, Bell, LayoutDashboard,
+  ChevronLeft, TrendingUp, Activity, Menu, Sparkles, Zap, Star,
 } from 'lucide-react';
 import { useAuth, IUser } from '@/app/context/AuthContext';
 
@@ -41,7 +42,6 @@ interface IOrder {
   items: { product: { name: string; type: string } | null; quantity: number; price: number }[];
 }
 
-/* ─────────── Tab type ─────────── */
 type Tab = 'overview' | 'sessions' | 'orders' | 'settings';
 
 /* ─────────── Helpers ─────────── */
@@ -60,10 +60,351 @@ const statusBadge: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-700',
   confirmed: 'bg-green-100 text-green-700',
   completed: 'bg-purple-100 text-purple-700',
+  paid: 'bg-green-100 text-green-700',
+  refunded: 'bg-orange-100 text-orange-700',
 };
 
 function fmt(date: string) {
   return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+/* ─────────── Animated Number Counter ─────────── */
+function AnimatedNumber({ value }: { value: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true });
+  const spring = useSpring(0, { stiffness: 100, damping: 20 });
+  const display = useTransform(spring, v => Math.round(v).toString());
+
+  useEffect(() => {
+    if (inView) spring.set(value);
+  }, [inView, value, spring]);
+
+  return <motion.span ref={ref}>{display}</motion.span>;
+}
+
+/* ─────────── Sidebar ─────────── */
+const navSections = [
+  { items: [{ id: 'overview' as Tab, label: 'Overview', Icon: LayoutDashboard }] },
+  {
+    heading: 'COACHING',
+    items: [
+      { id: 'sessions' as Tab, label: 'My Sessions', Icon: Calendar },
+      { id: 'orders' as Tab, label: 'Orders', Icon: ShoppingBag },
+    ],
+  },
+  {
+    heading: 'ACCOUNT',
+    items: [{ id: 'settings' as Tab, label: 'Settings', Icon: Settings }],
+  },
+];
+
+function Sidebar({
+  tab, setTab, user, onLogout, collapsed, setCollapsed, mobileOpen, setMobileOpen,
+}: {
+  tab: Tab; setTab: (t: Tab) => void; user: IUser; onLogout: () => void;
+  collapsed: boolean; setCollapsed: (v: boolean) => void;
+  mobileOpen: boolean; setMobileOpen: (v: boolean) => void;
+}) {
+  const content = (
+    <div className="flex flex-col h-full relative overflow-hidden">
+      {/* Dark gradient background */}
+      <div className="absolute inset-0 bg-[#0f0720]" />
+      {/* Glowing orbs */}
+      <div className="absolute top-0 left-0 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-20 right-0 w-32 h-32 bg-pink-600/15 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Logo */}
+      <div className="relative flex items-center gap-3 px-4 py-4 border-b border-white/10 overflow-hidden min-h-16">
+        <Link href="/" className="shrink-0" onClick={() => setMobileOpen(false)}>
+          <img src="/img/logo.png" alt="Reinvent You Over 50" className="h-10 w-auto brightness-0 invert" />
+        </Link>
+        {!collapsed && (
+          <motion.div
+            className="min-w-0 flex-1"
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <p className="text-[11px] font-bold text-white leading-tight">Reinvent You Over 50</p>
+            <p className="text-[9px] text-purple-300/70 uppercase tracking-widest mt-0.5">Transform Your Life</p>
+          </motion.div>
+        )}
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="hidden lg:flex ml-auto shrink-0 w-6 h-6 items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-all"
+        >
+          {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
+        </button>
+        <button
+          onClick={() => setMobileOpen(false)}
+          className="lg:hidden ml-auto shrink-0 w-6 h-6 flex items-center justify-center rounded-lg text-white/40 hover:text-white"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Navigation */}
+      <nav className="relative flex-1 overflow-y-auto py-4 px-2 space-y-0.5">
+        {navSections.map((section, si) => (
+          <div key={si} className={si > 0 ? 'pt-4' : ''}>
+            {section.heading && !collapsed && (
+              <p className="text-[9px] font-bold text-white/25 uppercase tracking-[0.2em] px-3 mb-2">
+                {section.heading}
+              </p>
+            )}
+            {section.heading && collapsed && <div className="h-px bg-white/10 mx-2 mb-3" />}
+            {section.items.map(({ id, label, Icon }) => (
+              <motion.button
+                key={id}
+                onClick={() => { setTab(id); setMobileOpen(false); }}
+                className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all overflow-hidden ${
+                  tab === id
+                    ? 'text-white'
+                    : 'text-white/50 hover:text-white/90 hover:bg-white/5'
+                }`}
+                whileHover={{ x: tab === id ? 0 : 3 }}
+                whileTap={{ scale: 0.97 }}
+                title={collapsed ? label : undefined}
+              >
+                {tab === id && (
+                  <motion.div
+                    className="absolute inset-0 bg-linear-to-r from-purple-600/80 to-pink-600/60 rounded-xl"
+                    layoutId="activeNav"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
+                {tab === id && (
+                  <div className="absolute inset-0 bg-linear-to-r from-purple-500/20 to-pink-500/10 rounded-xl blur-sm" />
+                )}
+                <Icon className={`relative w-4 h-4 shrink-0 ${tab === id ? 'text-white' : 'text-white/40'}`} />
+                {!collapsed && <span className="relative truncate">{label}</span>}
+                {tab === id && !collapsed && (
+                  <motion.div
+                    className="relative ml-auto w-1.5 h-1.5 rounded-full bg-white"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 500 }}
+                  />
+                )}
+              </motion.button>
+            ))}
+          </div>
+        ))}
+      </nav>
+
+      {/* User card & logout */}
+      <div className="relative border-t border-white/10 p-3 space-y-1">
+        {!collapsed && (
+          <motion.div
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10"
+            whileHover={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
+          >
+            <div className="relative shrink-0">
+              <div className="w-8 h-8 rounded-full bg-linear-to-br from-purple-400 to-pink-500 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-purple-900/50">
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+              <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-400 border-2 border-[#0f0720]" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-white truncate">{user.name.split(' ')[0]}</p>
+              <p className="text-[10px] text-white/40 truncate capitalize">{user.role}</p>
+            </div>
+          </motion.div>
+        )}
+        {collapsed && (
+          <div className="flex justify-center py-1">
+            <div className="relative">
+              <div className="w-8 h-8 rounded-full bg-linear-to-br from-purple-400 to-pink-500 flex items-center justify-center text-white text-xs font-bold shadow-lg">
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+              <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-400 border-2 border-[#0f0720]" />
+            </div>
+          </div>
+        )}
+        <motion.button
+          onClick={onLogout}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-red-400/70 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+          whileHover={{ x: 2 }}
+          title={collapsed ? 'Sign Out' : undefined}
+        >
+          <LogOut className="w-4 h-4 shrink-0" />
+          {!collapsed && 'Sign Out'}
+        </motion.button>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <motion.aside
+        className="fixed top-0 left-0 h-screen z-70 hidden lg:flex flex-col shadow-2xl shadow-black/30"
+        animate={{ width: collapsed ? 72 : 240 }}
+        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      >
+        {content}
+      </motion.aside>
+
+      {/* Mobile overlay */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-75 bg-black/60 backdrop-blur-sm"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+            />
+            <motion.aside
+              className="fixed top-0 left-0 h-screen w-60 z-80 flex flex-col shadow-2xl"
+              initial={{ x: -240 }}
+              animate={{ x: 0 }}
+              exit={{ x: -240 }}
+              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            >
+              {content}
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+/* ─────────── Sessions Activity Chart (SVG — animated draw) ─────────── */
+function SessionsChart({ bookings }: { bookings: IBooking[] }) {
+  const W = 520, H = 150, padX = 30, padY = 20;
+  const [drawn, setDrawn] = useState(false);
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true });
+
+  useEffect(() => { if (inView) setTimeout(() => setDrawn(true), 100); }, [inView]);
+
+  const months = useMemo(() => {
+    const result = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(1);
+      d.setMonth(d.getMonth() - i);
+      result.push({ label: d.toLocaleDateString('en-US', { month: 'short' }), year: d.getFullYear(), month: d.getMonth() });
+    }
+    return result;
+  }, []);
+
+  const data = useMemo(() =>
+    months.map(m => ({
+      label: m.label,
+      count: bookings.filter(b => {
+        const d = new Date(b.scheduledAt);
+        return d.getFullYear() === m.year && d.getMonth() === m.month;
+      }).length,
+    })),
+  [bookings, months]);
+
+  const maxVal = Math.max(...data.map(d => d.count), 4);
+  const stepX = (W - padX * 2) / (data.length - 1);
+  const pts = data.map((d, i) => ({
+    x: padX + i * stepX,
+    y: padY + (1 - d.count / maxVal) * (H - padY * 2.5),
+    count: d.count,
+    label: d.label,
+  }));
+
+  // Smooth cubic bezier
+  function bezierPath(points: typeof pts) {
+    return points.map((p, i) => {
+      if (i === 0) return `M${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+      const prev = points[i - 1];
+      const cx = (prev.x + p.x) / 2;
+      return `C${cx.toFixed(1)},${prev.y.toFixed(1)} ${cx.toFixed(1)},${p.y.toFixed(1)} ${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+    }).join(' ');
+  }
+
+  const pathD = bezierPath(pts);
+  const areaD = `${pathD} L${pts[pts.length - 1].x},${H - padY} L${pts[0].x},${H - padY} Z`;
+
+  // Approximate path length for stroke-dasharray animation
+  const pathLen = 600;
+
+  return (
+    <svg ref={ref} viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ overflow: 'visible' }}>
+      <defs>
+        <linearGradient id="areaFill2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.18} />
+          <stop offset="100%" stopColor="#7c3aed" stopOpacity={0} />
+        </linearGradient>
+        <linearGradient id="lineStroke2" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#7c3aed" />
+          <stop offset="50%" stopColor="#a855f7" />
+          <stop offset="100%" stopColor="#ec4899" />
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+          <feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+
+      {/* Horizontal grid */}
+      {[0, 0.25, 0.5, 0.75, 1].map((f, i) => (
+        <g key={i}>
+          <line
+            x1={padX} y1={padY + f * (H - padY * 2.5)}
+            x2={W - padX} y2={padY + f * (H - padY * 2.5)}
+            stroke="#f3f4f6" strokeWidth={1} strokeDasharray={i === 4 ? '0' : '4 4'}
+          />
+          <text x={padX - 6} y={padY + f * (H - padY * 2.5) + 3.5} textAnchor="end" fontSize={8} fill="#d1d5db">
+            {Math.round(maxVal * (1 - f))}
+          </text>
+        </g>
+      ))}
+
+      {/* Area fill */}
+      <motion.path
+        d={areaD}
+        fill="url(#areaFill2)"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: drawn ? 1 : 0 }}
+        transition={{ duration: 0.8, delay: 0.4 }}
+      />
+
+      {/* Animated line */}
+      <motion.path
+        d={pathD}
+        fill="none"
+        stroke="url(#lineStroke2)"
+        strokeWidth={2.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        filter="url(#glow)"
+        strokeDasharray={pathLen}
+        animate={{ strokeDashoffset: drawn ? 0 : pathLen }}
+        initial={{ strokeDashoffset: pathLen }}
+        transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
+      />
+
+      {/* Data points */}
+      {pts.map((p, i) => (
+        <motion.g
+          key={i}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: drawn ? 1 : 0, scale: drawn ? 1 : 0 }}
+          transition={{ delay: 1.0 + i * 0.07, type: 'spring', stiffness: 400 }}
+        >
+          <circle cx={p.x} cy={p.y} r={8} fill="#7c3aed" opacity={0.08} />
+          <circle cx={p.x} cy={p.y} r={4} fill="white" stroke="#7c3aed" strokeWidth={2.5} filter="url(#glow)" />
+          {p.count > 0 && (
+            <text x={p.x} y={p.y - 11} textAnchor="middle" fontSize={9} fill="#7c3aed" fontWeight="700">{p.count}</text>
+          )}
+        </motion.g>
+      ))}
+
+      {/* X labels */}
+      {pts.map((p, i) => (
+        <text key={i} x={p.x} y={H} textAnchor="middle" fontSize={10} fill="#9ca3af" fontWeight="500">{p.label}</text>
+      ))}
+    </svg>
+  );
 }
 
 /* ─────────── Main Dashboard ─────────── */
@@ -71,6 +412,8 @@ export default function DashboardPage() {
   const router = useRouter();
   const { user, token, loading: authLoading, logout, updateUser } = useAuth();
   const [tab, setTab] = useState<Tab>('overview');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   // Data state
   const [membership, setMembership] = useState<IMembership | null>(null);
@@ -92,14 +435,10 @@ export default function DashboardPage() {
   const [pwError, setPwError] = useState('');
   const [pwSuccess, setPwSuccess] = useState(false);
 
-  /* ── Redirect if not authenticated ── */
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/login');
-    }
+    if (!authLoading && !user) router.push('/login');
   }, [authLoading, user, router]);
 
-  /* ── Fetch dashboard data ── */
   const fetchData = useCallback(async () => {
     if (!token) return;
     setDataLoading(true);
@@ -110,41 +449,19 @@ export default function DashboardPage() {
         fetch('/api/bookings/my', { headers }),
         fetch('/api/orders/my', { headers }),
       ]);
-      if (memberRes.ok) {
-        const d = await memberRes.json();
-        setMembership(d.data);
-      }
-      if (bookingsRes.ok) {
-        const d = await bookingsRes.json();
-        setBookings(d.data ?? []);
-      }
-      if (ordersRes.ok) {
-        const d = await ordersRes.json();
-        setOrders(d.data ?? []);
-      }
-    } catch {
-      // silently ignore partial failures
-    } finally {
-      setDataLoading(false);
-    }
+      if (memberRes.ok) setMembership((await memberRes.json()).data);
+      if (bookingsRes.ok) setBookings((await bookingsRes.json()).data ?? []);
+      if (ordersRes.ok) setOrders((await ordersRes.json()).data ?? []);
+    } catch { /* ignore */ }
+    finally { setDataLoading(false); }
   }, [token]);
 
-  useEffect(() => {
-    if (token) fetchData();
-  }, [token, fetchData]);
+  useEffect(() => { if (token) fetchData(); }, [token, fetchData]);
+  useEffect(() => { if (user) setEditName(user.name); }, [user]);
 
-  useEffect(() => {
-    if (user) setEditName(user.name);
-  }, [user]);
-
-  /* ── Handlers ── */
   const handleSaveName = async () => {
-    if (!editName.trim() || editName.trim().length < 2) {
-      setNameError('Name must be at least 2 characters');
-      return;
-    }
-    setNameLoading(true);
-    setNameError('');
+    if (!editName.trim() || editName.trim().length < 2) { setNameError('Name must be at least 2 characters'); return; }
+    setNameLoading(true); setNameError('');
     try {
       const res = await fetch('/api/auth/me', {
         method: 'PUT',
@@ -157,25 +474,15 @@ export default function DashboardPage() {
       setIsEditingName(false);
       setNameSuccess(true);
       setTimeout(() => setNameSuccess(false), 3000);
-    } catch {
-      setNameError('Something went wrong');
-    } finally {
-      setNameLoading(false);
-    }
+    } catch { setNameError('Something went wrong'); }
+    finally { setNameLoading(false); }
   };
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pwForm.newPassword !== pwForm.confirmNewPassword) {
-      setPwError('New passwords do not match');
-      return;
-    }
-    if (pwForm.newPassword.length < 8) {
-      setPwError('New password must be at least 8 characters');
-      return;
-    }
-    setPwLoading(true);
-    setPwError('');
+    if (pwForm.newPassword !== pwForm.confirmNewPassword) { setPwError('New passwords do not match'); return; }
+    if (pwForm.newPassword.length < 8) { setPwError('New password must be at least 8 characters'); return; }
+    setPwLoading(true); setPwError('');
     try {
       const res = await fetch('/api/auth/change-password', {
         method: 'PUT',
@@ -187,140 +494,188 @@ export default function DashboardPage() {
       setPwSuccess(true);
       setPwForm({ currentPassword: '', newPassword: '', confirmNewPassword: '' });
       setTimeout(() => setPwSuccess(false), 4000);
-    } catch {
-      setPwError('Something went wrong');
-    } finally {
-      setPwLoading(false);
-    }
+    } catch { setPwError('Something went wrong'); }
+    finally { setPwLoading(false); }
   };
 
-  const handleLogout = () => {
-    logout();
-    router.push('/');
-  };
+  const handleLogout = () => { logout(); router.push('/'); };
 
-  /* ── Loading state ── */
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-50 via-pink-50 to-orange-50">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+      <div className="fixed inset-0 z-60 flex items-center justify-center bg-[#0f0720]">
+        {/* Ambient orbs */}
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-pink-600/15 rounded-full blur-3xl pointer-events-none" />
+        <motion.div
+          className="flex flex-col items-center gap-5"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+        >
+          <div className="relative w-20 h-20">
+            <motion.div
+              className="absolute inset-0 rounded-full bg-linear-to-br from-purple-600 to-pink-600 opacity-20"
+              animate={{ scale: [1, 1.4, 1] }}
+              transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+            />
+            <div className="absolute inset-0 rounded-full bg-linear-to-br from-purple-600 to-pink-600 flex items-center justify-center shadow-xl shadow-purple-900/40">
+              <Sparkles className="w-9 h-9 text-white" />
+            </div>
+          </div>
+          <div className="text-center">
+            <motion.p
+              className="text-white font-bold text-lg"
+              animate={{ opacity: [0.6, 1, 0.6] }}
+              transition={{ repeat: Infinity, duration: 1.8 }}
+            >
+              Loading your dashboard…
+            </motion.p>
+            <p className="text-purple-300/60 text-sm mt-1">Preparing your experience</p>
+          </div>
+        </motion.div>
       </div>
     );
   }
 
   if (!user) return null;
 
-  const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
-    { id: 'overview', label: 'Overview', icon: <Sparkles className="w-4 h-4" /> },
-    { id: 'sessions', label: 'Sessions', icon: <Calendar className="w-4 h-4" /> },
-    { id: 'orders', label: 'Orders', icon: <ShoppingBag className="w-4 h-4" /> },
-    { id: 'settings', label: 'Settings', icon: <Settings className="w-4 h-4" /> },
-  ];
+  const tabLabels: Record<Tab, string> = {
+    overview: 'Overview',
+    sessions: 'My Sessions',
+    orders: 'Order History',
+    settings: 'Settings',
+  };
+
+  const sidebarW = sidebarCollapsed ? 72 : 240;
+
+  const hasNotification = bookings.some(
+    b => b.status === 'confirmed' && new Date(b.scheduledAt) > new Date(),
+  );
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-pink-50 to-orange-50 pt-20 pb-16">
-      {/* BG decoration */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute w-96 h-96 rounded-full bg-purple-300/10 blur-3xl top-0 right-0" />
-        <div className="absolute w-80 h-80 rounded-full bg-pink-300/10 blur-3xl bottom-20 left-0" />
-      </div>
+    /* Fixed overlay covering the global header */
+    <div className="fixed inset-0 z-60 bg-gray-50 flex overflow-hidden">
+      <Sidebar
+        tab={tab}
+        setTab={setTab}
+        user={user}
+        onLogout={handleLogout}
+        collapsed={sidebarCollapsed}
+        setCollapsed={setSidebarCollapsed}
+        mobileOpen={mobileOpen}
+        setMobileOpen={setMobileOpen}
+      />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
-        {/* ── Header Bar ── */}
+      {/* Main content shifts with sidebar */}
+      <motion.div
+        className="flex flex-col flex-1 min-w-0 overflow-hidden"
+        animate={{ marginLeft: sidebarW }}
+        transition={{ duration: 0.25, ease: 'easeInOut' }}
+        style={{ marginLeft: sidebarW }}
+      >
+        {/* ── Top bar ── */}
         <motion.div
-          className="mb-8"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          className="shrink-0 px-5 py-3.5 flex items-center justify-between border-b"
+          style={{ backdropFilter: 'blur(20px)', background: 'rgba(255,255,255,0.85)', borderColor: 'rgba(124,58,237,0.08)' }}
         >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="lg:hidden p-2 rounded-xl text-gray-500 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
             <div>
-              <p className="text-sm text-gray-500 font-medium">Welcome back,</p>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 font-display">
-                {user.name} <span className="text-purple-600">✦</span>
+              <h1 className="text-[15px] font-bold leading-tight">
+                <span className="bg-linear-to-r from-purple-700 to-pink-600 bg-clip-text text-transparent">{tabLabels[tab]}</span>
               </h1>
+              <p className="text-[11px] text-gray-400">
+                {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' })}
+              </p>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-white/70 backdrop-blur rounded-full border border-white/50 text-xs text-gray-600 font-medium">
-                <Shield className="w-3.5 h-3.5 text-purple-500" />
-                <span className="capitalize">{user.role}</span>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 hover:text-red-600 bg-white/70 hover:bg-red-50 backdrop-blur rounded-full border border-white/50 transition-all font-medium"
-              >
-                <LogOut className="w-4 h-4" />
-                Sign Out
-              </button>
-            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <motion.button
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative w-9 h-9 flex items-center justify-center rounded-xl bg-white hover:bg-purple-50 text-gray-500 hover:text-purple-600 transition-colors border border-gray-100 shadow-sm"
+            >
+              <Bell className="w-4 h-4" />
+              {hasNotification && (
+                <>
+                  <motion.span
+                    className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-pink-500"
+                    animate={{ scale: [1, 1.4, 1] }}
+                    transition={{ repeat: Infinity, duration: 1.5 }}
+                  />
+                  <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-pink-500" />
+                </>
+              )}
+            </motion.button>
+            <motion.a
+              href="/contact"
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-9 h-9 flex items-center justify-center rounded-xl bg-white hover:bg-purple-50 text-gray-500 hover:text-purple-600 transition-colors border border-gray-100 shadow-sm"
+            >
+              <Activity className="w-4 h-4" />
+            </motion.a>
+            <motion.div
+              whileHover={{ scale: 1.08 }}
+              className="w-9 h-9 rounded-xl bg-linear-to-br from-purple-600 to-pink-600 flex items-center justify-center text-white text-sm font-bold shadow-md shadow-purple-200/60 cursor-pointer"
+            >
+              {user.name.charAt(0).toUpperCase()}
+            </motion.div>
           </div>
         </motion.div>
 
-        {/* ── Tabs ── */}
-        <motion.div
-          className="flex gap-1 p-1 bg-white/60 backdrop-blur-xl rounded-2xl border border-white/50 shadow-sm mb-8 w-fit"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-        >
-          {tabs.map(t => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                tab === t.id
-                  ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-md'
-                  : 'text-gray-600 hover:text-purple-600 hover:bg-white/80'
-              }`}
-            >
-              {t.icon}
-              {t.label}
-            </button>
-          ))}
-        </motion.div>
-
-        {/* ── Tab Content ── */}
-        <AnimatePresence mode="wait">
-          {tab === 'overview' && (
-            <OverviewTab
-              key="overview"
-              user={user}
-              membership={membership}
-              bookings={bookings}
-              orders={orders}
-              loading={dataLoading}
-            />
-          )}
-          {tab === 'sessions' && (
-            <SessionsTab key="sessions" bookings={bookings} loading={dataLoading} />
-          )}
-          {tab === 'orders' && (
-            <OrdersTab key="orders" orders={orders} loading={dataLoading} />
-          )}
-          {tab === 'settings' && (
-            <SettingsTab
-              key="settings"
-              user={user}
-              editName={editName}
-              setEditName={setEditName}
-              isEditingName={isEditingName}
-              setIsEditingName={setIsEditingName}
-              nameLoading={nameLoading}
-              nameError={nameError}
-              nameSuccess={nameSuccess}
-              onSaveName={handleSaveName}
-              pwForm={pwForm}
-              setPwForm={setPwForm}
-              showPw={showPw}
-              setShowPw={setShowPw}
-              pwLoading={pwLoading}
-              pwError={pwError}
-              pwSuccess={pwSuccess}
-              onChangePassword={handleChangePassword}
-            />
-          )}
-        </AnimatePresence>
-      </div>
+        {/* ── Scrollable content ── */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-5 lg:p-6">
+            <AnimatePresence mode="wait">
+              {tab === 'overview' && (
+                <OverviewTab
+                  key="overview"
+                  user={user}
+                  membership={membership}
+                  bookings={bookings}
+                  orders={orders}
+                  loading={dataLoading}
+                  setTab={setTab}
+                />
+              )}
+              {tab === 'sessions' && (
+                <SessionsTab key="sessions" bookings={bookings} loading={dataLoading} />
+              )}
+              {tab === 'orders' && (
+                <OrdersTab key="orders" orders={orders} loading={dataLoading} />
+              )}
+              {tab === 'settings' && (
+                <SettingsTab
+                  key="settings"
+                  user={user}
+                  editName={editName}
+                  setEditName={setEditName}
+                  isEditingName={isEditingName}
+                  setIsEditingName={setIsEditingName}
+                  nameLoading={nameLoading}
+                  nameError={nameError}
+                  nameSuccess={nameSuccess}
+                  onSaveName={handleSaveName}
+                  pwForm={pwForm}
+                  setPwForm={setPwForm}
+                  showPw={showPw}
+                  setShowPw={setShowPw}
+                  pwLoading={pwLoading}
+                  pwError={pwError}
+                  pwSuccess={pwSuccess}
+                  onChangePassword={handleChangePassword}
+                />
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }
@@ -329,46 +684,66 @@ export default function DashboardPage() {
    Overview Tab
 ═══════════════════════════════ */
 function OverviewTab({
-  user, membership, bookings, orders, loading,
+  user, membership, bookings, orders, loading, setTab,
 }: {
   user: IUser;
   membership: IMembership | null;
   bookings: IBooking[];
   orders: IOrder[];
   loading: boolean;
+  setTab: (t: Tab) => void;
 }) {
   if (loading) return <TabSkeleton />;
 
   const upcomingBookings = bookings.filter(
     b => b.status !== 'cancelled' && new Date(b.scheduledAt) > new Date(),
   );
+  const completedSessions = bookings.filter(b => b.status === 'completed').length;
 
   const stats = [
     {
-      label: 'Plan',
+      label: 'Current Plan',
       value: membership ? membership.plan.charAt(0).toUpperCase() + membership.plan.slice(1) : 'No Plan',
+      numericValue: undefined as number | undefined,
+      sub: membership ? membership.status : 'Inactive',
       icon: <Crown className="w-5 h-5" />,
       color: 'from-purple-500 to-pink-500',
+      bg: 'bg-purple-50',
+      trend: membership?.status === 'active' ? 'Active' : undefined,
     },
     {
       label: 'Upcoming Sessions',
       value: String(upcomingBookings.length),
+      numericValue: upcomingBookings.length,
+      sub: `${completedSessions} completed`,
       icon: <Calendar className="w-5 h-5" />,
       color: 'from-blue-500 to-cyan-500',
+      bg: 'bg-blue-50',
+      trend: upcomingBookings.length > 0 ? 'Scheduled' : undefined,
     },
     {
       label: 'Total Orders',
       value: String(orders.length),
+      numericValue: orders.length,
+      sub: orders.length > 0 ? `$${orders.reduce((s, o) => s + (o.total ?? 0), 0).toFixed(0)} spent` : 'No orders yet',
       icon: <ShoppingBag className="w-5 h-5" />,
       color: 'from-orange-500 to-amber-500',
+      bg: 'bg-orange-50',
+      trend: undefined,
     },
     {
       label: 'Member Since',
       value: new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-      icon: <Star className="w-5 h-5" />,
+      numericValue: undefined as number | undefined,
+      sub: `${Math.floor((Date.now() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24))} days`,
+      icon: <TrendingUp className="w-5 h-5" />,
       color: 'from-green-500 to-emerald-500',
+      bg: 'bg-green-50',
+      trend: undefined,
     },
   ];
+
+  const recentSessions = bookings.slice(0, 5);
 
   return (
     <motion.div
@@ -376,126 +751,241 @@ function OverviewTab({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}
       transition={{ duration: 0.35 }}
-      className="space-y-8"
+      className="space-y-6"
     >
-      {/* Stats grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* ── Stats row ── */}
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
         {stats.map((s, i) => (
           <motion.div
             key={s.label}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: i * 0.06 }}
-            className="bg-white/70 backdrop-blur-xl rounded-2xl p-5 border border-white/50 shadow-sm"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.08, type: 'spring', stiffness: 200, damping: 20 }}
+            whileHover={{ y: -5, scale: 1.02 }}
+            className="relative bg-white rounded-2xl p-5 border border-gray-100 shadow-sm overflow-hidden cursor-default group"
+            style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}
           >
-            <div className={`inline-flex w-10 h-10 rounded-xl bg-linear-to-br ${s.color} items-center justify-center text-white mb-3 shadow-md`}>
-              {s.icon}
+            {/* Glow accent on hover */}
+            <div className={`absolute inset-0 bg-linear-to-br ${s.color} opacity-0 group-hover:opacity-[0.04] transition-opacity duration-300 pointer-events-none`} />
+            {/* Coloured top border */}
+            <div className={`absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r ${s.color}`} />
+
+            <div className="flex items-start justify-between mb-3">
+              <motion.div
+                className={`w-10 h-10 rounded-xl bg-linear-to-br ${s.color} flex items-center justify-center text-white`}
+                style={{ boxShadow: `0 4px 14px rgba(124,58,237,0.25)` }}
+                whileHover={{ rotate: [0, -8, 8, 0] }}
+                transition={{ duration: 0.4 }}
+              >
+                {s.icon}
+              </motion.div>
+              {s.trend && (
+                <span className="text-[10px] font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" /> {s.trend}
+                </span>
+              )}
             </div>
-            <p className="text-2xl font-bold text-gray-900">{s.value}</p>
-            <p className="text-sm text-gray-500 mt-0.5">{s.label}</p>
+
+            <p className="text-2xl font-bold text-gray-900 leading-tight tabular-nums">
+              {s.numericValue !== undefined ? <AnimatedNumber value={s.numericValue} /> : s.value}
+            </p>
+            <p className="text-xs text-gray-400 mt-0.5 font-medium">{s.label}</p>
+            <p className="text-[11px] text-gray-400 mt-1 capitalize">{s.sub}</p>
           </motion.div>
         ))}
       </div>
 
-      {/* Membership card */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-6 border border-white/50 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <Crown className="w-5 h-5 text-purple-600" /> Membership
-          </h2>
-          {membership ? (
+      {/* ── Chart + Membership row ── */}
+      <div className="grid xl:grid-cols-3 gap-4">
+        {/* Sessions chart */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="xl:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 overflow-hidden relative"
+        >
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-purple-500 to-pink-500" />
+          <div className="flex items-center justify-between mb-4">
             <div>
-              <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r ${planColors[membership.plan] ?? 'from-gray-400 to-gray-500'} text-white font-semibold text-sm mb-4`}>
-                <Crown className="w-4 h-4" />
-                {membership.plan.charAt(0).toUpperCase() + membership.plan.slice(1)} Plan
-              </div>
-              <div className="space-y-2 text-sm text-gray-600">
-                <div className="flex justify-between">
-                  <span>Status</span>
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${statusBadge[membership.status] ?? 'bg-gray-100 text-gray-600'}`}>
-                    {membership.status}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Billing</span>
-                  <span className="capitalize font-medium text-gray-800">{membership.billingCycle}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Price</span>
-                  <span className="font-medium text-gray-800">${membership.price}/mo</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Started</span>
-                  <span className="font-medium text-gray-800">{fmt(membership.startDate)}</span>
-                </div>
-              </div>
+              <h2 className="text-[15px] font-bold text-gray-900">Session Activity</h2>
+              <p className="text-xs text-gray-400 mt-0.5">Sessions booked over the last 6 months</p>
             </div>
-          ) : (
-            <div className="text-center py-6">
-              <p className="text-gray-500 mb-4">You don&apos;t have an active membership yet.</p>
-              <Link
-                href="/membership"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold text-sm shadow-md hover:shadow-purple-500/30 hover:scale-105 transition-all"
-              >
-                Explore Plans <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
-          )}
-        </div>
+            <motion.button
+              onClick={() => setTab('sessions')}
+              whileHover={{ x: 2 }}
+              className="text-xs font-semibold text-purple-600 hover:text-pink-600 transition-colors flex items-center gap-1"
+            >
+              View all <ChevronRight className="w-3.5 h-3.5" />
+            </motion.button>
+          </div>
+          <SessionsChart bookings={bookings} />
+        </motion.div>
 
-        {/* Recent bookings quick view */}
-        <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-6 border border-white/50 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-blue-600" /> Upcoming Sessions
-          </h2>
-          {upcomingBookings.length === 0 ? (
-            <div className="text-center py-6">
-              <p className="text-gray-500 mb-4">No upcoming sessions scheduled.</p>
-              <Link
-                href="/booking"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-semibold text-sm shadow-md hover:scale-105 transition-all"
-              >
-                Book a Session <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {upcomingBookings.slice(0, 3).map(b => (
-                <div key={b._id} className="flex items-center justify-between p-3 bg-blue-50/60 rounded-xl">
-                  <div>
-                    <p className="font-medium text-gray-800 text-sm capitalize">{b.sessionType} Session</p>
-                    <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
-                      <Clock className="w-3 h-3" /> {fmt(b.scheduledAt)}
-                    </p>
+        {/* Membership card */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.28 }}
+          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col relative overflow-hidden"
+        >
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-amber-400 to-orange-500" />
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-[15px] font-bold text-gray-900">Membership</h2>
+            <motion.div
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ repeat: Infinity, duration: 3, repeatDelay: 2 }}
+            >
+              <Crown className="w-4.5 h-4.5 text-amber-500" />
+            </motion.div>
+          </div>
+          {membership ? (
+            <>
+              <div className={`flex items-center gap-2 px-3.5 py-2 rounded-xl bg-linear-to-r ${planColors[membership.plan] ?? 'from-gray-400 to-gray-500'} text-white text-sm font-bold mb-4 self-start shadow-md`}>
+                <Sparkles className="w-3.5 h-3.5" />
+                {membership.plan.charAt(0).toUpperCase() + membership.plan.slice(1)}
+              </div>
+              <div className="space-y-3 text-sm flex-1">
+                {[
+                  { label: 'Status', value: membership.status, isStatus: true },
+                  { label: 'Billing', value: membership.billingCycle, isStatus: false },
+                  { label: 'Price', value: `$${membership.price}/mo`, isStatus: false },
+                  { label: 'Renewed', value: fmt(membership.startDate), isStatus: false },
+                ].map(row => (
+                  <div key={row.label} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                    <span className="text-gray-400 text-xs font-medium">{row.label}</span>
+                    {row.isStatus ? (
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold capitalize ${statusBadge[membership.status] ?? 'bg-gray-100 text-gray-600'}`}>
+                        {membership.status}
+                      </span>
+                    ) : (
+                      <span className="text-xs font-semibold text-gray-700 capitalize">{row.value}</span>
+                    )}
                   </div>
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${statusBadge[b.status] ?? 'bg-gray-100 text-gray-600'}`}>
-                    {b.status}
-                  </span>
-                </div>
-              ))}
+                ))}
+              </div>
+              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="mt-4">
+                <Link
+                  href="/membership"
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-purple-300/50 transition-shadow"
+                >
+                  Manage Plan <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </motion.div>
+            </>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center text-center py-4">
+              <motion.div
+                className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center mb-3"
+                animate={{ boxShadow: ['0 0 0px rgba(124,58,237,0)', '0 0 16px rgba(124,58,237,0.2)', '0 0 0px rgba(124,58,237,0)'] }}
+                transition={{ repeat: Infinity, duration: 2.5 }}
+              >
+                <Crown className="w-6 h-6 text-purple-400" />
+              </motion.div>
+              <p className="text-sm font-semibold text-gray-700 mb-1">No active plan</p>
+              <p className="text-xs text-gray-400 mb-4">Unlock coaching, events & more</p>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
+                <Link
+                  href="/membership"
+                  className="px-5 py-2.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl text-xs font-bold shadow-md"
+                >
+                  Explore Plans
+                </Link>
+              </motion.div>
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
 
-      {/* CTA cards */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {[
-          { label: 'Book a Session', desc: 'Schedule 1-on-1 coaching', href: '/booking', color: 'from-purple-500 to-pink-500', icon: <Calendar className="w-5 h-5" /> },
-          { label: 'Browse Events', desc: 'Discover upcoming events', href: '/events', color: 'from-orange-500 to-amber-500', icon: <Star className="w-5 h-5" /> },
-          { label: 'Get Workbook', desc: 'Download transformation tools', href: '/workbook', color: 'from-green-500 to-teal-500', icon: <Package className="w-5 h-5" /> },
-        ].map(c => (
-          <Link key={c.href} href={c.href}>
-            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-5 border border-white/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer group">
-              <div className={`inline-flex w-10 h-10 rounded-xl bg-linear-to-br ${c.color} items-center justify-center text-white mb-3 group-hover:scale-110 transition-transform`}>
-                {c.icon}
-              </div>
-              <p className="font-semibold text-gray-800">{c.label}</p>
-              <p className="text-sm text-gray-500 mt-0.5">{c.desc}</p>
+      {/* ── Recent Sessions table ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.36 }}
+        className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden relative"
+      >
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-blue-500 to-cyan-500" />
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">
+          <h2 className="text-[15px] font-bold text-gray-900">Recent Sessions</h2>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
+            <Link
+              href="/booking"
+              className="text-xs font-semibold px-3 py-1.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-lg shadow-sm"
+            >
+              + Book New
+            </Link>
+          </motion.div>
+        </div>
+        {recentSessions.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center mb-3">
+              <Calendar className="w-6 h-6 text-blue-300" />
             </div>
-          </Link>
-        ))}
-      </div>
+            <p className="text-sm font-semibold text-gray-600">No sessions yet</p>
+            <p className="text-xs text-gray-400 mt-1">Book your first coaching session</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-50 bg-gray-50/40">
+                  {['Session Type', 'Guest', 'Date & Time', 'Duration', 'Status', ''].map(h => (
+                    <th key={h} className="text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-5 py-3">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <motion.tbody
+                variants={{ show: { transition: { staggerChildren: 0.05 } } }}
+                initial="hidden"
+                animate="show"
+              >
+                {recentSessions.map((b) => (
+                  <motion.tr
+                    key={b._id}
+                    variants={{ hidden: { opacity: 0, x: -12 }, show: { opacity: 1, x: 0 } }}
+                    whileHover={{ backgroundColor: 'rgba(124,58,237,0.03)' }}
+                    className="border-b border-gray-50 last:border-0 transition-colors"
+                  >
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white shrink-0 shadow-sm shadow-purple-200/60">
+                          <Calendar className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="font-semibold text-gray-800 capitalize">{b.sessionType}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-3.5 text-gray-600">{b.guestName}</td>
+                    <td className="px-5 py-3.5 text-gray-500">
+                      <span className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-gray-400" />
+                        {fmt(b.scheduledAt)}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 text-gray-500">{b.duration} min</td>
+                    <td className="px-5 py-4">
+                      <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold capitalize ${statusBadge[b.status] ?? 'bg-gray-100 text-gray-600'}`}>
+                        {b.status}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      {b.meetingLink && (
+                        <motion.a
+                          href={b.meetingLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          whileHover={{ scale: 1.05 }}
+                          className="text-xs font-semibold text-purple-600 hover:text-pink-600 transition-colors"
+                        >
+                          Join →
+                        </motion.a>
+                      )}
+                    </td>
+                  </motion.tr>
+                ))}
+              </motion.tbody>
+            </table>
+          </div>
+        )}
+      </motion.div>
     </motion.div>
   );
 }
@@ -504,7 +994,19 @@ function OverviewTab({
    Sessions Tab
 ═══════════════════════════════ */
 function SessionsTab({ bookings, loading }: { bookings: IBooking[]; loading: boolean }) {
+  const [filter, setFilter] = useState<'all' | 'upcoming' | 'completed' | 'cancelled'>('all');
   if (loading) return <TabSkeleton />;
+
+  const filtered = filter === 'all' ? bookings
+    : filter === 'upcoming' ? bookings.filter(b => b.status !== 'cancelled' && new Date(b.scheduledAt) > new Date())
+    : bookings.filter(b => b.status === filter);
+
+  const filters: { id: typeof filter; label: string }[] = [
+    { id: 'all', label: 'All' },
+    { id: 'upcoming', label: 'Upcoming' },
+    { id: 'completed', label: 'Completed' },
+    { id: 'cancelled', label: 'Cancelled' },
+  ];
 
   return (
     <motion.div
@@ -512,61 +1014,136 @@ function SessionsTab({ bookings, loading }: { bookings: IBooking[]; loading: boo
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}
       transition={{ duration: 0.35 }}
+      className="space-y-4"
     >
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Your Sessions</h2>
-        <Link
-          href="/booking"
-          className="flex items-center gap-1.5 px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl text-sm font-semibold shadow-md hover:shadow-purple-500/30 hover:scale-105 transition-all"
-        >
-          + Book New
-        </Link>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-bold text-gray-900">Coaching Sessions</h2>
+          <p className="text-xs text-gray-400 mt-0.5">{bookings.length} total sessions</p>
+        </div>
+        <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+          <Link
+            href="/booking"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl text-sm font-semibold shadow-md shadow-purple-200/50 self-start"
+          >
+            + Book Session
+          </Link>
+        </motion.div>
       </div>
 
-      {bookings.length === 0 ? (
-        <EmptyState
-          icon={<Calendar className="w-12 h-12 text-gray-300" />}
-          title="No sessions yet"
-          desc="Book your first coaching session to get started."
-          action={{ label: 'Book a Session', href: '/booking' }}
-        />
-      ) : (
-        <div className="space-y-3">
-          {bookings.map((b, i) => (
-            <motion.div
-              key={b._id}
-              initial={{ opacity: 0, x: -15 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="bg-white/70 backdrop-blur-xl rounded-2xl p-5 border border-white/50 shadow-sm flex flex-col sm:flex-row sm:items-center gap-4"
-            >
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-semibold text-gray-800 capitalize">{b.sessionType} Session</span>
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${statusBadge[b.status] ?? 'bg-gray-100 text-gray-600'}`}>
-                    {b.status}
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-3 text-sm text-gray-500">
-                  <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {fmt(b.scheduledAt)}</span>
-                  <span className="flex items-center gap-1"><User className="w-3.5 h-3.5" /> {b.guestName}</span>
-                  <span>{b.duration} min</span>
-                </div>
-              </div>
-              {b.meetingLink && (
-                <a
-                  href={b.meetingLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl text-sm font-medium transition-colors shrink-0"
-                >
-                  Join Meeting
-                </a>
-              )}
+      {/* Filter tabs — glassmorphism pill container */}
+      <div className="flex gap-1 p-1 rounded-xl w-fit" style={{ background: 'rgba(243,244,246,0.8)', backdropFilter: 'blur(8px)', border: '1px solid rgba(124,58,237,0.08)' }}>
+        {filters.map(f => (
+          <motion.button
+            key={f.id}
+            onClick={() => setFilter(f.id)}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            className={`relative px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+              filter === f.id ? 'text-purple-700' : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            {filter === f.id && (
+              <motion.div
+                layoutId="filterPill"
+                className="absolute inset-0 bg-white rounded-lg shadow-sm"
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              />
+            )}
+            <span className="relative">{f.label}</span>
+          </motion.button>
+        ))}
+      </div>
+
+      {/* Table */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden relative">
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-purple-500 to-pink-500" />
+        {filtered.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-3">
+              <Calendar className="w-7 h-7 text-blue-300" />
+            </div>
+            <p className="text-sm font-semibold text-gray-600">No sessions found</p>
+            <p className="text-xs text-gray-400 mt-1 mb-4">Book your first coaching session</p>
+            <motion.div whileHover={{ scale: 1.05 }}>
+              <Link href="/booking" className="px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl text-xs font-bold shadow-md">
+                Book a Session
+              </Link>
             </motion.div>
-          ))}
-        </div>
-      )}
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-50 bg-gray-50/40">
+                  {['Session', 'Guest Name', 'Date & Time', 'Duration', 'Status', 'Action'].map(h => (
+                    <th key={h} className="text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-5 py-3.5">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <motion.tbody
+                variants={{ show: { transition: { staggerChildren: 0.055 } } }}
+                initial="hidden"
+                animate="show"
+              >
+                {filtered.map((b) => (
+                  <motion.tr
+                    key={b._id}
+                    variants={{ hidden: { opacity: 0, x: -16 }, show: { opacity: 1, x: 0 } }}
+                    whileHover={{ backgroundColor: 'rgba(124,58,237,0.025)' }}
+                    className="border-b border-gray-50 last:border-0 transition-colors"
+                  >
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white shrink-0 shadow-sm shadow-purple-200/50">
+                          <Calendar className="w-4 h-4" />
+                        </div>
+                        <span className="font-semibold text-gray-800 capitalize">{b.sessionType}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-600 text-xs font-bold shrink-0">
+                          {b.guestName.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="text-gray-700 font-medium">{b.guestName}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4 text-gray-500">
+                      <span className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-gray-400" />
+                        {fmt(b.scheduledAt)}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4 text-gray-500">{b.duration} min</td>
+                    <td className="px-5 py-4">
+                      <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold capitalize ${statusBadge[b.status] ?? 'bg-gray-100 text-gray-600'}`}>
+                        {b.status}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4">
+                      {b.meetingLink ? (
+                        <motion.a
+                          href={b.meetingLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          whileHover={{ scale: 1.06 }}
+                          className="px-3 py-1.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-lg text-xs font-semibold shadow-sm shadow-purple-200/40"
+                        >
+                          Join Meeting
+                        </motion.a>
+                      ) : (
+                        <span className="text-xs text-gray-300">—</span>
+                      )}
+                    </td>
+                  </motion.tr>
+                ))}
+              </motion.tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </motion.div>
   );
 }
@@ -577,54 +1154,116 @@ function SessionsTab({ bookings, loading }: { bookings: IBooking[]; loading: boo
 function OrdersTab({ orders, loading }: { orders: IOrder[]; loading: boolean }) {
   if (loading) return <TabSkeleton />;
 
+  const totalSpent = orders.reduce((s, o) => s + (o.total ?? 0), 0);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}
       transition={{ duration: 0.35 }}
+      className="space-y-4"
     >
-      <h2 className="text-xl font-bold text-gray-900 mb-6">Order History</h2>
+      {/* Summary banner */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-2xl p-5 bg-linear-to-r from-orange-500 to-amber-500 text-white relative overflow-hidden shadow-md shadow-orange-200/50"
+      >
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative">
+          <div>
+            <h2 className="text-lg font-bold">Order History</h2>
+            <p className="text-orange-100 text-sm mt-0.5">
+              {orders.length} orders · <span className="font-bold text-white">${totalSpent.toFixed(2)}</span> total spent
+            </p>
+          </div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
+            <Link
+              href="/workbook"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl text-sm font-semibold border border-white/25 transition-colors"
+            >
+              Browse Products
+            </Link>
+          </motion.div>
+        </div>
+      </motion.div>
 
       {orders.length === 0 ? (
-        <EmptyState
-          icon={<ShoppingBag className="w-12 h-12 text-gray-300" />}
-          title="No orders yet"
-          desc="Your purchases will appear here."
-          action={{ label: 'Browse Products', href: '/workbook' }}
-        />
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center py-16 text-center">
+          <motion.div
+            className="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center mb-3"
+            animate={{ y: [0, -4, 0] }}
+            transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
+          >
+            <ShoppingBag className="w-7 h-7 text-orange-300" />
+          </motion.div>
+          <p className="text-sm font-semibold text-gray-600">No orders yet</p>
+          <p className="text-xs text-gray-400 mt-1 mb-4">Your purchases will appear here</p>
+          <motion.div whileHover={{ scale: 1.05 }}>
+            <Link href="/workbook" className="px-4 py-2 bg-linear-to-r from-orange-500 to-amber-500 text-white rounded-xl text-xs font-bold shadow-md">
+              Browse Products
+            </Link>
+          </motion.div>
+        </div>
       ) : (
-        <div className="space-y-4">
-          {orders.map((o, i) => (
-            <motion.div
-              key={o._id}
-              initial={{ opacity: 0, x: -15 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="bg-white/70 backdrop-blur-xl rounded-2xl p-5 border border-white/50 shadow-sm"
-            >
-              <div className="flex items-start justify-between gap-4 mb-3">
-                <div>
-                  <p className="font-semibold text-gray-800 text-sm">Order #{o._id.slice(-8).toUpperCase()}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{fmt(o.createdAt)}</p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="font-bold text-gray-900">${o.total?.toFixed(2)}</p>
-                  <span className={`text-xs font-semibold capitalize px-2 py-0.5 rounded-full ${statusBadge[o.status] ?? 'bg-gray-100 text-gray-600'}`}>
-                    {o.status}
-                  </span>
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                {o.items.map((item, idx) => (
-                  <div key={idx} className="flex justify-between text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">
-                    <span>{item.product?.name ?? 'Product'} × {item.quantity}</span>
-                    <span>${(item.price * item.quantity).toFixed(2)}</span>
-                  </div>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden relative">
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-orange-400 to-amber-400" />
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-50 bg-gray-50/40">
+                  {['Order', 'Date', 'Items', 'Total', 'Status'].map(h => (
+                    <th key={h} className="text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-5 py-3.5">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <motion.tbody
+                variants={{ show: { transition: { staggerChildren: 0.06 } } }}
+                initial="hidden"
+                animate="show"
+              >
+                {orders.map((o) => (
+                  <motion.tr
+                    key={o._id}
+                    variants={{ hidden: { opacity: 0, x: -16 }, show: { opacity: 1, x: 0 } }}
+                    whileHover={{ backgroundColor: 'rgba(249,115,22,0.025)' }}
+                    className="border-b border-gray-50 last:border-0 transition-colors"
+                  >
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-linear-to-br from-orange-400 to-amber-400 flex items-center justify-center text-white shrink-0 shadow-sm shadow-orange-200/50">
+                          <ShoppingBag className="w-4 h-4" />
+                        </div>
+                        <span className="font-semibold text-gray-800 font-mono text-xs">#{o._id.slice(-8).toUpperCase()}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4 text-gray-500 text-xs">{fmt(o.createdAt)}</td>
+                    <td className="px-5 py-4">
+                      <div className="space-y-0.5">
+                        {o.items.slice(0, 2).map((item, idx) => (
+                          <p key={idx} className="text-xs text-gray-600">
+                            {item.product?.name ?? 'Product'} <span className="text-gray-400">×{item.quantity}</span>
+                          </p>
+                        ))}
+                        {o.items.length > 2 && (
+                          <p className="text-[10px] text-gray-400">+{o.items.length - 2} more</p>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className="font-bold text-gray-900">${o.total?.toFixed(2)}</span>
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold capitalize ${statusBadge[o.status] ?? 'bg-gray-100 text-gray-600'}`}>
+                        {o.status}
+                      </span>
+                    </td>
+                  </motion.tr>
                 ))}
-              </div>
-            </motion.div>
-          ))}
+              </motion.tbody>
+            </table>
+          </div>
         </div>
       )}
     </motion.div>
@@ -664,15 +1303,26 @@ function SettingsTab(p: SettingsTabProps) {
       className="space-y-6 max-w-2xl"
     >
       {/* Profile card */}
-      <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-6 border border-white/50 shadow-sm">
+      <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-purple-500 to-pink-500" />
         <h2 className="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2">
-          <User className="w-5 h-5 text-purple-600" /> Profile Information
+          <span className="w-7 h-7 rounded-lg bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white">
+            <User className="w-3.5 h-3.5" />
+          </span>
+          Profile Information
         </h2>
 
-        {/* Avatar */}
+        {/* Avatar with animated ring */}
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-            {p.user.name.charAt(0).toUpperCase()}
+          <div className="relative">
+            <motion.div
+              className="absolute inset-0 rounded-2xl"
+              animate={{ boxShadow: ['0 0 0 0px rgba(124,58,237,0.4)', '0 0 0 6px rgba(124,58,237,0)', '0 0 0 0px rgba(124,58,237,0)'] }}
+              transition={{ repeat: Infinity, duration: 2.5, ease: 'easeOut' }}
+            />
+            <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-purple-200/50">
+              {p.user.name.charAt(0).toUpperCase()}
+            </div>
           </div>
           <div>
             <p className="font-semibold text-gray-800">{p.user.name}</p>
@@ -696,14 +1346,16 @@ function SettingsTab(p: SettingsTabProps) {
             />
             {p.isEditingName ? (
               <>
-                <button
+                <motion.button
                   onClick={p.onSaveName}
                   disabled={p.nameLoading}
-                  className="px-4 py-2.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl text-sm font-medium hover:scale-105 transition-all disabled:opacity-60 flex items-center gap-1.5"
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="px-4 py-2.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl text-sm font-medium disabled:opacity-60 flex items-center gap-1.5 shadow-sm"
                 >
                   {p.nameLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                   Save
-                </button>
+                </motion.button>
                 <button
                   onClick={() => { p.setIsEditingName(false); p.setEditName(p.user.name); }}
                   className="px-3 py-2.5 text-gray-500 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm transition-all"
@@ -712,19 +1364,26 @@ function SettingsTab(p: SettingsTabProps) {
                 </button>
               </>
             ) : (
-              <button
+              <motion.button
                 onClick={() => p.setIsEditingName(true)}
-                className="px-4 py-2.5 text-gray-600 hover:text-purple-600 bg-gray-100 hover:bg-purple-50 rounded-xl text-sm font-medium transition-all flex items-center gap-1.5"
+                whileHover={{ scale: 1.04, backgroundColor: '#f5f3ff' }}
+                className="px-4 py-2.5 text-gray-600 hover:text-purple-600 bg-gray-100 rounded-xl text-sm font-medium transition-colors flex items-center gap-1.5"
               >
                 <Edit3 className="w-4 h-4" /> Edit
-              </button>
+              </motion.button>
             )}
           </div>
           {p.nameError && (
             <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{p.nameError}</p>
           )}
           {p.nameSuccess && (
-            <p className="text-xs text-green-600 mt-1.5 flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5" /> Name updated successfully</p>
+            <motion.p
+              className="text-xs text-green-600 mt-1.5 flex items-center gap-1"
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <CheckCircle className="w-3.5 h-3.5" /> Name updated successfully
+            </motion.p>
           )}
         </div>
 
@@ -742,16 +1401,20 @@ function SettingsTab(p: SettingsTabProps) {
       </div>
 
       {/* Change Password */}
-      <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-6 border border-white/50 shadow-sm">
+      <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-blue-500 to-cyan-500" />
         <h2 className="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2">
-          <Shield className="w-5 h-5 text-purple-600" /> Change Password
+          <span className="w-7 h-7 rounded-lg bg-linear-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white">
+            <Shield className="w-3.5 h-3.5" />
+          </span>
+          Change Password
         </h2>
 
         {p.pwError && (
           <motion.div
             className="flex items-center gap-2 p-3 mb-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
           >
             <AlertCircle className="w-4 h-4 shrink-0" /> {p.pwError}
           </motion.div>
@@ -759,8 +1422,8 @@ function SettingsTab(p: SettingsTabProps) {
         {p.pwSuccess && (
           <motion.div
             className="flex items-center gap-2 p-3 mb-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
           >
             <CheckCircle className="w-4 h-4 shrink-0" /> Password changed successfully!
           </motion.div>
@@ -790,7 +1453,7 @@ function SettingsTab(p: SettingsTabProps) {
                 <button
                   type="button"
                   onClick={() => p.setShowPw(prev => ({ ...prev, [field.showKey]: !prev[field.showKey] }))}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   aria-label="Toggle visibility"
                 >
                   {p.showPw[field.showKey] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -799,13 +1462,15 @@ function SettingsTab(p: SettingsTabProps) {
             </div>
           ))}
 
-          <button
+          <motion.button
             type="submit"
             disabled={p.pwLoading}
-            className="px-6 py-2.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold text-sm shadow-md hover:shadow-purple-500/30 hover:scale-[1.02] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+            whileHover={{ scale: 1.02, boxShadow: '0 8px 20px rgba(124,58,237,0.3)' }}
+            whileTap={{ scale: 0.98 }}
+            className="px-6 py-2.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold text-sm shadow-md disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {p.pwLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> Updating...</> : 'Update Password'}
-          </button>
+          </motion.button>
         </form>
       </div>
     </motion.div>
@@ -814,34 +1479,21 @@ function SettingsTab(p: SettingsTabProps) {
 
 /* ─────────── Shared helpers ─────────── */
 function TabSkeleton() {
+  const shimmer = 'relative overflow-hidden before:absolute before:inset-0 before:bg-linear-to-r before:from-gray-100 before:via-white before:to-gray-100 before:animate-[shimmer_1.4s_infinite] bg-gray-100 rounded-2xl';
   return (
-    <div className="space-y-4 animate-pulse">
-      {[1, 2, 3].map(i => (
-        <div key={i} className="bg-white/60 rounded-2xl h-24 border border-white/50" />
-      ))}
+    <div className="space-y-4">
+      <style>{`@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}} .before\\:animate-\\[shimmer_1\\.4s_infinite\\]::before{background-size:800px 100%;animation:shimmer 1.4s linear infinite;}`}</style>
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+        {[1, 2, 3, 4].map(i => (
+          <div key={i} className={`${shimmer} h-28`} />
+        ))}
+      </div>
+      <div className="grid xl:grid-cols-3 gap-4">
+        <div className={`xl:col-span-2 ${shimmer} h-56`} />
+        <div className={`${shimmer} h-56`} />
+      </div>
+      <div className={`${shimmer} h-64`} />
     </div>
   );
 }
 
-function EmptyState({
-  icon, title, desc, action,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  desc: string;
-  action: { label: string; href: string };
-}) {
-  return (
-    <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-10 border border-white/50 shadow-sm text-center">
-      <div className="flex justify-center mb-4">{icon}</div>
-      <p className="text-lg font-semibold text-gray-700 mb-1">{title}</p>
-      <p className="text-sm text-gray-500 mb-6">{desc}</p>
-      <Link
-        href={action.href}
-        className="inline-flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold text-sm shadow-md hover:shadow-purple-500/30 hover:scale-105 transition-all"
-      >
-        {action.label} <ChevronRight className="w-4 h-4" />
-      </Link>
-    </div>
-  );
-}
