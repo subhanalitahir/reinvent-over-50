@@ -1370,7 +1370,7 @@ function EventsTab({
   const accessible = upcoming.filter(canAccess);
   const locked = upcoming.filter(e => !canAccess(e));
 
-  const futureOnly = (e: IEvent) => new Date(e.date) >= new Date();
+  const futureOnly = (e: IEvent) => new Date(e.startDate) >= new Date();
 
   return (
     <motion.div
@@ -1458,7 +1458,7 @@ function EventsTab({
                   <span className="text-xs font-semibold text-green-600">
                     {event.isFree ? 'Free' : event.isFreeForMembers && isMember ? 'Free for Members' : purchasedEventIds.has(event._id) ? 'Purchased' : `$${event.price.toFixed(2)}`}
                   </span>
-                  {event.type === 'virtual' && event.meetingLink ? (
+                  {event.type === 'virtual' && event.virtualLink ? (
                     <a
                       href={event.virtualLink}
                       target="_blank"

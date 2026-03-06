@@ -1,11 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useAuth } from '@/app/context/AuthContext';
 import {
-  Send, Users, Bell, CheckCircle, AlertCircle, Loader2,
-  Eye, EyeOff, Mail,
+  Send, Users, Bell, CheckCircle, AlertCircle, Loader2, Mail,
 } from 'lucide-react';
+
+const NewsletterEditor = dynamic(
+  () => import('./NewsletterEditor').then(m => m.NewsletterEditor),
+  { ssr: false, loading: () => <div className="h-64 rounded-xl border border-gray-200 bg-gray-50 animate-pulse" /> },
+);
 
 export default function AdminNewsletterPage() {
   const { token } = useAuth();
@@ -14,7 +19,6 @@ export default function AdminNewsletterPage() {
   const [htmlContent, setHtmlContent] = useState('');
   const [sendToUsers, setSendToUsers] = useState(true);
   const [sendToSubscribers, setSendToSubscribers] = useState(true);
-  const [preview, setPreview] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ total: number; sent: number; failed: number } | null>(null);
   const [error, setError] = useState('');
@@ -92,36 +96,16 @@ export default function AdminNewsletterPage() {
 
           {/* Content */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Email Content (HTML) <span className="text-red-500">*</span>
-              </label>
-              <button
-                type="button"
-                onClick={() => setPreview(p => !p)}
-                className="flex items-center gap-1.5 text-xs font-semibold text-purple-600 hover:text-purple-700 transition-colors"
-              >
-                {preview ? <><EyeOff className="w-3.5 h-3.5" /> Edit</> : <><Eye className="w-3.5 h-3.5" /> Preview</>}
-              </button>
-            </div>
-
-            {preview ? (
-              <div
-                className="min-h-64 border border-gray-200 rounded-xl p-4 bg-gray-50 prose prose-sm max-w-none text-sm"
-                dangerouslySetInnerHTML={{ __html: htmlContent || '<p class="text-gray-400">Nothing to preview yet.</p>' }}
-              />
-            ) : (
-              <textarea
-                value={htmlContent}
-                onChange={(e) => setHtmlContent(e.target.value)}
-                rows={16}
-                placeholder={`Write HTML content here. Example:\n<h2>Hello!</h2>\n<p>This month we're sharing <strong>5 powerful tips</strong> to help you reinvent your life after 50.</p>\n<p>Read more on our <a href="https://example.com">website</a>.</p>`}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono resize-y"
-              />
-            )}
+            <label className="block text-sm font-semibold text-gray-700 mb-3">
+              Email Content <span className="text-red-500">*</span>
+            </label>
+            <NewsletterEditor
+              onChange={setHtmlContent}
+              initialContent={htmlContent}
+            />
             <p className="text-xs text-gray-400 mt-2">
-              Supports HTML. The content is wrapped in our branded email template automatically.
-              Each email includes an unsubscribe link.
+              What you see is what your recipients will receive. Content is wrapped in our
+              branded email template automatically. Each email includes an unsubscribe link.
             </p>
           </div>
         </div>
@@ -178,8 +162,8 @@ export default function AdminNewsletterPage() {
             <h3 className="text-sm font-bold text-purple-800 mb-2">Tips</h3>
             <ul className="text-xs text-purple-700 space-y-1.5 list-disc list-inside leading-relaxed">
               <li>Keep subject lines under 60 characters</li>
-              <li>Use <code className="bg-purple-100 px-1 rounded">&lt;p&gt;</code>, <code className="bg-purple-100 px-1 rounded">&lt;h2&gt;</code>, <code className="bg-purple-100 px-1 rounded">&lt;strong&gt;</code> for formatting</li>
-              <li>Use the Preview button to check your layout</li>
+              <li>Use the toolbar to format headings, bold, lists, colours, and links</li>
+              <li>Insert images via URL using the image button in the toolbar</li>
               <li>Duplicate recipients (user + subscriber) are sent only once</li>
               <li>Unsubscribe links are added automatically</li>
             </ul>
