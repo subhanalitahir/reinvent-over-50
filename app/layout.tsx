@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Header } from "./components/Header";
-import { Footer } from "./components/Footer";
-import { PDFPopup } from "./components/PDFPopup";
 import { AuthProvider } from "./context/AuthContext";
+import { ConditionalLayout } from "./components/ConditionalLayout";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -41,12 +39,9 @@ export default function RootLayout({
       >
         <div className="min-h-screen bg-white">
           <AuthProvider>
-            <Header />
-            <main>
+            <ConditionalLayout>
               {children}
-            </main>
-            <Footer />
-            <PDFPopup />
+            </ConditionalLayout>
           </AuthProvider>
         </div>
       </body>

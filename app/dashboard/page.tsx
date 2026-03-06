@@ -474,7 +474,9 @@ export default function DashboardPage() {
   const [pwSuccess, setPwSuccess] = useState(false);
 
   useEffect(() => {
-    if (!authLoading && !user) router.push('/login');
+    if (authLoading) return;
+    if (!user) { router.push('/login'); return; }
+    if (user.role === 'admin') { router.replace('/admin'); return; }
   }, [authLoading, user, router]);
 
   const fetchData = useCallback(async () => {
