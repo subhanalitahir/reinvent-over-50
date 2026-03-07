@@ -648,6 +648,39 @@ export const sendWorkbookPurchaseEmail = async (
   });
 };
 
+export const sendContactReplyEmail = async (
+  email: string,
+  name: string,
+  subject: string,
+  replyMessage: string,
+): Promise<void> => {
+  const firstName = name.split(" ")[0];
+  const subjectLabel =
+    subject.charAt(0).toUpperCase() + subject.slice(1).replace(/-/g, " ");
+  const formattedMessage = replyMessage
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\n/g, "<br>");
+
+  const body = `
+    ${emailHero("💬", `Hi ${firstName},`, "You have a reply from the Reinvent You Over 50 team.", "135deg,#4c1d95 0%,#7c3aed 50%,#db2777 100%")}
+    <p style="margin:0 0 6px;font-size:13px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Regarding: ${subjectLabel}</p>
+    ${emailHighlight(formattedMessage, "#7c3aed", "#faf5ff")}
+    <p style="margin:28px 0 0;font-size:13px;color:#9ca3af;line-height:1.7;">— The Reinvent You Over 50 Team 💜</p>
+  `;
+
+  await sendEmail({
+    to: email,
+    subject: `Re: ${subjectLabel} – Reinvent You Over 50`,
+    html: emailLayout(
+      body,
+      `You have a reply from the Reinvent You Over 50 team regarding your ${subjectLabel} enquiry.`,
+    ),
+    text: `Hi ${firstName},\n\n${replyMessage}\n\n— The Reinvent You Over 50 Team`,
+  });
+};
+
 // ─── Newsletter broadcast ──────────────────────────────────────────────────────
 
 export const sendNewsletterEmail = async (

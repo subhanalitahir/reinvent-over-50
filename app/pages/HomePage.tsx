@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { Users, Calendar, BookOpen, Video, Award, Heart, ArrowRight, Star, CheckCircle, TrendingUp, Shield, Zap, Quote, Sparkles, Play } from 'lucide-react';
 import { motion } from 'motion/react';
+import { BannerStrip } from '../components/BannerStrip';
 
 export function HomePage() {
   const features = [
@@ -93,6 +94,7 @@ export function HomePage() {
 
   return (
     <div className="pt-20">
+      <BannerStrip placement="home" />
 
       {/* ===== HERO ===== */}
       <section

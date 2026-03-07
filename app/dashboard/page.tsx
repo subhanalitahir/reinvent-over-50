@@ -796,7 +796,7 @@ function OverviewTab({
       label: 'Total Orders',
       value: String(orders.length),
       numericValue: orders.length,
-      sub: orders.length > 0 ? `$${orders.reduce((s, o) => s + (o.total ?? 0), 0).toFixed(0)} spent` : 'No orders yet',
+      sub: orders.length > 0 ? `$${(orders.reduce((s, o) => s + (o.total ?? 0), 0) / 100).toFixed(0)} spent` : 'No orders yet',
       icon: <ShoppingBag className="w-5 h-5" />,
       color: 'from-orange-500 to-amber-500',
       bg: 'bg-orange-50',
@@ -1230,7 +1230,7 @@ function SessionsTab({ bookings, loading }: { bookings: IBooking[]; loading: boo
 function OrdersTab({ orders, loading }: { orders: IOrder[]; loading: boolean }) {
   if (loading) return <TabSkeleton />;
 
-  const totalSpent = orders.reduce((s, o) => s + (o.total ?? 0), 0);
+  const totalSpent = orders.reduce((s, o) => s + (o.total ?? 0), 0) / 100;
 
   return (
     <motion.div
@@ -1328,7 +1328,7 @@ function OrdersTab({ orders, loading }: { orders: IOrder[]; loading: boolean }) 
                       </div>
                     </td>
                     <td className="px-5 py-4">
-                      <span className="font-bold text-gray-900">${o.total?.toFixed(2)}</span>
+                      <span className="font-bold text-gray-900">${((o.total ?? 0) / 100).toFixed(2)}</span>
                     </td>
                     <td className="px-5 py-4">
                       <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold capitalize ${statusBadge[o.status] ?? 'bg-gray-100 text-gray-600'}`}>

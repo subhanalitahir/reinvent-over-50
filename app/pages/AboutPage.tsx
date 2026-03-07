@@ -4,6 +4,7 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { Target, Heart, Users, Sparkles, Quote, ArrowRight, Star } from 'lucide-react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
+import { BannerStrip } from '../components/BannerStrip';
 
 export function AboutPage() {
   const values = [
@@ -60,6 +61,7 @@ export function AboutPage() {
 
   return (
     <div className="pt-20">
+      <BannerStrip placement="about" />
       {/* Hero Section */}
       <section className="relative min-h-[60vh] flex items-center overflow-hidden bg-linear-to-br from-purple-50 via-pink-50 to-orange-50">
         <div className="absolute inset-0 bg-mesh-gradient opacity-40" />

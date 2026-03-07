@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const placement = searchParams.get("placement");
 
-    const filter: Record<string, unknown> = { isActive: true };
+    const filter: Record<string, unknown> = { status: "active" };
     if (placement) filter.placement = placement;
 
     const now = new Date();

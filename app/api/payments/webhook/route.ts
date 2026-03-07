@@ -3,8 +3,10 @@ import Stripe from "stripe";
 import connectDB from "@/lib/db";
 import Order from "@/lib/models/Order";
 import Member from "@/lib/models/Member";
+import Booking from "@/lib/models/Booking";
 import {
   sendOrderConfirmationEmail,
+  sendBookingConfirmationEmail,
   sendMembershipWelcomeEmail,
 } from "@/lib/email";
 
@@ -90,8 +92,30 @@ export async function POST(request: NextRequest) {
               }
             }
           }
+        } else if (metaType === "booking") {
+          // Auto-confirm booking when payment succeeds
+          const booking = await Booking.findOneAndUpdate(
+            { stripeSessionId: session.id },
+            { status: "confirmed" },
+            { new: true },
+          );
+          if (booking) {
+            const customerEmail =
+              session.customer_details?.email ?? booking.guestEmail ?? "";
+            if (customerEmail) {
+              sendBookingConfirmationEmail(customerEmail, {
+                guestName: booking.guestName,
+                sessionType: booking.sessionType,
+                scheduledAt: booking.scheduledAt,
+                duration: booking.duration,
+                meetingLink: process.env.CALENDLY_LINK,
+              }).catch((e: unknown) =>
+                console.error("[EMAIL] booking confirmation:", e),
+              );
+            }
+          }
         } else {
-          // Mark related order as paid
+          // Mark related order as paid (workbook, event, etc.)
           const order = await Order.findOne({
             stripeSessionId: session.id,
           }).populate("user");

@@ -285,9 +285,15 @@ export function WorkbookPage() {
                       </div>
                     )}
                     <div className="relative z-10">
-                      <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg ${isFeatured ? 'bg-white/20' : 'bg-linear-to-br from-purple-500 to-pink-500'}`}>
-                        {product.includesBooking ? <Video className="w-8 h-8 text-white" /> : <BookOpen className="w-8 h-8 text-white" />}
-                      </div>
+                      {product.imageUrl ? (
+                        <div className="rounded-2xl overflow-hidden mb-6 h-40 shadow-lg">
+                          <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg ${isFeatured ? 'bg-white/20' : 'bg-linear-to-br from-purple-500 to-pink-500'}`}>
+                          {product.includesBooking ? <Video className="w-8 h-8 text-white" /> : <BookOpen className="w-8 h-8 text-white" />}
+                        </div>
+                      )}
                       <h3 className={`text-2xl font-bold mb-1 ${isFeatured ? 'text-white' : 'text-gray-900'}`}>{product.name}</h3>
                       <p className={`mb-6 text-sm line-clamp-2 ${isFeatured ? 'text-purple-100' : 'text-gray-500'}`}>{product.description}</p>
                       <div className="flex items-baseline gap-2 mb-2">

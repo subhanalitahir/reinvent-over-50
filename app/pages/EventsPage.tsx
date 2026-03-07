@@ -8,6 +8,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EmailModal } from '../components/EmailModal';
 import { useAuth } from '../context/AuthContext';
+import { BannerStrip } from '../components/BannerStrip';
 
 interface IEvent {
   _id: string;
@@ -159,6 +160,8 @@ export function EventsPage() {
           {eventError}
         </motion.div>
       )}
+
+      <BannerStrip placement="events" />
 
       {/* Hero Section */}
       <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-linear-to-br from-purple-50 via-pink-50 to-orange-50">

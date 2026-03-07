@@ -75,7 +75,7 @@ export default function AdminOrdersPage() {
     }
   };
 
-  const totalRevenue = orders.filter(o => o.status === 'paid').reduce((acc, o) => acc + o.total, 0);
+  const totalRevenue = orders.filter(o => o.status === 'paid').reduce((acc, o) => acc + o.total, 0) / 100;
 
   return (
     <div className="space-y-6">
@@ -142,7 +142,7 @@ export default function AdminOrdersPage() {
                     <td className="px-6 py-4 text-gray-600 hidden sm:table-cell">
                       {o.items.map(i => i.name).join(', ').slice(0, 40)}{o.items.length > 1 ? ` +${o.items.length - 1}` : ''}
                     </td>
-                    <td className="px-6 py-4 font-bold text-gray-900">${o.total.toFixed(2)}</td>
+                    <td className="px-6 py-4 font-bold text-gray-900">${(o.total / 100).toFixed(2)}</td>
                     <td className="px-6 py-4">
                       <div className="relative inline-block">
                         <select value={o.status} onChange={e => updateStatus(o._id, e.target.value)}
@@ -185,7 +185,7 @@ export default function AdminOrdersPage() {
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="bg-gray-50 rounded-xl p-3"><div className="text-xs text-gray-400 mb-1">Customer</div><div className="font-semibold">{selected.guestName ?? 'Guest'}</div></div>
-                <div className="bg-gray-50 rounded-xl p-3"><div className="text-xs text-gray-400 mb-1">Total</div><div className="font-bold text-gray-900">${selected.total.toFixed(2)} {selected.currency.toUpperCase()}</div></div>
+                <div className="bg-gray-50 rounded-xl p-3"><div className="text-xs text-gray-400 mb-1">Total</div><div className="font-bold text-gray-900">${(selected.total / 100).toFixed(2)} {selected.currency.toUpperCase()}</div></div>
                 <div className="bg-gray-50 rounded-xl p-3"><div className="text-xs text-gray-400 mb-1">Date</div><div className="font-semibold">{new Date(selected.createdAt).toLocaleString()}</div></div>
                 {selected.paidAt && <div className="bg-gray-50 rounded-xl p-3"><div className="text-xs text-gray-400 mb-1">Paid At</div><div className="font-semibold">{new Date(selected.paidAt).toLocaleString()}</div></div>}
               </div>
@@ -195,7 +195,7 @@ export default function AdminOrdersPage() {
                   {selected.items.map((item, i) => (
                     <div key={i} className="flex justify-between items-center bg-gray-50 rounded-xl px-4 py-3 text-sm">
                       <span className="font-medium">{item.name} <span className="text-gray-400">x{item.quantity}</span></span>
-                      <span className="font-bold">${(item.price * item.quantity).toFixed(2)}</span>
+                      <span className="font-bold">${(item.price / 100 * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>

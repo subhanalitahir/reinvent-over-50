@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
-import { Search, Mail, Trash2, ChevronDown, Eye, RefreshCw, X } from 'lucide-react';
+import { Search, Mail, Trash2, ChevronDown, Eye, RefreshCw, X, Send } from 'lucide-react';
 
 interface IContact {
   _id: string;
@@ -33,6 +33,10 @@ export default function AdminContactsPage() {
   const [selected, setSelected] = useState<IContact | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [confirm, setConfirm] = useState<string | null>(null);
+  const [replyOpen, setReplyOpen] = useState(false);
+  const [replyText, setReplyText] = useState('');
+  const [replySending, setReplySending] = useState(false);
+  const [replyError, setReplyError] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -91,6 +95,29 @@ export default function AdminContactsPage() {
       if (selected?._id === id) setSelected(null);
     } finally {
       setActionLoading(null);
+    }
+  };
+
+  const sendReply = async () => {
+    if (!selected || !replyText.trim()) return;
+    setReplySending(true);
+    setReplyError('');
+    try {
+      const res = await fetch(`/api/contacts/${selected._id}/reply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ message: replyText }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.message ?? 'Failed to send reply');
+      setContacts(prev => prev.map(c => c._id === selected._id ? { ...c, status: 'replied' } : c));
+      setSelected(prev => prev ? { ...prev, status: 'replied' } : null);
+      setReplyOpen(false);
+      setReplyText('');
+    } catch (err: unknown) {
+      setReplyError(err instanceof Error ? err.message : 'Failed to send reply');
+    } finally {
+      setReplySending(false);
     }
   };
 
@@ -246,11 +273,54 @@ export default function AdminContactsPage() {
                     Mark {s}
                   </button>
                 ))}
-                <a href={`mailto:${selected.email}?subject=Re: ${selected.subject}`}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-green-100 text-green-700 hover:bg-green-200 transition-colors ml-auto">
-                  Reply via Email →
-                </a>
+                <button
+                  onClick={() => { setReplyText(''); setReplyError(''); setReplyOpen(true); }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-green-100 text-green-700 hover:bg-green-200 transition-colors ml-auto flex items-center gap-1.5">
+                  <Send className="w-3.5 h-3.5" /> Reply via Email
+                </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reply compose modal */}
+      {replyOpen && selected && (
+        <div className="fixed inset-0 bg-black/50 z-60 flex items-end sm:items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl">
+            <div className="flex items-center justify-between p-5 border-b border-gray-100">
+              <div>
+                <h3 className="font-bold text-gray-900">Reply to {selected.name}</h3>
+                <p className="text-xs text-gray-400 mt-0.5">{selected.email}</p>
+              </div>
+              <button onClick={() => setReplyOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100">
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="p-5 space-y-3">
+              <div className="text-xs text-gray-500 bg-gray-50 rounded-xl p-3">
+                <span className="font-semibold text-gray-600">Their message: </span>
+                {selected.message.length > 180 ? selected.message.slice(0, 180) + '…' : selected.message}
+              </div>
+              <textarea
+                rows={6}
+                placeholder="Write your reply…"
+                value={replyText}
+                onChange={e => setReplyText(e.target.value)}
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
+              />
+              {replyError && <p className="text-xs text-red-500">{replyError}</p>}
+            </div>
+            <div className="flex gap-3 p-5 border-t border-gray-100">
+              <button onClick={() => setReplyOpen(false)} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50">
+                Cancel
+              </button>
+              <button
+                onClick={sendReply}
+                disabled={replySending || !replyText.trim()}
+                className="flex-1 px-4 py-2.5 bg-green-600 text-white rounded-xl text-sm font-semibold hover:bg-green-700 disabled:opacity-60 flex items-center justify-center gap-2">
+                {replySending ? 'Sending…' : <><Send className="w-4 h-4" /> Send Reply</>}
+              </button>
             </div>
           </div>
         </div>
