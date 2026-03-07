@@ -1,7 +1,13 @@
 import { NextRequest } from "next/server";
 import connectDB from "@/lib/db";
 import Contact from "@/lib/models/Contact";
-import { getAuthUser, requireAdmin, apiSuccess, handleError, AppError } from "@/lib/auth";
+import {
+  getAuthUser,
+  requireAdmin,
+  apiSuccess,
+  handleError,
+  AppError,
+} from "@/lib/auth";
 import { sendContactReplyEmail } from "@/lib/email";
 
 // POST /api/contacts/[id]/reply  (admin)
