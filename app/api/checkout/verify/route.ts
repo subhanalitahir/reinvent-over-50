@@ -10,6 +10,8 @@ import {
   sendBookingConfirmationEmail,
   sendWorkbookPurchaseEmail,
   sendEventRegistrationEmail,
+  sendVirtualEventAccessEmail,
+  sendEventPassEmail,
   sendMembershipWelcomeEmail,
 } from "@/lib/email";
 
@@ -84,15 +86,92 @@ export async function GET(req: NextRequest) {
           { status: "paid" },
           { new: true },
         );
-        if (email) {
+
+        const eventId = session.metadata?.eventId;
+        const attendeeName =
+          session.metadata?.guestName ||
+          session.customer_details?.name ||
+          email;
+        const eventType = session.metadata?.eventType ?? "virtual";
+        const virtualLink = session.metadata?.virtualLink ?? "";
+
+        interface EventData {
+          title: string;
+          startDate?: string;
+          location?: string;
+          passId?: string;
+        }
+        let eventData: EventData | null = null;
+
+        if (eventId) {
+          const EventModel = (await import("@/lib/models/Event")).default;
+          const dbEvent = await EventModel.findById(eventId);
+          if (dbEvent) {
+            const passId = `PASS-${session.id.slice(-8).toUpperCase()}`;
+            const eventDate = new Date(dbEvent.startDate).toLocaleDateString(
+              "en-US",
+              {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              },
+            );
+            eventData = {
+              title: dbEvent.title,
+              startDate: dbEvent.startDate.toISOString(),
+              location: dbEvent.location,
+              passId,
+            };
+            if (email) {
+              if (eventType === "virtual" || eventType === "hybrid") {
+                sendVirtualEventAccessEmail(email, {
+                  name: attendeeName ?? email,
+                  eventTitle: dbEvent.title,
+                  zoomLink: virtualLink || dbEvent.virtualLink || "",
+                  date: eventDate,
+                }).catch((e: unknown) =>
+                  console.error("[EMAIL] event zoom:", e),
+                );
+              } else {
+                sendEventPassEmail(email, {
+                  name: attendeeName ?? email,
+                  eventTitle: dbEvent.title,
+                  date: eventDate,
+                  location: dbEvent.location ?? "TBA",
+                  price: `$${((order?.total ?? 0) / 100).toFixed(2)}`,
+                  passId,
+                }).catch((e: unknown) =>
+                  console.error("[EMAIL] event pass:", e),
+                );
+              }
+            }
+          }
+        } else if (email) {
+          // fallback
           sendEventRegistrationEmail(email, {
             title: order?.items?.[0]?.name ?? "Event",
             date: new Date().toLocaleDateString(),
-            location: "Online",
+            location: eventType === "in-person" ? "See confirmation" : "Online",
             price: `$${((order?.total ?? 0) / 100).toFixed(2)}`,
           }).catch((e: unknown) => console.error("[EMAIL] event reg:", e));
         }
-        return apiSuccess({ type, order }, "Event registration confirmed");
+
+        return apiSuccess(
+          {
+            type,
+            order,
+            eventType,
+            eventData: {
+              title: eventData?.title ?? order?.items?.[0]?.name ?? "Event",
+              startDate: eventData?.startDate,
+              location: eventData?.location,
+              passId: eventData?.passId,
+              attendeeName,
+            },
+          },
+          "Event registration confirmed",
+        );
       }
 
       case "membership": {

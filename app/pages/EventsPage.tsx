@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import { Calendar, MapPin, Video, Clock, Sparkles, ArrowRight, Ticket, Loader2, Users } from 'lucide-react';
+import { Calendar, MapPin, Video, Clock, Sparkles, ArrowRight, Ticket, Loader2, Users, X, QrCode } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
@@ -40,6 +40,9 @@ export function EventsPage() {
   const [eventSuccess, setEventSuccess] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [pendingEventId, setPendingEventId] = useState<string | null>(null);
+  const [pendingFreeEvent, setPendingFreeEvent] = useState<IEvent | null>(null);
+  const [zoomModalOpen, setZoomModalOpen] = useState(false);
+  const [passModal, setPassModal] = useState<{ eventTitle: string; date: string; location: string; attendeeName: string; passId: string } | null>(null);
 
   const loadEvents = useCallback(async () => {
     setEventsLoading(true);
@@ -61,9 +64,31 @@ export function EventsPage() {
   useEffect(() => {
     const successParam = searchParams.get('success');
     const sessionId = searchParams.get('session_id');
-    if (successParam === 'true') {
+    if (successParam === 'true' && sessionId) {
+      fetch(`/api/checkout/verify?session_id=${sessionId}`)
+        .then(res => res.json())
+        .then(data => {
+          const evType = data?.data?.eventType as string | undefined;
+          const evData = data?.data?.eventData as { title?: string; startDate?: string; location?: string; passId?: string; attendeeName?: string } | undefined;
+          if (evType === 'virtual' || evType === 'hybrid') {
+            setZoomModalOpen(true);
+          } else if (evType === 'in-person') {
+            setPassModal({
+              eventTitle: evData?.title ?? 'Event',
+              date: evData?.startDate
+                ? new Date(evData.startDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+                : new Date().toLocaleDateString(),
+              location: evData?.location ?? 'TBA',
+              attendeeName: evData?.attendeeName ?? '',
+              passId: evData?.passId ?? `PASS-${Date.now().toString(36).toUpperCase().slice(-8)}`,
+            });
+          } else {
+            setEventSuccess(true);
+          }
+        })
+        .catch(() => setEventSuccess(true));
+    } else if (successParam === 'true') {
       setEventSuccess(true);
-      if (sessionId) fetch(`/api/checkout/verify?session_id=${sessionId}`).catch(() => {});
     }
     if (searchParams.get('canceled') === 'true') setEventError('Payment was cancelled. Please try again.');
   }, [searchParams]);
@@ -101,15 +126,47 @@ export function EventsPage() {
     }
   };
 
+  const handleFreeEventAccess = async (event: IEvent, guestEmail?: string) => {
+    setLoadingEvent(event._id);
+    setEventError('');
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const body: Record<string, unknown> = {};
+      if (guestEmail) body.email = guestEmail;
+      const res = await fetch(`/api/events/${event._id}/access`, { method: 'POST', headers, body: JSON.stringify(body) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message ?? 'Failed to access event');
+      if (event.type === 'virtual' || event.type === 'hybrid') {
+        setZoomModalOpen(true);
+      } else {
+        setPassModal({
+          eventTitle: event.title,
+          date: new Date(event.startDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+          location: event.location ?? 'TBA',
+          attendeeName: user?.name ?? guestEmail ?? data?.data?.attendeeName ?? 'Guest',
+          passId: data?.data?.passId ?? `PASS-${Date.now().toString(36).toUpperCase().slice(-8)}`,
+        });
+      }
+    } catch (err: unknown) {
+      setEventError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setLoadingEvent(null);
+    }
+  };
+
   const handleEventRegister = (event: IEvent) => {
     if (isFreeForCurrentUser(event)) {
-      // Redirect to membership page for member-only free events
       if (event.isFreeForMembers && !event.isFree && user?.role !== 'member' && user?.role !== 'admin') {
         window.location.href = '/membership';
         return;
       }
-      // Fully free â€” just show success or link
-      window.location.href = '/dashboard';
+      if (user && token) {
+        handleFreeEventAccess(event);
+      } else {
+        setPendingFreeEvent(event);
+        setModalOpen(true);
+      }
       return;
     }
     setEventError('');
@@ -122,15 +179,20 @@ export function EventsPage() {
   };
 
   const handleModalSubmit = async (email: string) => {
-    if (!pendingEventId) return;
     setModalOpen(false);
-    await doEventCheckout(pendingEventId, email);
+    if (pendingFreeEvent) {
+      const ev = pendingFreeEvent;
+      setPendingFreeEvent(null);
+      await handleFreeEventAccess(ev, email);
+    } else if (pendingEventId) {
+      await doEventCheckout(pendingEventId, email);
+    }
   };
 
   const virtualEvents = events.filter(e => e.type === 'virtual' || e.type === 'hybrid');
   const inPersonEvents = events.filter(e => e.type === 'in-person');
 
-  const pendingEvent = events.find(e => e._id === pendingEventId);
+  const pendingEvent = pendingFreeEvent ?? events.find(e => e._id === pendingEventId);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -431,13 +493,103 @@ export function EventsPage() {
 
       <EmailModal
         isOpen={modalOpen}
-        onClose={() => { setModalOpen(false); setPendingEventId(null); }}
+        onClose={() => { setModalOpen(false); setPendingEventId(null); setPendingFreeEvent(null); }}
         onSubmit={handleModalSubmit}
-        title="Register for event"
-        subtitle={pendingEvent ? `Enter your email to reserve your spot for "${pendingEvent.title}".` : 'Enter your email to register.'}
-        ctaLabel="Reserve My Spot â†’"
+        title={pendingFreeEvent ? 'Access Event' : 'Register for event'}
+        subtitle={pendingEvent ? `Enter your email to ${pendingFreeEvent ? 'access' : 'reserve your spot for'} "${pendingEvent.title}".` : 'Enter your email to register.'}
+        ctaLabel="Reserve My Spot â†'"
         loading={loadingEvent !== null}
       />
+
+      {/* Zoom Link Sent Modal */}
+      <AnimatePresence>
+        {zoomModalOpen && (
+          <motion.div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div className="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden"
+              initial={{ scale: 0.85, opacity: 0, y: 30 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.85, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}>
+              <div className="bg-linear-to-br from-blue-600 via-purple-600 to-pink-600 p-8 text-center">
+                <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Video className="w-10 h-10 text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-2">Zoom Link Sent!</h2>
+                <p className="text-white/80 text-sm">Your access details have been emailed to you</p>
+              </div>
+              <div className="p-8 text-center">
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  The <strong className="text-purple-700">Zoom link for this virtual event</strong> has been sent to your email address. Please check your inbox (and spam folder) for the join link.
+                </p>
+                <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-6 text-sm text-blue-700">
+                  <strong>Tip:</strong> Join 5 minutes early to test your audio and video.
+                </div>
+                <button onClick={() => setZoomModalOpen(false)}
+                  className="w-full bg-linear-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity">
+                  Got it, thanks!
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Event Pass Modal */}
+      <AnimatePresence>
+        {passModal && (
+          <motion.div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div className="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden"
+              initial={{ scale: 0.85, opacity: 0, y: 30 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.85, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}>
+              <div className="flex items-center justify-between p-5 border-b border-gray-100">
+                <h2 className="text-lg font-bold text-gray-900">Your Event Pass</h2>
+                <button onClick={() => setPassModal(null)} className="p-1.5 rounded-lg hover:bg-gray-100">
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+              {/* Pass card */}
+              <div className="p-6">
+                <div className="bg-linear-to-br from-[#1e0a3c] to-[#2d1060] rounded-2xl p-6 border-2 border-dashed border-purple-400/40">
+                  <div className="text-center mb-5">
+                    <div className="text-4xl mb-2">🎟️</div>
+                    <div className="text-xs font-bold text-purple-300/70 tracking-[3px] uppercase mb-1">Event Pass</div>
+                    <div className="text-xl font-bold text-white leading-tight">{passModal.eventTitle}</div>
+                  </div>
+                  <div className="border-t border-dashed border-purple-400/30 pt-4 space-y-3">
+                    {[
+                      { label: 'Attendee', value: passModal.attendeeName },
+                      { label: 'Date', value: passModal.date },
+                      { label: 'Location', value: passModal.location },
+                    ].map(row => (
+                      <div key={row.label} className="flex justify-between items-center">
+                        <span className="text-xs font-semibold text-purple-300/70 uppercase tracking-wider">{row.label}</span>
+                        <span className="text-sm font-bold text-white text-right max-w-[60%]">{row.value}</span>
+                      </div>
+                    ))}
+                    <div className="border-t border-dashed border-purple-400/30 pt-3 flex justify-between items-center">
+                      <span className="text-xs font-semibold text-purple-300/70 uppercase tracking-wider">Pass ID</span>
+                      <span className="text-xs font-mono text-purple-300">{passModal.passId}</span>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-center text-sm text-gray-500 mt-4 mb-5">
+                  A copy of this pass has been sent to your email.
+                </p>
+                <div className="flex gap-3">
+                  <button onClick={() => setPassModal(null)}
+                    className="flex-1 bg-linear-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                    <QrCode className="w-4 h-4" /> Save Pass
+                  </button>
+                  <button onClick={() => setPassModal(null)}
+                    className="flex-1 border border-gray-200 text-gray-600 py-3 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors">
+                    Close
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

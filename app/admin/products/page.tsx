@@ -14,6 +14,7 @@ interface IProduct {
   price: number;
   compareAtPrice?: number;
   imageUrl?: string;
+  fileUrl?: string;
   tags: string[];
   isDigital: boolean;
   includesBooking: boolean;
@@ -41,6 +42,7 @@ export default function AdminProductsPage() {
   const [saving, setSaving] = useState(false);
   const [confirm, setConfirm] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -69,6 +71,11 @@ export default function AdminProductsPage() {
 
   const saveProduct = async () => {
     if (!selected) return;
+    if (!selected.fileUrl?.trim()) {
+      setSaveError('Download link is required.');
+      return;
+    }
+    setSaveError('');
     setSaving(true);
     try {
       const isEdit = !!(selected as IProduct)._id;
@@ -125,7 +132,7 @@ export default function AdminProductsPage() {
           <button onClick={load} className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-600 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors">
             <RefreshCw className="w-4 h-4" />
           </button>
-          <button onClick={() => { setSelected({ ...EMPTY }); setModal('create'); }}
+          <button onClick={() => { setSelected({ ...EMPTY }); setModal('create'); setSaveError(''); }}
             className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-xl text-sm font-semibold hover:bg-purple-700 transition-colors">
             <Plus className="w-4 h-4" /> New Product
           </button>
@@ -200,7 +207,7 @@ export default function AdminProductsPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => { setSelected({ ...p }); setModal('edit'); }}
+                        <button onClick={() => { setSelected({ ...p }); setModal('edit'); setSaveError(''); }}
                           className="p-1.5 rounded-lg text-purple-400 hover:bg-purple-50 hover:text-purple-600 transition-colors"><Edit3 className="w-4 h-4" /></button>
                         <button onClick={() => setConfirm(p._id)}
                           className="p-1.5 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors"><Trash2 className="w-4 h-4" /></button>
@@ -271,6 +278,18 @@ export default function AdminProductsPage() {
                 <input type="url" value={selected.imageUrl ?? ''}
                   onChange={e => setSelected(prev => ({ ...prev, imageUrl: e.target.value }))}
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+                  Download Link <span className="text-red-500">*</span>
+                </label>
+                <input type="url" value={selected.fileUrl ?? ''}
+                  onChange={e => { setSelected(prev => ({ ...prev, fileUrl: e.target.value })); setSaveError(''); }}
+                  placeholder="https://..."
+                  className={`w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 ${saveError && !selected.fileUrl?.trim() ? 'border-red-400 bg-red-50' : 'border-gray-200'}`} />
+                {saveError && !selected.fileUrl?.trim() && (
+                  <p className="mt-1.5 text-xs text-red-500 font-medium">{saveError}</p>
+                )}
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-xs font-semibold text-gray-500 mb-1.5">Description *</label>

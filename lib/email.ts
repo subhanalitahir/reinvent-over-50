@@ -540,6 +540,104 @@ export const sendContactAcknowledgementEmail = async (
   });
 };
 
+export const sendVirtualEventAccessEmail = async (
+  email: string,
+  {
+    name,
+    eventTitle,
+    zoomLink,
+    date,
+  }: { name: string; eventTitle: string; zoomLink: string; date: string },
+) => {
+  const firstName = name.split(" ")[0];
+  const body = `
+    ${emailHero("🎥", "Your Zoom Link is Ready!", `You're all set for "${eventTitle}". See you online!`, "135deg,#1e40af 0%,#7c3aed 50%,#db2777 100%")}
+    <p style="margin:0 0 20px;font-size:15px;color:#374151;line-height:1.75;">Hi <strong>${firstName}</strong>, your access to <strong style="color:#7c3aed;">${eventTitle}</strong> has been confirmed!</p>
+    ${emailDataTable([
+      { label: "Event", value: `<strong>${eventTitle}</strong>` },
+      { label: "Date", value: date },
+      { label: "Format", value: "🎥 Virtual (Zoom)" },
+      {
+        label: "Status",
+        value: `<span style='background:#dcfce7;color:#16a34a;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;'>CONFIRMED ✓</span>`,
+      },
+    ])}
+    <div style="background:linear-gradient(135deg,#ede9fe,#fce7f3);border-radius:14px;padding:20px 24px;margin:20px 0 28px;text-align:center;">
+      <p style="margin:0 0 6px;font-size:13px;font-weight:600;color:#6b7280;letter-spacing:0.5px;text-transform:uppercase;">Your Zoom Join Link</p>
+      ${emailButton("Join the Event Now", zoomLink, "135deg,#1e40af,#7c3aed")}
+      <p style="margin:8px 0 0;font-size:12px;color:#9ca3af;">or copy: <a href="${zoomLink}" style="color:#7c3aed;word-break:break-all;">${zoomLink}</a></p>
+    </div>
+    ${emailChecklist([
+      "Find a quiet, well-lit space with stable internet",
+      "Have a notebook ready to capture insights",
+      "Join 5 minutes early to test your audio and video",
+    ])}
+  `;
+  await sendEmail({
+    to: email,
+    subject: `Your Zoom Link for "${eventTitle}" 🎥 – Reinvent You Over 50`,
+    html: emailLayout(
+      body,
+      `Your Zoom link for "${eventTitle}" on ${date} is ready.`,
+    ),
+    text: `Hi ${firstName},\n\nYour Zoom link for "${eventTitle}" on ${date}:\n\n${zoomLink}\n\n— The Reinvent You Over 50 Team`,
+  });
+};
+
+export const sendEventPassEmail = async (
+  email: string,
+  {
+    name,
+    eventTitle,
+    date,
+    location,
+    price,
+    passId,
+  }: {
+    name: string;
+    eventTitle: string;
+    date: string;
+    location: string;
+    price: string;
+    passId: string;
+  },
+) => {
+  const firstName = name.split(" ")[0];
+  const body = `
+    ${emailHero("🎟️", "Your Event Pass!", `Your pass for "${eventTitle}" is confirmed. See you there!`, "135deg,#0f172a 0%,#7c3aed 50%,#db2777 100%")}
+    <p style="margin:0 0 20px;font-size:15px;color:#374151;line-height:1.75;">Hi <strong>${firstName}</strong>, you're all set for <strong style="color:#7c3aed;">${eventTitle}</strong>!</p>
+    <div style="background:linear-gradient(135deg,#1e0a3c,#2d1060);border-radius:16px;padding:28px;margin:20px 0 28px;border:2px dashed rgba(167,139,250,0.4);">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="font-size:32px;margin-bottom:8px;">🎟️</div>
+        <div style="font-size:11px;font-weight:700;color:rgba(196,181,253,0.7);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;">Event Pass</div>
+        <div style="font-size:22px;font-weight:800;color:#ffffff;letter-spacing:-0.3px;">${eventTitle}</div>
+      </div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px dashed rgba(167,139,250,0.3);padding-top:16px;">
+        <tr><td style="padding:8px 0;font-size:12px;color:rgba(196,181,253,0.7);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Attendee</td><td style="padding:8px 0;font-size:14px;color:#ffffff;font-weight:700;text-align:right;">${name}</td></tr>
+        <tr><td style="padding:8px 0;font-size:12px;color:rgba(196,181,253,0.7);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Date</td><td style="padding:8px 0;font-size:14px;color:#ffffff;font-weight:700;text-align:right;">${date}</td></tr>
+        <tr><td style="padding:8px 0;font-size:12px;color:rgba(196,181,253,0.7);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Location</td><td style="padding:8px 0;font-size:14px;color:#ffffff;font-weight:700;text-align:right;">${location}</td></tr>
+        <tr><td style="padding:8px 0;font-size:12px;color:rgba(196,181,253,0.7);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Ticket</td><td style="padding:8px 0;font-size:14px;color:#ffffff;font-weight:700;text-align:right;">${price}</td></tr>
+        <tr><td style="padding:12px 0 0;font-size:12px;color:rgba(196,181,253,0.7);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;border-top:1px dashed rgba(167,139,250,0.3);">Pass ID</td><td style="padding:12px 0 0;font-size:13px;color:#c4b5fd;font-family:monospace;text-align:right;border-top:1px dashed rgba(167,139,250,0.3);">${passId}</td></tr>
+      </table>
+    </div>
+    ${emailChecklist([
+      "Bring this email or save it to your phone",
+      "Arrive 10–15 minutes early",
+      "Present your Pass ID at the door",
+    ])}
+    ${emailHighlight(`<strong>Location:</strong> ${location}`, "#0ea5e9", "#f0f9ff")}
+  `;
+  await sendEmail({
+    to: email,
+    subject: `Your Event Pass for "${eventTitle}" 🎟️ – Reinvent You Over 50`,
+    html: emailLayout(
+      body,
+      `Your pass for "${eventTitle}" on ${date} at ${location}. Pass ID: ${passId}.`,
+    ),
+    text: `Hi ${firstName},\n\nYour event pass:\n\nEvent: ${eventTitle}\nDate: ${date}\nLocation: ${location}\nTicket: ${price}\nPass ID: ${passId}\n\nPlease arrive 10–15 minutes early.\n\n— The Reinvent You Over 50 Team`,
+  });
+};
+
 export const sendEventRegistrationEmail = async (
   email: string,
   event: { title: string; date: string; location: string; price: string },

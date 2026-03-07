@@ -62,6 +62,8 @@ export async function POST(req: NextRequest) {
         userId: user?._id?.toString() ?? "",
         guestEmail: guestEmail ?? "",
         guestName: guestName ?? "",
+        eventType: event.type,
+        virtualLink: event.virtualLink ?? "",
       },
       success_url: `${clientUrl}/events?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${clientUrl}/events/${event._id}?cancelled=true`,

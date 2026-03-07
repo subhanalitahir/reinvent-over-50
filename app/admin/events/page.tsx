@@ -237,9 +237,6 @@ export default function AdminEventsPage() {
                 { label: 'Hosted By *', key: 'hostedBy', type: 'text' },
                 { label: 'Start Date *', key: 'startDate', type: 'datetime-local' },
                 { label: 'End Date *', key: 'endDate', type: 'datetime-local' },
-                { label: 'Location', key: 'location', type: 'text' },
-                { label: 'Virtual Link', key: 'virtualLink', type: 'url' },
-                { label: 'Max Attendees', key: 'maxAttendees', type: 'number' },
                 { label: 'Price ($)', key: 'price', type: 'number' },
                 { label: 'Image URL', key: 'imageUrl', type: 'url' },
               ].map(f => (
@@ -250,6 +247,25 @@ export default function AdminEventsPage() {
                     className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
                 </div>
               ))}
+              {/* Location — only for in-person / hybrid */}
+              {(selected.type === 'in-person' || selected.type === 'hybrid') && (
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">Location *</label>
+                  <input type="text" value={selected.location ?? ''}
+                    onChange={e => setSelected(prev => ({ ...prev, location: e.target.value }))}
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                </div>
+              )}
+              {/* Zoom link — only for virtual / hybrid */}
+              {(selected.type === 'virtual' || selected.type === 'hybrid') && (
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">Zoom / Virtual Link *</label>
+                  <input type="url" value={selected.virtualLink ?? ''}
+                    onChange={e => setSelected(prev => ({ ...prev, virtualLink: e.target.value }))}
+                    placeholder="https://zoom.us/j/..."
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                </div>
+              )}
               <div>
                 <label className="block text-xs font-semibold text-gray-500 mb-1.5">Event Type *</label>
                 <select value={selected.type ?? 'virtual'} onChange={e => setSelected(prev => ({ ...prev, type: e.target.value as IEvent['type'] }))}
