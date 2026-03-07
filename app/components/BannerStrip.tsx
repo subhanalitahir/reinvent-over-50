@@ -54,14 +54,14 @@ export function BannerStrip({ placement }: BannerStripProps) {
               <ImageWithFallback
                 src={banner.imageUrl}
                 alt={banner.altText ?? banner.title}
-                className="w-full h-auto max-h-36 object-cover"
+                className="w-full h-auto max-h-64 object-cover"
               />
             </a>
           ) : (
             <ImageWithFallback
               src={banner.imageUrl}
               alt={banner.altText ?? banner.title}
-              className="w-full h-auto max-h-36 object-cover"
+              className="w-full h-auto max-h-64 object-cover"
             />
           )}
           {banner.sponsor && (
