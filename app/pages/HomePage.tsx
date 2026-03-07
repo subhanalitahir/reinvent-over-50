@@ -197,7 +197,7 @@ export function HomePage() {
                 animate={{ scale: [1, 1.03, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ duration: 4, repeat: Infinity }}
               />
               <div className="relative">
-                <ImageWithFallback src="https://images.unsplash.com/photo-1595529056838-5dd92007644d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25maWRlbnQlMjB3b21hbiUyMG92ZXIlMjA1MHxlbnwxfHx8fDE3NzIzNTM1ODR8MA&ixlib=rb-4.1.0&q=80&w=1080"
+                <ImageWithFallback src="https://www.womansworld.com/wp-content/uploads/2025/01/how-to-lower-blood-pressure-naturally.jpg?quality=86&strip=all"
                   alt="Confident woman over 50" className="rounded-[32px] shadow-2xl w-full relative z-10 object-cover" />
 
                 <motion.div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-20"
