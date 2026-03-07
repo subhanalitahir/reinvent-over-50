@@ -44,7 +44,16 @@ const ContactSchema = new Schema<IContact>(
     phone: { type: String, trim: true },
     subject: {
       type: String,
-      enum: ["general", "membership", "workbook", "events", "coaching", "technical", "partnership", "other"],
+      enum: [
+        "general",
+        "membership",
+        "workbook",
+        "events",
+        "coaching",
+        "technical",
+        "partnership",
+        "other",
+      ],
       default: "general",
     },
     message: {
