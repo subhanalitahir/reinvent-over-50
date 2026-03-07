@@ -6,7 +6,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role: "visitor" | "member" | "admin";
+  role: "visitor" | "user" | "member" | "admin";
   avatar?: string;
   isVerified: boolean;
   resetPasswordToken?: string;
@@ -41,8 +41,8 @@ const UserSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ["visitor", "member", "admin"],
-      default: "visitor",
+      enum: ["visitor", "user", "member", "admin"],
+      default: "user",
     },
     avatar: { type: String, default: "" },
     isVerified: { type: Boolean, default: false },
@@ -76,5 +76,10 @@ UserSchema.methods.comparePassword = async function (
 
 UserSchema.index({ email: 1 });
 
-export default (mongoose.models.User as mongoose.Model<IUser>) ||
-  mongoose.model<IUser>("User", UserSchema);
+// Delete any cached model so schema changes (e.g. new enum values) are always picked up
+// without requiring a full server restart.
+if (mongoose.models.User) {
+  delete (mongoose.models as Record<string, unknown>).User;
+}
+
+export default mongoose.model<IUser>("User", UserSchema);

@@ -39,6 +39,18 @@ export async function POST(req: NextRequest) {
     if (!["monthly", "annual"].includes(billingCycle))
       throw new AppError("billingCycle must be 'monthly' or 'annual'", 400);
 
+    // Block purchase if user already has an active membership
+    const activeMember = await Member.findOne({
+      user: user!._id,
+      status: "active",
+    });
+    if (activeMember) {
+      throw new AppError(
+        "You already have an active membership. Please manage your plan from the dashboard.",
+        400,
+      );
+    }
+
     // Prefer DB pricing; fall back to hardcoded constants
     const pricingConfig = await PricingConfig.findOne();
     const dbMembership = pricingConfig?.membership as

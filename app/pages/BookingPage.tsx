@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { Calendar, Clock, Video, Check, Star, ArrowRight, Sparkles, Shield, Award, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 
 export function BookingPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { user, token } = useAuth();
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
@@ -294,7 +295,13 @@ export function BookingPage() {
               )}
             </AnimatePresence>
 
-            <motion.button type="button" onClick={() => setStep('payment')} disabled={!selectedDate || !selectedTime}
+            <motion.button type="button" onClick={() => {
+              if (!user || !token) {
+                router.push('/signup?redirect=booking');
+                return;
+              }
+              setStep('payment');
+            }} disabled={!selectedDate || !selectedTime}
               className={`w-full py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all ${
                 selectedDate && selectedTime
                   ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-xl hover:shadow-purple-500/40 cursor-pointer'

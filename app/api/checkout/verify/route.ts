@@ -3,12 +3,14 @@ import Stripe from "stripe";
 import connectDB from "@/lib/db";
 import Order from "@/lib/models/Order";
 import Booking from "@/lib/models/Booking";
+import Member from "@/lib/models/Member";
 import { apiSuccess, handleError, AppError } from "@/lib/auth";
 import {
   sendOrderConfirmationEmail,
   sendBookingConfirmationEmail,
   sendWorkbookPurchaseEmail,
   sendEventRegistrationEmail,
+  sendMembershipWelcomeEmail,
 } from "@/lib/email";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -91,6 +93,45 @@ export async function GET(req: NextRequest) {
           }).catch((e: unknown) => console.error("[EMAIL] event reg:", e));
         }
         return apiSuccess({ type, order }, "Event registration confirmed");
+      }
+
+      case "membership": {
+        const userId = session.metadata?.userId;
+        if (!userId) {
+          return apiSuccess({ type, paid: true }, "Membership session verified");
+        }
+        const UserModel = (await import("@/lib/models/User")).default;
+        const member = await Member.findOneAndUpdate(
+          { user: userId },
+          {
+            status: "active",
+            startDate: new Date(),
+            endDate: (() => {
+              const d = new Date();
+              const cycle = session.metadata?.billingCycle ?? "monthly";
+              if (cycle === "annual") d.setFullYear(d.getFullYear() + 1);
+              else d.setMonth(d.getMonth() + 1);
+              return d;
+            })(),
+            ...(session.customer
+              ? { stripeCustomerId: typeof session.customer === "string" ? session.customer : (session.customer as Stripe.Customer).id }
+              : {}),
+            ...(session.subscription
+              ? { stripeSubscriptionId: typeof session.subscription === "string" ? session.subscription : (session.subscription as Stripe.Subscription).id }
+              : {}),
+          },
+          { new: true },
+        );
+        if (member) {
+          await UserModel.findByIdAndUpdate(userId, { role: "member" });
+          const user = await UserModel.findById(userId);
+          if (user && email) {
+            sendMembershipWelcomeEmail(email, user.name, member.plan).catch(
+              (e: unknown) => console.error("[EMAIL] membership welcome:", e),
+            );
+          }
+        }
+        return apiSuccess({ type, member }, "Membership activated");
       }
 
       default: {

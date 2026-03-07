@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
       name: name.trim(),
       email: email.toLowerCase(),
       password,
+      role: 'user',
     });
     const token = generateToken(user._id.toString());
 

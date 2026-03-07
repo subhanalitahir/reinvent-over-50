@@ -1,11 +1,10 @@
 'use client';
 
-import { Check, Star, Sparkles, ArrowRight, Zap, Crown, Users, Shield, TrendingUp, CheckCircle } from 'lucide-react';
+import { Check, Star, Sparkles, ArrowRight, Zap, Crown, Users, Shield, TrendingUp, CheckCircle, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { EmailModal } from '../components/EmailModal';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 
 interface ApiMembershipPrices {
@@ -17,14 +16,17 @@ interface ApiMembershipPrices {
 
 export function MembershipPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { user, token } = useAuth();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [pendingPlan, setPendingPlan] = useState<string | null>(null);
   const [apiPrices, setApiPrices] = useState<ApiMembershipPrices | null>(null);
+  const [currentMembership, setCurrentMembership] = useState<{
+    plan: string; status: string; endDate?: string; billingCycle: string;
+  } | null>(null);
+  const [activeMembershipModalOpen, setActiveMembershipModalOpen] = useState(false);
 
   useEffect(() => {
     fetch('/api/pricing')
@@ -32,6 +34,14 @@ export function MembershipPage() {
       .then(j => { if (j?.data?.membership) setApiPrices(j.data.membership); })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!user || !token) { setCurrentMembership(null); return; }
+    fetch('/api/members/me', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(j => { if (j?.data) setCurrentMembership(j.data); })
+      .catch(() => {});
+  }, [user, token]);
 
   useEffect(() => {
     const successParam = searchParams.get('success');
@@ -46,18 +56,14 @@ export function MembershipPage() {
     if (searchParams.get('canceled') === 'true') setError('Payment was cancelled. You can try again.');
   }, [searchParams]);
 
-  const doCheckout = async (planKey: string, email?: string) => {
+  const doCheckout = async (planKey: string) => {
     setLoadingPlan(planKey);
     setError('');
     try {
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
-      const body: Record<string, string> = { plan: planKey, billingCycle };
-      if (email) body.email = email;
       const res = await fetch('/api/checkout/membership', {
         method: 'POST',
-        headers,
-        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ plan: planKey, billingCycle }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.message ?? 'Checkout failed');
@@ -65,7 +71,6 @@ export function MembershipPage() {
       else if (data.url) window.location.href = data.url;
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
-      setModalOpen(false);
     } finally {
       setLoadingPlan(null);
     }
@@ -73,20 +78,15 @@ export function MembershipPage() {
 
   const handleCheckout = (planKey: string) => {
     setError('');
-    if (user && token) {
-      // Authenticated: call API directly with the Bearer token
-      doCheckout(planKey);
-    } else {
-      // Guest: collect email via modal
-      setPendingPlan(planKey);
-      setModalOpen(true);
+    if (!user || !token) {
+      router.push('/signup?redirect=membership');
+      return;
     }
-  };
-
-  const handleModalSubmit = async (email: string) => {
-    if (!pendingPlan) return;
-    setModalOpen(false);
-    await doCheckout(pendingPlan, email);
+    if (currentMembership?.status === 'active') {
+      setActiveMembershipModalOpen(true);
+      return;
+    }
+    doCheckout(planKey);
   };
 
   const plans = [
@@ -659,15 +659,71 @@ export function MembershipPage() {
           </motion.p>
         </div>
       </section>
-      <EmailModal
-        isOpen={modalOpen}
-        onClose={() => { setModalOpen(false); setPendingPlan(null); }}
-        onSubmit={handleModalSubmit}
-        title="Almost there!"
-        subtitle="Enter your email to activate your membership. We'll send your welcome package here."
-        ctaLabel="Join Now →"
-        loading={loadingPlan !== null}
-      />
+      <AnimatePresence>
+        {activeMembershipModalOpen && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setActiveMembershipModalOpen(false)}
+            />
+            <motion.div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+              <motion.div
+                className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full relative pointer-events-auto"
+                initial={{ scale: 0.9, y: 20, opacity: 0 }}
+                animate={{ scale: 1, y: 0, opacity: 1 }}
+                exit={{ scale: 0.9, y: 20, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              >
+                <button
+                  onClick={() => setActiveMembershipModalOpen(false)}
+                  className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+                <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner">
+                  <Crown className="w-8 h-8 text-amber-500" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 text-center mb-3">
+                  You&apos;re Already a Member!
+                </h3>
+                <p className="text-gray-600 text-center mb-2">
+                  You already have an active{' '}
+                  <span className="font-bold capitalize text-purple-700">
+                    {currentMembership?.plan}
+                  </span>{' '}
+                  plan.
+                </p>
+                {currentMembership?.endDate && (
+                  <p className="text-gray-500 text-sm text-center mb-6">
+                    Your membership is active until{' '}
+                    <span className="font-semibold text-gray-700">
+                      {new Date(currentMembership.endDate).toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'long', day: 'numeric',
+                      })}
+                    </span>
+                  </p>
+                )}
+                {!currentMembership?.endDate && <div className="mb-6" />}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setActiveMembershipModalOpen(false)}
+                    className="flex-1 py-3 rounded-2xl border-2 border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-colors"
+                  >
+                    Got it
+                  </button>
+                  <Link
+                    href="/dashboard"
+                    className="flex-1 py-3 rounded-2xl bg-linear-to-r from-purple-600 to-pink-600 text-white font-semibold text-center hover:opacity-90 transition-opacity"
+                  >
+                    My Dashboard
+                  </Link>
+                </div>
+              </motion.div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

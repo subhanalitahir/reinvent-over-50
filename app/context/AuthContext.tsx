@@ -6,7 +6,7 @@ export interface IUser {
   _id: string;
   name: string;
   email: string;
-  role: 'visitor' | 'member' | 'admin';
+  role: 'visitor' | 'user' | 'member' | 'admin';
   avatar?: string;
   isVerified: boolean;
   createdAt: string;

@@ -919,8 +919,13 @@ function OverviewTab({
                 {[
                   { label: 'Status', value: membership.status, isStatus: true },
                   { label: 'Billing', value: membership.billingCycle, isStatus: false },
-                  { label: 'Price', value: `$${membership.price}/mo`, isStatus: false },
+                  {
+                    label: 'Price',
+                    value: `$${(membership.price / 100).toFixed(0)}/${membership.billingCycle === 'annual' ? 'yr' : 'mo'}`,
+                    isStatus: false,
+                  },
                   { label: 'Renewed', value: fmt(membership.startDate), isStatus: false },
+                  ...(membership.endDate ? [{ label: 'Expires', value: fmt(membership.endDate), isStatus: false }] : []),
                 ].map(row => (
                   <div key={row.label} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
                     <span className="text-gray-400 text-xs font-medium">{row.label}</span>
