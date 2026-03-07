@@ -2,7 +2,7 @@ import { MongoClient } from "mongodb";
 import bcrypt from "bcryptjs";
 
 const MONGO_URI =
-  "mongodb://reinventapp:reinventpass@localhost:27017/reinventdb";
+  "mongodb+srv://subhanalitahirdev_db_user:xvp2TUG19Fb9N8qL@cluster0.pwxlkyd.mongodb.net/";
 
 const ADMIN = {
   name: "Admin",
