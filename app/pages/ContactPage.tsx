@@ -66,8 +66,8 @@ export function ContactPage() {
     <div className="pt-20">
       {/* Hero */}
       <section className="relative min-h-[50vh] flex items-center bg-linear-to-br from-purple-50 via-pink-50 to-orange-50 overflow-hidden">
-        <motion.div className="orb orb-purple w-96 h-96 top-[-80px] left-[-80px]" animate={{ scale: [1,1.3,1], x:[0,40,0], y:[0,30,0] }} transition={{ duration:12, repeat:Infinity, ease:'easeInOut' }} />
-        <motion.div className="orb orb-pink w-80 h-80 bottom-[-60px] right-[-60px]" animate={{ scale:[1,1.2,1], x:[0,-30,0], y:[0,-20,0] }} transition={{ duration:10, repeat:Infinity, ease:'easeInOut', delay:2 }} />
+        <motion.div className="orb orb-purple w-96 h-96 -top-20 -left-20" animate={{ scale: [1,1.3,1], x:[0,40,0], y:[0,30,0] }} transition={{ duration:12, repeat:Infinity, ease:'easeInOut' }} />
+        <motion.div className="orb orb-pink w-80 h-80 -bottom-15 -right-15" animate={{ scale:[1,1.2,1], x:[0,-30,0], y:[0,-20,0] }} transition={{ duration:10, repeat:Infinity, ease:'easeInOut', delay:2 }} />
         {[...Array(8)].map((_,i) => (
           <motion.div key={i} className="absolute w-3 h-3 rounded-full" style={{ background:`hsl(${270+i*20},70%,60%)`, left:`${10+i*11}%`, top:`${20+(i%3)*25}%`, opacity:0.4 }}
             animate={{ y:[0,-30,0], x:[0,(i%2===0?15:-15),0], scale:[1,1.4,1], opacity:[0.4,0.8,0.4] }}
@@ -76,14 +76,14 @@ export function ContactPage() {
         <div className="max-w-5xl mx-auto px-6 py-24 text-center relative z-10 w-full">
           <motion.div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-sm rounded-full shadow-lg mb-8 border border-purple-100" initial={{ opacity:0, scale:0.8 }} animate={{ opacity:1, scale:1 }} transition={{ duration:0.5 }}>
             <MessageCircle className="w-4 h-4 text-purple-600" />
-            <span className="text-sm font-semibold text-gray-700">We'd love to hear from you</span>
+            <span className="text-sm font-semibold text-gray-700">We&apos;d love to hear from you</span>
           </motion.div>
           <motion.h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight" initial={{ opacity:0, y:30 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.7, delay:0.1 }}>
             <span className="block text-gray-900">Get In</span>
             <span className="block bg-linear-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">Touch</span>
           </motion.h1>
           <motion.p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.7, delay:0.3 }}>
-            Have a question? We're friendly, real humans — and we reply fast.
+            Have a question? We&apos;re friendly, real humans — and we reply fast.
           </motion.p>
         </div>
       </section>
@@ -121,8 +121,8 @@ export function ContactPage() {
                   <Sparkles className="w-4 h-4" />
                   Send Us a Message
                 </motion.div>
-                <h2 className="text-4xl font-bold text-gray-900 mb-2">Let's Talk</h2>
-                <p className="text-gray-500 mb-8">Fill in the form and we'll get back to you within 24 hours.</p>
+                <h2 className="text-4xl font-bold text-gray-900 mb-2">Let&apos;s Talk</h2>
+                <p className="text-gray-500 mb-8">Fill in the form and we&apos;ll get back to you within 24 hours.</p>
                 <AnimatePresence mode="wait">
                   {submitted ? (
                     <motion.div className="flex flex-col items-center justify-center py-16 text-center" initial={{ opacity:0, scale:0.8 }} animate={{ opacity:1, scale:1 }} exit={{ opacity:0 }} key="success">
@@ -130,7 +130,7 @@ export function ContactPage() {
                         <CheckCircle className="w-12 h-12 text-white" />
                       </motion.div>
                       <h3 className="text-3xl font-bold text-gray-900 mb-3">Message Sent!</h3>
-                      <p className="text-gray-500 text-lg">We'll be in touch within 24 hours ??</p>
+                      <p className="text-gray-500 text-lg">We&apos;ll be in touch within 24 hours ??</p>
                     </motion.div>
                   ) : (
                     <motion.form onSubmit={handleSubmit} className="space-y-6" key="form">
@@ -141,7 +141,7 @@ export function ContactPage() {
                         ].map((field) => (
                           <motion.div key={field.id} animate={{ scale: focusedField===field.id ? 1.01 : 1 }} transition={{ duration:0.2 }}>
                             <label htmlFor={field.id} className={`block text-sm font-semibold mb-2 transition-colors ${focusedField===field.id ? 'text-purple-600' : 'text-gray-700'}`}>{field.label} *</label>
-                            <input type={field.type} id={field.id} name={field.id} value={(formData as any)[field.id]} onChange={handleChange}
+                            <input type={field.type} id={field.id} name={field.id} value={formData[field.id as keyof typeof formData]} onChange={handleChange}
                               onFocus={() => setFocusedField(field.id)} onBlur={() => setFocusedField(null)} required
                               className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 transition-all duration-300 focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)]"
                               placeholder={field.placeholder} />
@@ -232,7 +232,7 @@ export function ContactPage() {
             Ready to Start Your Journey?
           </motion.h2>
           <motion.p className="text-2xl text-purple-100 mb-12" initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.6, delay:0.2 }}>
-            Don't wait to create the life you've always dreamed of
+            Don&apos;t wait to create the life you&apos;ve always dreamed of
           </motion.p>
           <motion.div className="flex flex-col sm:flex-row gap-5 justify-center" initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.6, delay:0.4 }}>
             <motion.div whileHover={{ scale:1.05 }} whileTap={{ scale:0.95 }}>

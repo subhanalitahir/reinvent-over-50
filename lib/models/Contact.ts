@@ -3,6 +3,9 @@ import mongoose, { Document, Schema } from "mongoose";
 export type ContactSubject =
   | "general"
   | "membership"
+  | "workbook"
+  | "events"
+  | "coaching"
   | "technical"
   | "partnership"
   | "other";
@@ -41,7 +44,7 @@ const ContactSchema = new Schema<IContact>(
     phone: { type: String, trim: true },
     subject: {
       type: String,
-      enum: ["general", "membership", "technical", "partnership", "other"],
+      enum: ["general", "membership", "workbook", "events", "coaching", "technical", "partnership", "other"],
       default: "general",
     },
     message: {
@@ -64,6 +67,11 @@ const ContactSchema = new Schema<IContact>(
 ContactSchema.index({ email: 1 });
 ContactSchema.index({ status: 1 });
 ContactSchema.index({ createdAt: -1 });
+
+// Delete cached model in dev so schema changes are always picked up on hot reload
+if (process.env.NODE_ENV === "development") {
+  delete (mongoose.models as Record<string, unknown>).Contact;
+}
 
 export default (mongoose.models.Contact as mongoose.Model<IContact>) ||
   mongoose.model<IContact>("Contact", ContactSchema);

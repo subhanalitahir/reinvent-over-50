@@ -40,13 +40,19 @@ export async function PUT(req: NextRequest) {
       if (body.membership) {
         for (const plan of Object.keys(body.membership)) {
           if (body.membership[plan].monthly !== undefined)
-            (config.membership as unknown as Record<string, Record<string, number>>)[
-              plan
-            ].monthly = Number(body.membership[plan].monthly);
+            (
+              config.membership as unknown as Record<
+                string,
+                Record<string, number>
+              >
+            )[plan].monthly = Number(body.membership[plan].monthly);
           if (body.membership[plan].annual !== undefined)
-            (config.membership as unknown as Record<string, Record<string, number>>)[
-              plan
-            ].annual = Number(body.membership[plan].annual);
+            (
+              config.membership as unknown as Record<
+                string,
+                Record<string, number>
+              >
+            )[plan].annual = Number(body.membership[plan].annual);
         }
       }
       if (body.bookings) {
