@@ -98,7 +98,10 @@ export async function GET(req: NextRequest) {
       case "membership": {
         const userId = session.metadata?.userId;
         if (!userId) {
-          return apiSuccess({ type, paid: true }, "Membership session verified");
+          return apiSuccess(
+            { type, paid: true },
+            "Membership session verified",
+          );
         }
         const UserModel = (await import("@/lib/models/User")).default;
         const member = await Member.findOneAndUpdate(
@@ -114,10 +117,20 @@ export async function GET(req: NextRequest) {
               return d;
             })(),
             ...(session.customer
-              ? { stripeCustomerId: typeof session.customer === "string" ? session.customer : (session.customer as Stripe.Customer).id }
+              ? {
+                  stripeCustomerId:
+                    typeof session.customer === "string"
+                      ? session.customer
+                      : (session.customer as Stripe.Customer).id,
+                }
               : {}),
             ...(session.subscription
-              ? { stripeSubscriptionId: typeof session.subscription === "string" ? session.subscription : (session.subscription as Stripe.Subscription).id }
+              ? {
+                  stripeSubscriptionId:
+                    typeof session.subscription === "string"
+                      ? session.subscription
+                      : (session.subscription as Stripe.Subscription).id,
+                }
               : {}),
           },
           { new: true },
