@@ -83,19 +83,19 @@ const planColors: Record<string, string> = {
   community: 'from-blue-500 to-cyan-500',
   growth: 'from-green-500 to-emerald-500',
   transformation: 'from-purple-600 to-pink-600',
-  vip: 'from-amber-500 to-orange-500',
+  vip: 'from-fuchsia-500 to-purple-500',
 };
 
 const statusBadge: Record<string, string> = {
   active: 'bg-green-100 text-green-700',
-  cancelled: 'bg-red-100 text-red-700',
+  cancelled: 'bg-rose-100 text-rose-700',
   expired: 'bg-gray-100 text-gray-600',
   trial: 'bg-blue-100 text-blue-700',
   pending: 'bg-yellow-100 text-yellow-700',
   confirmed: 'bg-green-100 text-green-700',
   completed: 'bg-purple-100 text-purple-700',
   paid: 'bg-green-100 text-green-700',
-  refunded: 'bg-orange-100 text-orange-700',
+  refunded: 'bg-fuchsia-100 text-fuchsia-700',
 };
 
 function fmt(date: string) {
@@ -259,7 +259,7 @@ function Sidebar({
         )}
         <motion.button
           onClick={onLogout}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-red-400/70 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-fuchsia-400/70 hover:text-fuchsia-400 hover:bg-fuchsia-500/10 transition-colors"
           whileHover={{ x: 2 }}
           title={collapsed ? 'Sign Out' : undefined}
         >
@@ -798,8 +798,8 @@ function OverviewTab({
       numericValue: orders.length,
       sub: orders.length > 0 ? `$${(orders.reduce((s, o) => s + (o.total ?? 0), 0) / 100).toFixed(0)} spent` : 'No orders yet',
       icon: <ShoppingBag className="w-5 h-5" />,
-      color: 'from-orange-500 to-amber-500',
-      bg: 'bg-orange-50',
+      color: 'from-fuchsia-500 to-purple-500',
+      bg: 'bg-fuchsia-50',
       trend: undefined,
     },
     {
@@ -899,14 +899,14 @@ function OverviewTab({
           transition={{ delay: 0.28 }}
           className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col relative overflow-hidden"
         >
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-amber-400 to-orange-500" />
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-fuchsia-400 to-purple-500" />
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-[15px] font-bold text-gray-900">Membership</h2>
             <motion.div
               animate={{ rotate: [0, 10, -10, 0] }}
               transition={{ repeat: Infinity, duration: 3, repeatDelay: 2 }}
             >
-              <Crown className="w-4.5 h-4.5 text-amber-500" />
+              <Crown className="w-4.5 h-4.5 text-fuchsia-500" />
             </motion.div>
           </div>
           {membership ? (
@@ -1244,13 +1244,13 @@ function OrdersTab({ orders, loading }: { orders: IOrder[]; loading: boolean }) 
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl p-5 bg-linear-to-r from-orange-500 to-amber-500 text-white relative overflow-hidden shadow-md shadow-orange-200/50"
+        className="rounded-2xl p-5 bg-linear-to-r from-fuchsia-500 to-purple-500 text-white relative overflow-hidden shadow-md shadow-fuchsia-200/50"
       >
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative">
           <div>
             <h2 className="text-lg font-bold">Order History</h2>
-            <p className="text-orange-100 text-sm mt-0.5">
+            <p className="text-fuchsia-100 text-sm mt-0.5">
               {orders.length} orders · <span className="font-bold text-white">${totalSpent.toFixed(2)}</span> total spent
             </p>
           </div>
@@ -1268,23 +1268,23 @@ function OrdersTab({ orders, loading }: { orders: IOrder[]; loading: boolean }) 
       {orders.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center py-16 text-center">
           <motion.div
-            className="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center mb-3"
+            className="w-14 h-14 rounded-2xl bg-fuchsia-50 flex items-center justify-center mb-3"
             animate={{ y: [0, -4, 0] }}
             transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
           >
-            <ShoppingBag className="w-7 h-7 text-orange-300" />
+            <ShoppingBag className="w-7 h-7 text-fuchsia-300" />
           </motion.div>
           <p className="text-sm font-semibold text-gray-600">No orders yet</p>
           <p className="text-xs text-gray-400 mt-1 mb-4">Your purchases will appear here</p>
           <motion.div whileHover={{ scale: 1.05 }}>
-            <Link href="/workbook" className="px-4 py-2 bg-linear-to-r from-orange-500 to-amber-500 text-white rounded-xl text-xs font-bold shadow-md">
+            <Link href="/workbook" className="px-4 py-2 bg-linear-to-r from-fuchsia-500 to-purple-500 text-white rounded-xl text-xs font-bold shadow-md">
               Browse Products
             </Link>
           </motion.div>
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden relative">
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-orange-400 to-amber-400" />
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-fuchsia-400 to-purple-400" />
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -1308,7 +1308,7 @@ function OrdersTab({ orders, loading }: { orders: IOrder[]; loading: boolean }) 
                   >
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-linear-to-br from-orange-400 to-amber-400 flex items-center justify-center text-white shrink-0 shadow-sm shadow-orange-200/50">
+                        <div className="w-9 h-9 rounded-xl bg-linear-to-br from-fuchsia-400 to-purple-400 flex items-center justify-center text-white shrink-0 shadow-sm shadow-fuchsia-200/50">
                           <ShoppingBag className="w-4 h-4" />
                         </div>
                         <span className="font-semibold text-gray-800 font-mono text-xs">#{o._id.slice(-8).toUpperCase()}</span>
@@ -1609,7 +1609,7 @@ function WorkbooksTab({
               <div className="p-4">
                 <div className="flex items-start justify-between gap-2 mb-1">
                   <h3 className="font-semibold text-gray-800 text-sm leading-snug">{product.name}</h3>
-                  <span className={`shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${product.type === 'bundle' ? 'bg-amber-100 text-amber-700' : 'bg-indigo-100 text-indigo-700'}`}>
+                  <span className={`shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${product.type === 'bundle' ? 'bg-fuchsia-100 text-fuchsia-700' : 'bg-indigo-100 text-indigo-700'}`}>
                     {product.type}
                   </span>
                 </div>
@@ -1783,7 +1783,7 @@ function SettingsTab(p: SettingsTabProps) {
             )}
           </div>
           {p.nameError && (
-            <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{p.nameError}</p>
+            <p className="text-xs text-rose-500 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{p.nameError}</p>
           )}
           {p.nameSuccess && (
             <motion.p
@@ -1821,7 +1821,7 @@ function SettingsTab(p: SettingsTabProps) {
 
         {p.pwError && (
           <motion.div
-            className="flex items-center gap-2 p-3 mb-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+            className="flex items-center gap-2 p-3 mb-4 bg-rose-50 border border-rose-200 rounded-lg text-rose-700 text-sm"
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
           >

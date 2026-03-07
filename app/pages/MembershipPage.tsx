@@ -145,8 +145,8 @@ export function MembershipPage() {
         'Direct founder access',
       ],
       popular: false,
-      gradient: 'from-amber-500 to-orange-500',
-      glow: 'rgba(245,158,11,0.25)',
+      gradient: 'from-fuchsia-500 to-purple-500',
+      glow: 'rgba(217,70,239,0.25)',
       cta: 'Go VIP',
     },
   ];
@@ -187,12 +187,12 @@ export function MembershipPage() {
       )}
       {/* Error Banner */}
       {error && !success && (
-        <div className="bg-red-50 border-b border-red-200 text-red-700 py-4 text-center text-sm font-medium">
+        <div className="bg-rose-50 border-b border-rose-200 text-rose-700 py-4 text-center text-sm font-medium">
           {error}
         </div>
       )}
       {/* Hero Section */}
-      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-linear-to-br from-purple-50 via-pink-50 to-orange-50">
+      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-linear-to-br from-purple-50 via-pink-50 to-fuchsia-50">
         <div className="absolute inset-0 bg-mesh-gradient opacity-40" />
         <div className="absolute inset-0 bg-dot-pattern opacity-30" />
         <motion.div className="orb orb-purple w-112.5 h-112.5 -top-20 -left-20"
@@ -299,7 +299,7 @@ export function MembershipPage() {
                       <div className="absolute inset-0 opacity-10"
                         style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(219,39,119,0.2) 0%, transparent 50%)' }} />
                       {/* Top accent line */}
-                      <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg,#7c3aed,#db2777,#f59e0b)' }} />
+                      <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg,#7c3aed,#db2777,#c026d3)' }} />
 
                       <div className="p-8 relative z-10">
                         {/* Icon + name */}
@@ -361,7 +361,7 @@ export function MembershipPage() {
                           disabled={loadingPlan === plan.name.toLowerCase()}
                           whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                           className="relative w-full py-4 rounded-2xl font-black text-base flex items-center justify-center gap-2 overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed text-white shadow-2xl"
-                          style={{ background: 'linear-gradient(135deg,#7c3aed,#db2777,#f59e0b)' }}>
+                          style={{ background: 'linear-gradient(135deg,#7c3aed,#db2777,#c026d3)' }}>
                           <span className="relative z-10">{loadingPlan === plan.name.toLowerCase() ? 'Redirecting…' : (plan.cta ?? 'Get Started')}</span>
                           {loadingPlan !== plan.name.toLowerCase() && <ArrowRight className="w-4 h-4 relative z-10" />}
                           <div className="btn-shimmer" />
@@ -445,7 +445,7 @@ export function MembershipPage() {
                             {loadingPlan === plan.name.toLowerCase() ? 'Redirecting…' : (plan.cta ?? 'Get Started')}
                           </span>
                           {loadingPlan !== plan.name.toLowerCase() && (
-                            <ArrowRight className={`w-4 h-4 bg-linear-to-r ${plan.gradient} bg-clip-text text-transparent`} style={{ color: index === 0 ? '#3b82f6' : '#f59e0b' }} />
+                            <ArrowRight className={`w-4 h-4 bg-linear-to-r ${plan.gradient} bg-clip-text text-transparent`} style={{ color: index === 0 ? '#3b82f6' : '#d946ef' }} />
                           )}
                         </motion.button>
                         <p className="text-center text-gray-400 text-xs mt-3 font-medium">Cancel anytime · No lock-in</p>
@@ -489,12 +489,12 @@ export function MembershipPage() {
               {
                 title: 'Weekly Virtual Meetups',
                 description: 'Join live video sessions with expert speakers and discussions',
-                gradient: 'from-pink-500 to-rose-500',
+                gradient: 'from-fuchsia-500 to-pink-500',
               },
               {
                 title: 'Monthly Events',
                 description: 'In-person gatherings in cities nationwide',
-                gradient: 'from-amber-500 to-orange-500',
+                gradient: 'from-fuchsia-500 to-purple-500',
               },
               {
                 title: 'Expert Resources',
@@ -681,8 +681,8 @@ export function MembershipPage() {
                 >
                   <X className="w-4 h-4" />
                 </button>
-                <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner">
-                  <Crown className="w-8 h-8 text-amber-500" />
+                <div className="w-16 h-16 bg-fuchsia-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner">
+                  <Crown className="w-8 h-8 text-fuchsia-500" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 text-center mb-3">
                   You&apos;re Already a Member!

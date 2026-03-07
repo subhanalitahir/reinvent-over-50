@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
@@ -25,7 +25,7 @@ interface IProduct {
 const STATUS_COLORS: Record<string, string> = {
   active: 'bg-green-100 text-green-700',
   inactive: 'bg-gray-100 text-gray-500',
-  archived: 'bg-red-100 text-red-600',
+  archived: 'bg-rose-100 text-rose-600',
 };
 
 const EMPTY: Partial<IProduct> = { name: '', slug: '', description: '', type: 'workbook', status: 'active', price: 0, isDigital: true, includesBooking: false, isFreeForMembers: false, tags: [] };
@@ -210,7 +210,7 @@ export default function AdminProductsPage() {
                         <button onClick={() => { setSelected({ ...p }); setModal('edit'); setSaveError(''); }}
                           className="p-1.5 rounded-lg text-purple-400 hover:bg-purple-50 hover:text-purple-600 transition-colors"><Edit3 className="w-4 h-4" /></button>
                         <button onClick={() => setConfirm(p._id)}
-                          className="p-1.5 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                          className="p-1.5 rounded-lg text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition-colors"><Trash2 className="w-4 h-4" /></button>
                       </div>
                     </td>
                   </tr>
@@ -281,14 +281,14 @@ export default function AdminProductsPage() {
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-xs font-semibold text-gray-500 mb-1.5">
-                  Download Link <span className="text-red-500">*</span>
+                  Download Link <span className="text-rose-500">*</span>
                 </label>
                 <input type="url" value={selected.fileUrl ?? ''}
                   onChange={e => { setSelected(prev => ({ ...prev, fileUrl: e.target.value })); setSaveError(''); }}
                   placeholder="https://..."
-                  className={`w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 ${saveError && !selected.fileUrl?.trim() ? 'border-red-400 bg-red-50' : 'border-gray-200'}`} />
+                  className={`w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 ${saveError && !selected.fileUrl?.trim() ? 'border-rose-400 bg-rose-50' : 'border-gray-200'}`} />
                 {saveError && !selected.fileUrl?.trim() && (
-                  <p className="mt-1.5 text-xs text-red-500 font-medium">{saveError}</p>
+                  <p className="mt-1.5 text-xs text-rose-500 font-medium">{saveError}</p>
                 )}
               </div>
               <div className="sm:col-span-2">
@@ -329,7 +329,7 @@ export default function AdminProductsPage() {
             <p className="text-gray-500 text-sm mb-6">This cannot be undone.</p>
             <div className="flex gap-3">
               <button onClick={() => setConfirm(null)} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50">Cancel</button>
-              <button onClick={() => deleteProduct(confirm)} className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700">Delete</button>
+              <button onClick={() => deleteProduct(confirm)} className="flex-1 px-4 py-2.5 bg-rose-600 text-white rounded-xl text-sm font-semibold hover:bg-rose-700">Delete</button>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
@@ -235,7 +235,7 @@ export default function AdminUsersPage() {
                         <button
                           onClick={() => setConfirm({ id: u._id, name: u.name })}
                           disabled={u.role === 'admin' || actionLoading === u._id + '_del'}
-                          className="p-1.5 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="p-1.5 rounded-lg text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                           title="Delete user"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -258,7 +258,7 @@ export default function AdminUsersPage() {
             <p className="text-gray-500 text-sm mb-6">Are you sure you want to delete <strong>{confirm.name}</strong>? This cannot be undone.</p>
             <div className="flex gap-3">
               <button onClick={() => setConfirm(null)} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">Cancel</button>
-              <button onClick={() => deleteUser(confirm.id)} className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors">Delete</button>
+              <button onClick={() => deleteUser(confirm.id)} className="flex-1 px-4 py-2.5 bg-rose-600 text-white rounded-xl text-sm font-semibold hover:bg-rose-700 transition-colors">Delete</button>
             </div>
           </div>
         </div>
@@ -295,14 +295,14 @@ export default function AdminUsersPage() {
                   {/* Membership */}
                   <section>
                     <div className="flex items-center gap-2 mb-3">
-                      <Crown className="w-4 h-4 text-amber-500" />
+                      <Crown className="w-4 h-4 text-fuchsia-500" />
                       <h4 className="font-semibold text-gray-800 text-sm">Membership</h4>
                     </div>
                     {activityData?.member ? (
-                      <div className="flex items-center gap-4 bg-amber-50 rounded-xl px-4 py-3">
+                      <div className="flex items-center gap-4 bg-fuchsia-50 rounded-xl px-4 py-3">
                         <div>
-                          <p className="font-semibold text-amber-900 capitalize">{activityData.member.plan ?? '—'}</p>
-                          <p className="text-xs text-amber-600">{activityData.member.billingCycle ?? ''}</p>
+                          <p className="font-semibold text-fuchsia-900 capitalize">{activityData.member.plan ?? '—'}</p>
+                          <p className="text-xs text-fuchsia-600">{activityData.member.billingCycle ?? ''}</p>
                         </div>
                         <span className={`ml-auto text-xs font-bold px-2 py-1 rounded-full ${activityData.member.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                           {activityData.member.status ?? 'unknown'}

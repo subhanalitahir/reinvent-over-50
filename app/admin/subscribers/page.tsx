@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
@@ -18,7 +18,7 @@ interface ISubscriber {
 const STATUS_COLORS: Record<string, string> = {
   subscribed: 'bg-green-100 text-green-700',
   unsubscribed: 'bg-gray-100 text-gray-500',
-  bounced: 'bg-red-100 text-red-700',
+  bounced: 'bg-rose-100 text-rose-700',
 };
 
 export default function AdminSubscribersPage() {
@@ -147,7 +147,7 @@ export default function AdminSubscribersPage() {
                     <td className="px-6 py-4 text-gray-400 text-xs hidden lg:table-cell">{new Date(s.createdAt).toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-right">
                       <button onClick={() => setConfirm(s._id)} disabled={actionLoading === s._id}
-                        className="p-1.5 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors disabled:opacity-30">
+                        className="p-1.5 rounded-lg text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition-colors disabled:opacity-30">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </td>
@@ -166,7 +166,7 @@ export default function AdminSubscribersPage() {
             <p className="text-gray-500 text-sm mb-6">This cannot be undone.</p>
             <div className="flex gap-3">
               <button onClick={() => setConfirm(null)} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50">Cancel</button>
-              <button onClick={() => deleteSubscriber(confirm)} className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700">Delete</button>
+              <button onClick={() => deleteSubscriber(confirm)} className="flex-1 px-4 py-2.5 bg-rose-600 text-white rounded-xl text-sm font-semibold hover:bg-rose-700">Delete</button>
             </div>
           </div>
         </div>

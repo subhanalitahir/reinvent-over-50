@@ -65,7 +65,7 @@ export function BookingPage() {
   return (
     <div className="pt-20">
       {/* Hero Section */}
-      <section className="relative min-h-[45vh] flex items-center bg-linear-to-br from-purple-50 via-pink-50 to-orange-50 overflow-hidden">
+      <section className="relative min-h-[45vh] flex items-center bg-linear-to-br from-purple-50 via-pink-50 to-fuchsia-50 overflow-hidden">
         <motion.div className="orb orb-purple w-80 h-80 -top-15 -right-10" animate={{ scale:[1,1.3,1], x:[0,-40,0] }} transition={{ duration:10, repeat:Infinity, ease:'easeInOut' }} />
         <motion.div className="orb orb-pink w-72 h-72 -bottom-10 -left-10" animate={{ scale:[1,1.2,1], y:[0,-30,0] }} transition={{ duration:12, repeat:Infinity, ease:'easeInOut', delay:1 }} />
         {[...Array(6)].map((_,i) => (
@@ -83,7 +83,7 @@ export function BookingPage() {
           <motion.h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight"
             initial={{ opacity:0, y:30 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.7, delay:0.1 }}>
             <span className="block text-gray-900">Book Your</span>
-            <span className="block bg-linear-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">1-on-1 Session</span>
+            <span className="block bg-linear-to-r from-purple-600 via-pink-600 to-fuchsia-500 bg-clip-text text-transparent">1-on-1 Session</span>
           </motion.h1>
           <motion.p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto"
             initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.7, delay:0.3 }}>
@@ -423,7 +423,7 @@ export function BookingPage() {
                   You&apos;ll be redirected to Stripe for secure payment. A confirmation email with your session details will follow.
                 </p>
               </div>
-              {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+              {error && <p className="text-rose-500 text-sm text-center">{error}</p>}
               <motion.button type="submit" disabled={loading}
                 className="w-full bg-linear-to-r from-purple-600 to-pink-600 text-white py-5 rounded-2xl font-bold text-lg shadow-xl flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
                 whileHover={loading ? {} : { scale:1.02, boxShadow:'0 20px 60px rgba(124,58,237,0.4)' }} whileTap={loading ? {} : { scale:0.98 }}>

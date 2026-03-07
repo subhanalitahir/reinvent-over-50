@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
@@ -21,7 +21,7 @@ const STATUS_COLORS: Record<string, string> = {
   active: 'bg-green-100 text-green-700',
   trial: 'bg-blue-100 text-blue-700',
   pending: 'bg-yellow-100 text-yellow-700',
-  cancelled: 'bg-red-100 text-red-700',
+  cancelled: 'bg-rose-100 text-rose-700',
   expired: 'bg-gray-100 text-gray-500',
 };
 
@@ -29,7 +29,7 @@ const PLAN_COLORS: Record<string, string> = {
   community: 'bg-cyan-50 text-cyan-700',
   growth: 'bg-emerald-50 text-emerald-700',
   transformation: 'bg-purple-50 text-purple-700',
-  vip: 'bg-amber-50 text-amber-700',
+  vip: 'bg-fuchsia-50 text-fuchsia-700',
 };
 
 export default function AdminMembersPage() {
@@ -200,7 +200,7 @@ export default function AdminMembersPage() {
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <button onClick={() => setSelected(m)} className="p-1.5 rounded-lg text-blue-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"><Eye className="w-4 h-4" /></button>
-                          <button onClick={() => setConfirm(m._id)} className="p-1.5 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                          <button onClick={() => setConfirm(m._id)} className="p-1.5 rounded-lg text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition-colors"><Trash2 className="w-4 h-4" /></button>
                         </div>
                       </td>
                     </tr>
@@ -253,7 +253,7 @@ export default function AdminMembersPage() {
             <p className="text-gray-500 text-sm mb-6">This cannot be undone.</p>
             <div className="flex gap-3">
               <button onClick={() => setConfirm(null)} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50">Cancel</button>
-              <button onClick={() => deleteMember(confirm)} className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700">Delete</button>
+              <button onClick={() => deleteMember(confirm)} className="flex-1 px-4 py-2.5 bg-rose-600 text-white rounded-xl text-sm font-semibold hover:bg-rose-700">Delete</button>
             </div>
           </div>
         </div>

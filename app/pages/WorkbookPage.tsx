@@ -135,12 +135,12 @@ export function WorkbookPage() {
         )}
       </AnimatePresence>
       {checkoutError && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-red-500 text-white px-8 py-4 rounded-2xl shadow-2xl font-semibold">
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-rose-500 text-white px-8 py-4 rounded-2xl shadow-2xl font-semibold">
           {checkoutError}
         </div>
       )}
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center bg-linear-to-br from-purple-50 via-pink-50 to-orange-50 overflow-hidden">
+      <section className="relative min-h-screen flex items-center bg-linear-to-br from-purple-50 via-pink-50 to-fuchsia-50 overflow-hidden">
         <motion.div className="orb orb-purple w-96 h-96 -top-25 -right-15" animate={{ scale:[1,1.3,1], x:[0,-50,0] }} transition={{ duration:14, repeat:Infinity, ease:'easeInOut' }} />
         <motion.div className="orb orb-pink w-80 h-80 -bottom-20 -left-10" animate={{ scale:[1,1.2,1], y:[0,-40,0] }} transition={{ duration:10, repeat:Infinity, ease:'easeInOut', delay:2 }} />
         {[...Array(6)].map((_,i) => (
@@ -159,7 +159,7 @@ export function WorkbookPage() {
               </motion.div>
               <motion.h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.8, delay:0.3 }}>
                 <span className="block text-gray-900">The Reinvention</span>
-                <span className="block bg-linear-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">Workbook</span>
+                <span className="block bg-linear-to-r from-purple-600 via-pink-600 to-fuchsia-500 bg-clip-text text-transparent">Workbook</span>
               </motion.h1>
               <motion.p className="text-xl text-gray-600 mb-10 leading-relaxed" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.8, delay:0.5 }}>
                 A comprehensive guide to discovering your purpose, setting meaningful goals, and creating an action plan for the life you've always dreamed of.
@@ -337,7 +337,7 @@ export function WorkbookPage() {
             {[
               { num:'01', title:'Values Discovery', desc:'Identify your core values and how they align with your current life.', quote:'This exercise helped me realize what truly matters to me at this stage of life.', gradient:'from-purple-500 to-pink-500' },
               { num:'02', title:'Life Vision Board', desc:'Create a visual representation of your ideal future.', quote:'Seeing my goals visually made them feel so much more achievable!', gradient:'from-blue-500 to-cyan-500' },
-              { num:'03', title:'90-Day Action Plan', desc:'Break down your goals into manageable steps with clear milestones.', quote:'The action plan made my transformation feel doable, not overwhelming.', gradient:'from-orange-500 to-red-500' },
+              { num:'03', title:'90-Day Action Plan', desc:'Break down your goals into manageable steps with clear milestones.', quote:'The action plan made my transformation feel doable, not overwhelming.', gradient:'from-fuchsia-500 to-purple-500' },
             ].map((ex, index) => (
               <motion.div key={index} className="card-shine group bg-linear-to-br from-gray-50 to-purple-50/20 rounded-3xl p-8 border border-gray-100 shadow-lg hover:shadow-2xl transition-all"
                 initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.5, delay:index*0.1 }}

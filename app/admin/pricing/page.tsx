@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
@@ -27,7 +27,7 @@ const PLAN_META: Record<keyof MembershipPrices, { label: string; desc: string; c
   community: { label: 'Community', desc: 'Entry-level plan', color: 'from-blue-500 to-cyan-500' },
   growth: { label: 'Growth', desc: 'Mid-tier plan', color: 'from-green-500 to-emerald-500' },
   transformation: { label: 'Transformation', desc: 'Most popular plan', color: 'from-purple-500 to-pink-500' },
-  vip: { label: 'VIP', desc: 'Premium all-access', color: 'from-amber-500 to-orange-500' },
+  vip: { label: 'VIP', desc: 'Premium all-access', color: 'from-fuchsia-500 to-purple-500' },
 };
 
 const BOOKING_META: Record<keyof BookingPrices, { label: string; desc: string; duration: string }> = {
@@ -148,7 +148,7 @@ export default function AdminPricingPage() {
         </div>
       )}
       {error && (
-        <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-medium">
+        <div className="flex items-center gap-2 p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-sm font-medium">
           <AlertCircle className="w-5 h-5 shrink-0" /> {error}
         </div>
       )}
@@ -298,12 +298,12 @@ export default function AdminPricingPage() {
 
           {/* Unsaved indicator */}
           {isDirty && (
-            <div className="flex items-center justify-between p-4 bg-amber-50 border border-amber-200 rounded-xl">
-              <p className="text-sm text-amber-700 font-medium">You have unsaved changes</p>
+            <div className="flex items-center justify-between p-4 bg-fuchsia-50 border border-fuchsia-200 rounded-xl">
+              <p className="text-sm text-fuchsia-700 font-medium">You have unsaved changes</p>
               <button
                 onClick={save}
                 disabled={saving}
-                className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-xl text-sm font-semibold hover:bg-amber-600 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-fuchsia-500 text-white rounded-xl text-sm font-semibold hover:bg-fuchsia-600 transition-colors"
               >
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                 Save Now

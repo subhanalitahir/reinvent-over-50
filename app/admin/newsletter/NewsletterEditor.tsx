@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -60,9 +60,9 @@ function Toolbar({ editor }: { editor: Editor }) {
   const [showColor, setShowColor] = useState(false);
 
   const COLORS = [
-    '#111827', '#7c3aed', '#db2777', '#ea580c', '#16a34a',
-    '#2563eb', '#dc2626', '#9333ea', '#0891b2', '#65a30d',
-    '#6b7280', '#f59e0b',
+    '#111827', '#7c3aed', '#db2777', '#c026d3', '#16a34a',
+    '#2563eb', '#9333ea', '#a855f7', '#0891b2', '#65a30d',
+    '#6b7280', '#d946ef',
   ];
 
   const applyLink = useCallback(() => {
@@ -150,7 +150,7 @@ function Toolbar({ editor }: { editor: Editor }) {
                 type="button"
                 title="Remove colour"
                 onClick={() => { editor.chain().focus().unsetColor().run(); setShowColor(false); }}
-                className="col-span-6 text-xs text-gray-500 hover:text-red-500 mt-1 py-1 border-t border-gray-100"
+                className="col-span-6 text-xs text-gray-500 hover:text-rose-500 mt-1 py-1 border-t border-gray-100"
               >
                 Remove colour
               </button>

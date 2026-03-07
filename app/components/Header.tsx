@@ -129,7 +129,7 @@ export function Header() {
                           </Link>
                           <button
                             onClick={handleLogout}
-                            className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                            className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-fuchsia-600 hover:bg-fuchsia-50 transition-colors"
                           >
                             <LogOut className="w-4 h-4" /> Sign Out
                           </button>
@@ -221,7 +221,7 @@ export function Header() {
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="flex items-center gap-2 w-full px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
+                      className="flex items-center gap-2 w-full px-4 py-3 text-fuchsia-600 hover:bg-fuchsia-50 rounded-lg transition-colors font-medium"
                     >
                       <LogOut className="w-4 h-4" /> Sign Out
                     </button>

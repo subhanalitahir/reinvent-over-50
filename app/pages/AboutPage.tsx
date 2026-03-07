@@ -12,8 +12,8 @@ export function AboutPage() {
       icon: Heart,
       title: 'Compassion',
       description: 'We believe in supporting each other with empathy and profound understanding at every step.',
-      gradient: 'from-rose-500 to-pink-600',
-      glow: 'rgba(244,63,94,0.3)',
+      gradient: 'from-fuchsia-500 to-pink-600',
+      glow: 'rgba(217,70,239,0.3)',
     },
     {
       icon: Users,
@@ -26,8 +26,8 @@ export function AboutPage() {
       icon: Sparkles,
       title: 'Transformation',
       description: 'Growth and radical positive change are not just possible — they are inevitable at any age.',
-      gradient: 'from-amber-500 to-orange-500',
-      glow: 'rgba(245,158,11,0.3)',
+      gradient: 'from-purple-500 to-fuchsia-500',
+      glow: 'rgba(168,85,247,0.3)',
     },
     {
       icon: Target,
@@ -63,7 +63,7 @@ export function AboutPage() {
     <div className="pt-20">
       <BannerStrip placement="about" />
       {/* Hero Section */}
-      <section className="relative min-h-[60vh] flex items-center overflow-hidden bg-linear-to-br from-purple-50 via-pink-50 to-orange-50">
+      <section className="relative min-h-[60vh] flex items-center overflow-hidden bg-linear-to-br from-purple-50 via-pink-50 to-fuchsia-50">
         <div className="absolute inset-0 bg-mesh-gradient opacity-40" />
         <div className="absolute inset-0 bg-dot-pattern opacity-30" />
         <motion.div className="orb orb-purple w-125 h-125 -top-30 -right-25"
@@ -178,7 +178,7 @@ export function AboutPage() {
 
       {/* Mission & Vision */}
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-br from-purple-50 via-pink-50/60 to-orange-50/40" />
+        <div className="absolute inset-0 bg-linear-to-br from-purple-50 via-pink-50/60 to-fuchsia-50/40" />
         <div className="absolute inset-0 bg-grid-pattern opacity-25" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div className="text-center mb-16"
@@ -220,9 +220,9 @@ export function AboutPage() {
               whileHover={{ y: -10, scale: 1.02 }}
               className="card-elevated relative overflow-hidden"
             >
-              <div className="h-1.5 bg-linear-to-r from-orange-500 to-rose-600 absolute top-0 left-0 right-0" />
+              <div className="h-1.5 bg-linear-to-r from-fuchsia-500 to-purple-600 absolute top-0 left-0 right-0" />
               <div className="px-8 pt-10 pb-8">
-                <div className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest text-white mb-5 bg-linear-to-r from-orange-500 to-rose-500">
+                <div className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest text-white mb-5 bg-linear-to-r from-fuchsia-500 to-purple-500">
                   Our Vision
                 </div>
                 <h3 className="font-display text-3xl md:text-4xl font-bold mb-5 text-gray-900">Redefine Age</h3>

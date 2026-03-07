@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
@@ -71,9 +71,9 @@ export default function AdminNewsletterPage() {
         </div>
       )}
       {error && (
-        <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-2xl">
-          <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 shrink-0" />
-          <p className="text-sm font-medium text-red-700">{error}</p>
+        <div className="flex items-start gap-3 p-4 bg-rose-50 border border-rose-200 rounded-2xl">
+          <AlertCircle className="w-5 h-5 text-rose-600 mt-0.5 shrink-0" />
+          <p className="text-sm font-medium text-rose-700">{error}</p>
         </div>
       )}
 
@@ -83,7 +83,7 @@ export default function AdminNewsletterPage() {
           {/* Subject */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Subject Line <span className="text-red-500">*</span>
+              Subject Line <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
@@ -97,7 +97,7 @@ export default function AdminNewsletterPage() {
           {/* Content */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
             <label className="block text-sm font-semibold text-gray-700 mb-3">
-              Email Content <span className="text-red-500">*</span>
+              Email Content <span className="text-rose-500">*</span>
             </label>
             <NewsletterEditor
               onChange={setHtmlContent}
@@ -151,7 +151,7 @@ export default function AdminNewsletterPage() {
             </div>
 
             {!sendToUsers && !sendToSubscribers && (
-              <p className="mt-3 text-xs text-red-500 font-medium">
+              <p className="mt-3 text-xs text-rose-500 font-medium">
                 Select at least one recipient group.
               </p>
             )}

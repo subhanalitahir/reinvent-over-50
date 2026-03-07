@@ -45,7 +45,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-50 via-pink-50 to-orange-50 px-4 pt-20 pb-12 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-50 via-pink-50 to-fuchsia-50 px-4 pt-20 pb-12 relative overflow-hidden">
       {/* Background orbs */}
       <motion.div
         className="absolute w-96 h-96 rounded-full bg-purple-400/20 blur-3xl -top-25 -right-25 pointer-events-none"
@@ -85,7 +85,7 @@ export default function LoginPage() {
         <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 p-8">
           {error && (
             <motion.div
-              className="flex items-center gap-2 p-3 mb-5 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+              className="flex items-center gap-2 p-3 mb-5 bg-rose-50 border border-rose-200 rounded-lg text-rose-700 text-sm"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
             >

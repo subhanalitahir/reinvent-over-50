@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
@@ -170,7 +170,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
           <button
             onClick={logout}
-            className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-xs font-semibold text-red-400/80 hover:text-red-300 hover:bg-red-500/15 transition-all"
+            className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-xs font-semibold text-fuchsia-400/80 hover:text-fuchsia-300 hover:bg-fuchsia-500/15 transition-all"
           >
             <LogOut className="w-3.5 h-3.5" />
             Sign Out

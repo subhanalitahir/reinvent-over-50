@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
@@ -27,7 +27,7 @@ interface IEvent {
 const STATUS_COLORS: Record<string, string> = {
   draft: 'bg-gray-100 text-gray-600',
   published: 'bg-green-100 text-green-700',
-  cancelled: 'bg-red-100 text-red-700',
+  cancelled: 'bg-rose-100 text-rose-700',
   completed: 'bg-indigo-100 text-indigo-700',
 };
 
@@ -190,7 +190,7 @@ export default function AdminEventsPage() {
                       <div className="text-xs text-gray-400">{e.hostedBy}</div>
                     </td>
                     <td className="px-6 py-4 capitalize text-gray-600 hidden sm:table-cell">
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${e.type === 'virtual' ? 'bg-blue-50 text-blue-600' : e.type === 'in-person' ? 'bg-orange-50 text-orange-600' : 'bg-purple-50 text-purple-600'}`}>
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${e.type === 'virtual' ? 'bg-blue-50 text-blue-600' : e.type === 'in-person' ? 'bg-fuchsia-50 text-fuchsia-600' : 'bg-purple-50 text-purple-600'}`}>
                         {e.type}
                       </span>
                     </td>
@@ -212,7 +212,7 @@ export default function AdminEventsPage() {
                       <div className="flex items-center justify-end gap-1">
                         <button onClick={() => openView(e)} className="p-1.5 rounded-lg text-blue-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"><Eye className="w-4 h-4" /></button>
                         <button onClick={() => openEdit(e)} className="p-1.5 rounded-lg text-purple-400 hover:bg-purple-50 hover:text-purple-600 transition-colors"><Edit3 className="w-4 h-4" /></button>
-                        <button onClick={() => setConfirm(e._id)} className="p-1.5 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                        <button onClick={() => setConfirm(e._id)} className="p-1.5 rounded-lg text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition-colors"><Trash2 className="w-4 h-4" /></button>
                       </div>
                     </td>
                   </tr>
@@ -349,7 +349,7 @@ export default function AdminEventsPage() {
             <p className="text-gray-500 text-sm mb-6">This cannot be undone.</p>
             <div className="flex gap-3">
               <button onClick={() => setConfirm(null)} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50">Cancel</button>
-              <button onClick={() => deleteEvent(confirm)} className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700">Delete</button>
+              <button onClick={() => deleteEvent(confirm)} className="flex-1 px-4 py-2.5 bg-rose-600 text-white rounded-xl text-sm font-semibold hover:bg-rose-700">Delete</button>
             </div>
           </div>
         </div>

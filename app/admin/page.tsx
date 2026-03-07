@@ -108,11 +108,11 @@ export default function AdminOverviewPage() {
   const statCards = stats ? [
     { label: 'Total Users', value: stats.users, icon: Users, gradient: 'from-blue-500 to-cyan-400', shadow: 'shadow-blue-200', href: '/admin/users', change: '+12%' },
     { label: 'Active Members', value: stats.activeMembers, icon: Crown, gradient: 'from-violet-500 to-purple-400', shadow: 'shadow-violet-200', href: '/admin/members', change: '+8%' },
-    { label: 'Total Bookings', value: stats.bookings, icon: Calendar, gradient: 'from-orange-500 to-amber-400', shadow: 'shadow-orange-200', href: '/admin/bookings', change: '+5%' },
+    { label: 'Total Bookings', value: stats.bookings, icon: Calendar, gradient: 'from-fuchsia-500 to-purple-400', shadow: 'shadow-fuchsia-200', href: '/admin/bookings', change: '+5%' },
     { label: 'Revenue', value: `$${stats.revenue.toFixed(0)}`, icon: DollarSign, gradient: 'from-emerald-500 to-green-400', shadow: 'shadow-emerald-200', href: '/admin/orders', change: '+18%' },
     { label: 'Paid Orders', value: stats.paidOrders, icon: ShoppingBag, gradient: 'from-indigo-500 to-blue-400', shadow: 'shadow-indigo-200', href: '/admin/orders', change: '+3%' },
     { label: 'Live Events', value: stats.events, icon: MapPin, gradient: 'from-pink-500 to-rose-400', shadow: 'shadow-pink-200', href: '/admin/events', change: '0%' },
-    { label: 'Subscribers', value: stats.subscribers, icon: Bell, gradient: 'from-yellow-500 to-orange-400', shadow: 'shadow-yellow-200', href: '/admin/subscribers', change: '+21%' },
+    { label: 'Subscribers', value: stats.subscribers, icon: Bell, gradient: 'from-fuchsia-400 to-purple-400', shadow: 'shadow-fuchsia-200', href: '/admin/subscribers', change: '+21%' },
     { label: 'Messages', value: stats.contacts, icon: Mail, gradient: 'from-teal-500 to-cyan-400', shadow: 'shadow-teal-200', href: '/admin/contacts', change: '+2%' },
   ] : [];
 
@@ -144,7 +144,7 @@ export default function AdminOverviewPage() {
             {stats && stats.pendingBookings > 0 && (
               <Link href="/admin/bookings"
                 className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 text-sm font-semibold hover:bg-white/25 transition-all">
-                <Clock className="w-4 h-4 text-amber-300" />
+                <Clock className="w-4 h-4 text-fuchsia-300" />
                 <span>{stats.pendingBookings} pending</span>
               </Link>
             )}
@@ -284,7 +284,7 @@ export default function AdminOverviewPage() {
                 </div>
                 <h3 className="font-bold text-gray-900 text-sm">Recent Messages</h3>
                 {stats && stats.newContacts > 0 && (
-                  <span className="px-1.5 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full">{stats.newContacts}</span>
+                  <span className="px-1.5 py-0.5 bg-rose-500 text-white text-[10px] font-bold rounded-full">{stats.newContacts}</span>
                 )}
               </div>
               <Link href="/admin/contacts"
@@ -339,7 +339,7 @@ export default function AdminOverviewPage() {
             { label: '+ New Event', href: '/admin/events', color: 'hover:bg-pink-50 hover:border-pink-200 hover:text-pink-700' },
             { label: '+ New Banner', href: '/admin/banners', color: 'hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700' },
             { label: '+ New Product', href: '/admin/products', color: 'hover:bg-green-50 hover:border-green-200 hover:text-green-700' },
-            { label: 'Manage Pricing', href: '/admin/pricing', color: 'hover:bg-amber-50 hover:border-amber-200 hover:text-amber-700' },
+            { label: 'Manage Pricing', href: '/admin/pricing', color: 'hover:bg-fuchsia-50 hover:border-fuchsia-200 hover:text-fuchsia-700' },
             { label: 'View Contacts', href: '/admin/contacts', color: 'hover:bg-teal-50 hover:border-teal-200 hover:text-teal-700' },
             { label: 'All Orders', href: '/admin/orders', color: 'hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700' },
           ].map(a => (
@@ -361,15 +361,15 @@ function StatusBadge({ status }: { status: string }) {
     confirmed: 'bg-emerald-50 text-emerald-700 border border-emerald-100',
     published: 'bg-emerald-50 text-emerald-700 border border-emerald-100',
     trial: 'bg-blue-50 text-blue-700 border border-blue-100',
-    pending: 'bg-amber-50 text-amber-700 border border-amber-100',
+    pending: 'bg-fuchsia-50 text-fuchsia-700 border border-amber-100',
     new: 'bg-violet-50 text-violet-700 border border-violet-100',
     read: 'bg-gray-50 text-gray-500 border border-gray-100',
     replied: 'bg-purple-50 text-purple-700 border border-purple-100',
-    cancelled: 'bg-red-50 text-red-600 border border-red-100',
-    failed: 'bg-red-50 text-red-600 border border-red-100',
+    cancelled: 'bg-rose-50 text-rose-600 border border-rose-100',
+    failed: 'bg-rose-50 text-rose-600 border border-rose-100',
     completed: 'bg-indigo-50 text-indigo-700 border border-indigo-100',
     archived: 'bg-gray-50 text-gray-400 border border-gray-100',
-    refunded: 'bg-orange-50 text-orange-700 border border-orange-100',
+    refunded: 'bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-100',
     draft: 'bg-gray-50 text-gray-500 border border-gray-100',
     inactive: 'bg-gray-50 text-gray-400 border border-gray-100',
   };

@@ -217,7 +217,7 @@ export function EventsPage() {
         )}
       </AnimatePresence>
       {eventError && (
-        <motion.div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-red-500 text-white px-8 py-4 rounded-2xl shadow-2xl font-semibold"
+        <motion.div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-rose-500 text-white px-8 py-4 rounded-2xl shadow-2xl font-semibold"
           initial={{ opacity:0, y:-30 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0 }}>
           {eventError}
         </motion.div>
@@ -226,7 +226,7 @@ export function EventsPage() {
       <BannerStrip placement="events" />
 
       {/* Hero Section */}
-      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-linear-to-br from-purple-50 via-pink-50 to-orange-50">
+      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-linear-to-br from-purple-50 via-pink-50 to-fuchsia-50">
         <div className="absolute inset-0 bg-mesh-gradient opacity-40" />
         <div className="absolute inset-0 bg-dot-pattern opacity-30" />
         <motion.div className="orb orb-purple w-112.5 h-112.5 -top-20 -right-15"
@@ -352,27 +352,27 @@ export function EventsPage() {
 
       {/* In-Person Events */}
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-br from-orange-50 via-rose-50/60 to-white" />
+        <div className="absolute inset-0 bg-linear-to-br from-fuchsia-50 via-pink-50/60 to-white" />
         <div className="absolute inset-0 bg-grid-pattern opacity-25" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div className="flex items-center gap-4 mb-14"
             initial={{ opacity:0, x:-30 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }}
             transition={{ duration:0.6 }}>
-            <motion.div className="w-14 h-14 bg-linear-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-xl"
+            <motion.div className="w-14 h-14 bg-linear-to-br from-fuchsia-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-xl"
               whileHover={{ rotate:360 }} transition={{ duration:0.6 }}>
               <MapPin className="w-7 h-7 text-white" />
             </motion.div>
             <div>
               <h2 className="font-display text-4xl md:text-5xl font-bold">
                 <span className="text-gray-900">In-Person </span>
-                <span className="font-display italic" style={{ background:'linear-gradient(135deg,#ea580c,#dc2626)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Events</span>
+                <span className="font-display italic" style={{ background:'linear-gradient(135deg,#c026d3,#9333ea)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Events</span>
               </h2>
               <p className="text-gray-500 text-sm mt-1">Real connections, real places</p>
             </div>
           </motion.div>
           {eventsLoading ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+              <Loader2 className="w-8 h-8 animate-spin text-fuchsia-500" />
             </div>
           ) : inPersonEvents.length === 0 ? (
             <div className="text-center py-20 text-gray-400">
@@ -388,12 +388,12 @@ export function EventsPage() {
                 const freeForUser = isFreeForCurrentUser(event);
                 return (
                   <motion.div key={event._id} variants={cardVariants} whileHover={{ y:-10, scale:1.03 }}
-                    className="card-shine bg-white border-2 border-orange-100 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:border-orange-300 transition-all">
+                    className="card-shine bg-white border-2 border-fuchsia-100 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:border-fuchsia-300 transition-all">
                     <div className="relative overflow-hidden">
                       <motion.div whileHover={{ scale:1.1 }} transition={{ duration:0.4 }}>
                         <ImageWithFallback src={event.imageUrl ?? ''} alt={event.title} className="w-full h-48 object-cover" />
                       </motion.div>
-                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-orange-600">
+                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-fuchsia-600">
                         In-Person
                       </div>
                       {(event.isFree || event.isFreeForMembers) && (
@@ -407,28 +407,28 @@ export function EventsPage() {
                       <p className="text-gray-600 mb-4 text-sm line-clamp-2">{event.description}</p>
                       <div className="space-y-2 text-sm text-gray-600 mb-4">
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-orange-500" />
+                          <Calendar className="w-4 h-4 text-fuchsia-500" />
                           <span>{new Date(event.startDate).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' })}</span>
                         </div>
                         {event.location && (
                           <div className="flex items-center gap-2">
-                            <MapPin className="w-4 h-4 text-orange-500" />
+                            <MapPin className="w-4 h-4 text-fuchsia-500" />
                             <span>{event.location}</span>
                           </div>
                         )}
                         {event.maxAttendees && (
                           <div className="flex items-center gap-2">
-                            <Users className="w-4 h-4 text-orange-500" />
+                            <Users className="w-4 h-4 text-fuchsia-500" />
                             <span>{event.maxAttendees - (event.attendees?.length ?? 0)} spots left</span>
                           </div>
                         )}
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className={`text-lg font-semibold ${event.isFree ? 'text-green-600' : 'text-orange-600'}`}>{priceLabel}</span>
+                        <span className={`text-lg font-semibold ${event.isFree ? 'text-green-600' : 'text-fuchsia-600'}`}>{priceLabel}</span>
                         <motion.button
                           onClick={() => handleEventRegister(event)}
                           disabled={loadingEvent === event._id}
-                          className="bg-linear-to-r from-orange-600 to-red-600 text-white px-6 py-2 rounded-lg font-medium shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                          className="bg-linear-to-r from-fuchsia-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
                           whileHover={{ scale: loadingEvent === event._id ? 1 : 1.05 }}
                           whileTap={{ scale: loadingEvent === event._id ? 1 : 0.95 }}>
                           {loadingEvent === event._id ? 'Loadingâ€¦' : freeForUser ? (user ? 'Access Now' : 'Join as Member') : 'Book Now'}
@@ -456,18 +456,18 @@ export function EventsPage() {
         <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
           <motion.div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm text-white/90 text-sm font-semibold tracking-widest uppercase mb-10"
             initial={{ opacity:0, scale:0.85 }} whileInView={{ opacity:1, scale:1 }} viewport={{ once:true }} transition={{ duration:0.5 }}>
-            <Sparkles className="w-4 h-4 text-yellow-300" />
+            <Sparkles className="w-4 h-4 text-fuchsia-300" />
             Don&apos;t Miss Out
           </motion.div>
           <motion.h2 className="font-display font-extrabold leading-none mb-6"
             initial={{ opacity:0, y:35 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
             transition={{ duration:0.75, ease:[0.16,1,0.3,1] }}>
             <span className="block text-5xl md:text-7xl lg:text-8xl text-white tracking-tight">Be Part of the</span>
-            <span className="block text-5xl md:text-7xl lg:text-8xl font-black italic mt-1" style={{ color:'#fbbf24', textShadow:'0 0 50px rgba(251,191,36,0.55), 0 0 100px rgba(251,191,36,0.3)' }}>Experience</span>
+            <span className="block text-5xl md:text-7xl lg:text-8xl font-black italic mt-1" style={{ color:'#e879f9', textShadow:'0 0 50px rgba(232,121,249,0.55), 0 0 100px rgba(232,121,249,0.3)' }}>Experience</span>
           </motion.h2>
           <motion.p className="text-xl md:text-2xl text-indigo-200 mb-10 max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.6, delay:0.2 }}>
-            Become a member and unlock <span className="text-yellow-300 font-bold">free or deeply discounted</span> access to every event we run.
+            Become a member and unlock <span className="text-fuchsia-300 font-bold">free or deeply discounted</span> access to every event we run.
           </motion.p>
           <motion.div className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.6, delay:0.45 }}>

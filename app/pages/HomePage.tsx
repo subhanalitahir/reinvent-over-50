@@ -26,8 +26,8 @@ export function HomePage() {
       icon: BookOpen,
       title: 'Transformation Workbook',
       description: 'Guided exercises to help you discover your new path with clarity and purpose',
-      gradient: 'from-orange-500 to-red-500',
-      bg: 'from-orange-50 to-red-50',
+      gradient: 'from-fuchsia-500 to-purple-500',
+      bg: 'from-fuchsia-50 to-purple-50',
     },
     {
       icon: Video,
@@ -40,9 +40,9 @@ export function HomePage() {
 
   const stats = [
     { value: '5,000+', label: 'Active Members', icon: Users, color: 'from-purple-500 to-violet-500' },
-    { value: '98%', label: 'Success Rate', icon: TrendingUp, color: 'from-pink-500 to-rose-500' },
+    { value: '98%', label: 'Success Rate', icon: TrendingUp, color: 'from-fuchsia-500 to-pink-500' },
     { value: '200+', label: 'Monthly Events', icon: Calendar, color: 'from-blue-500 to-indigo-500' },
-    { value: '50+', label: 'Countries', icon: Award, color: 'from-amber-500 to-orange-500' },
+    { value: '50+', label: 'Countries', icon: Award, color: 'from-purple-500 to-fuchsia-500' },
   ];
 
   const testimonials = [
@@ -99,7 +99,7 @@ export function HomePage() {
       {/* ===== HERO ===== */}
       <section
         className="relative min-h-screen flex items-center overflow-hidden"
-        style={{ background: 'linear-gradient(145deg, #faf5ff 0%, #fdf2f8 40%, #fff7ed 70%, #f0fdf4 100%)' }}
+        style={{ background: 'linear-gradient(145deg, #faf5ff 0%, #fdf2f8 40%, #fae8ff 70%, #f5f3ff 100%)' }}
       >
         <div className="absolute inset-0 bg-mesh-gradient opacity-60" />
         <div className="absolute inset-0 bg-grid-pattern opacity-30" />
@@ -113,7 +113,7 @@ export function HomePage() {
           <motion.div key={i} className="absolute rounded-full pointer-events-none"
             style={{
               width: `${4 + (i % 4) * 3}px`, height: `${4 + (i % 4) * 3}px`,
-              background: i % 3 === 0 ? 'rgba(124,58,237,0.4)' : i % 3 === 1 ? 'rgba(236,72,153,0.35)' : 'rgba(245,158,11,0.35)',
+              background: i % 3 === 0 ? 'rgba(124,58,237,0.4)' : i % 3 === 1 ? 'rgba(236,72,153,0.35)' : 'rgba(192,132,252,0.35)',
               left: `${5 + i * 8}%`, top: `${15 + (i % 5) * 15}%`,
             }}
             animate={{ y: [0, -(20 + i * 4), 0], opacity: [0.3, 0.8, 0.3], scale: [1, 1.4, 1] }}
@@ -141,7 +141,7 @@ export function HomePage() {
                 <h1 className="font-display font-bold leading-none">
                   <span className="block text-5xl md:text-7xl lg:text-8xl text-gray-900 tracking-tight">Your Best</span>
                   <span className="block text-5xl md:text-7xl lg:text-8xl text-gray-900 tracking-tight">Years Are</span>
-                  <span className="block text-5xl md:text-7xl lg:text-8xl font-black italic" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #db2777 50%, #f59e0b 100%)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  <span className="block text-5xl md:text-7xl lg:text-8xl font-black italic" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #db2777 50%, #c026d3 100%)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                     Still Ahead
                   </span>
                 </h1>
@@ -207,7 +207,7 @@ export function HomePage() {
                   <div className="text-sm text-gray-500 font-semibold">Active Members</div>
                   <div className="flex items-center gap-1 mt-2">
                     {[...Array(5)].map((_, i) => (
-                      <div key={i} className={`w-5 h-5 rounded-full border-2 border-white bg-linear-to-br ${['from-purple-400 to-pink-400', 'from-blue-400 to-cyan-400', 'from-green-400 to-emerald-400', 'from-orange-400 to-red-400', 'from-violet-400 to-purple-400'][i]}`} />
+                      <div key={i} className={`w-5 h-5 rounded-full border-2 border-white bg-linear-to-br ${['from-purple-400 to-pink-400', 'from-blue-400 to-cyan-400', 'from-green-400 to-emerald-400', 'from-fuchsia-400 to-purple-400', 'from-violet-400 to-purple-400'][i]}`} />
                     ))}
                     <span className="text-xs text-gray-400 ml-1">+more</span>
                   </div>
@@ -243,7 +243,7 @@ export function HomePage() {
       </section>
 
       {/* ===== MARQUEE STRIP ===== */}
-      <div className="py-5 overflow-hidden relative" style={{ background: 'linear-gradient(90deg, #7c3aed, #a855f7, #db2777, #f97316, #db2777, #a855f7, #7c3aed)' }}>
+      <div className="py-5 overflow-hidden relative" style={{ background: 'linear-gradient(90deg, #7c3aed, #a855f7, #db2777, #d946ef, #db2777, #a855f7, #7c3aed)' }}>
         <div className="flex gap-10 animate-marquee whitespace-nowrap font-bold text-sm uppercase tracking-widest text-white">
           {[...Array(3)].map((_, rep) =>
             ['Join 5,000+ Members', '✦ Transform Your Life', '✦ Expert Coaching', '✦ 98% Success Rate', '✦ 30-Day Guarantee', '✦ 50+ Countries', '✦ 200+ Events Monthly', '✦ Start Today Free'].map((item, i) => (
@@ -281,7 +281,7 @@ export function HomePage() {
       </section>
 
       {/* ===== FEATURES ===== */}
-      <section className="py-36 relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #faf5ff 0%, #fdf2f8 50%, #fff7ed 100%)' }}>
+      <section className="py-36 relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #faf5ff 0%, #fdf2f8 50%, #fae8ff 100%)' }}>
         <div className="absolute inset-0 bg-grid-pattern opacity-20" />
         <div className="absolute top-20 right-0 w-96 h-96 orb orb-purple opacity-30" />
         <div className="absolute bottom-0 left-10 w-64 h-64 orb orb-pink opacity-25" />
@@ -354,7 +354,7 @@ export function HomePage() {
               <motion.div className="space-y-5 mb-12" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
                 {[
                   { icon: Award, text: 'Weekly virtual meetups with world-class expert speakers', color: 'from-purple-500 to-pink-500' },
-                  { icon: Heart, text: 'Private member forum for 24/7 peer support & connection', color: 'from-pink-500 to-rose-500' },
+                  { icon: Heart, text: 'Private member forum for 24/7 peer support & connection', color: 'from-fuchsia-500 to-pink-500' },
                   { icon: Users, text: 'Personally matched with accountability partners', color: 'from-blue-500 to-violet-500' },
                 ].map((item, index) => (
                   <motion.div key={index} variants={itemVariants}
@@ -379,7 +379,7 @@ export function HomePage() {
       </section>
 
       {/* ===== TESTIMONIALS ===== */}
-      <section className="py-36 relative overflow-hidden" style={{ background: 'linear-gradient(150deg, #faf5ff 0%, #fdf2f8 40%, #fff7ed 100%)' }}>
+      <section className="py-36 relative overflow-hidden" style={{ background: 'linear-gradient(150deg, #faf5ff 0%, #fdf2f8 40%, #fae8ff 100%)' }}>
         <div className="absolute inset-0 bg-dot-pattern opacity-30" />
         <div className="absolute top-0 right-0 w-80 h-80 orb orb-purple opacity-20" />
         <div className="absolute bottom-0 left-0 w-96 h-96 orb orb-pink opacity-15" />
@@ -424,7 +424,7 @@ export function HomePage() {
       {/* ===== CTA ===== */}
       <section className="py-36 relative overflow-hidden">
         <div className="absolute inset-0 animate-aurora"
-          style={{ background: 'linear-gradient(135deg, #4c1d95, #7c3aed, #db2777, #ea580c, #db2777, #7c3aed)', backgroundSize: '400% 400%' }}
+          style={{ background: 'linear-gradient(135deg, #4c1d95, #7c3aed, #db2777, #c026d3, #db2777, #7c3aed)', backgroundSize: '400% 400%' }}
         />
         <div className="absolute inset-0 bg-noise opacity-40" />
         {[...Array(10)].map((_, i) => (
@@ -448,7 +448,7 @@ export function HomePage() {
           <motion.h2 className="text-5xl md:text-7xl lg:text-8xl font-display font-black text-white mb-8 leading-none tracking-tight"
             initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           >
-            Ready to <span className="italic" style={{ color: '#fde68a' }}>Transform</span>
+            Ready to <span className="italic" style={{ color: '#f0abfc' }}>Transform</span>
             <br />Your Life?
           </motion.h2>
 

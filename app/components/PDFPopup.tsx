@@ -119,7 +119,7 @@ export function PDFPopup() {
                     className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all disabled:opacity-60"
                     whileFocus={{ scale: 1.02 }}
                   />
-                  {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                  {error && <p className="text-rose-500 text-sm mt-1">{error}</p>}
                 </div>
                 <motion.button
                   type="submit"

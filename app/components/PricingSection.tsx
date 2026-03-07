@@ -10,13 +10,13 @@ const plans = [
   {
     name: 'Individual',
     price: '$9.99',
-    color: 'from-orange-500 to-orange-600',
+    color: 'from-fuchsia-500 to-fuchsia-600',
     features: ['Ad-free music', 'Unlimited downloads', 'High quality audio', 'All devices'],
   },
   {
     name: 'Family',
     price: '$14.99',
-    color: 'from-pink-500 to-red-500',
+    color: 'from-fuchsia-500 to-purple-500',
     features: ['Ad-free music', 'Up to 6 accounts', 'Family mix playlist', 'Parental controls'],
   },
 ];

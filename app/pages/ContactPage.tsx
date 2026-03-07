@@ -48,7 +48,7 @@ export function ContactPage() {
   const contactCards = [
     { icon: Mail, title: 'Email Us', detail: 'info@reinventyou.com', sub: 'Response within 24 hours', gradient: 'from-purple-500 to-pink-500', bg: 'from-purple-50 to-pink-50' },
     { icon: Phone, title: 'Call Us', detail: '(555) 123-4567', sub: 'Mon-Fri, 9 AM – 5 PM ET', gradient: 'from-blue-500 to-cyan-500', bg: 'from-blue-50 to-cyan-50' },
-    { icon: MapPin, title: 'Visit Us', detail: '123 Transformation St', sub: 'Suite 500, City, State 12345', gradient: 'from-orange-500 to-red-500', bg: 'from-orange-50 to-red-50' },
+    { icon: MapPin, title: 'Visit Us', detail: '123 Transformation St', sub: 'Suite 500, City, State 12345', gradient: 'from-fuchsia-500 to-purple-500', bg: 'from-fuchsia-50 to-purple-50' },
     { icon: Clock, title: 'Office Hours', detail: 'Mon–Fri: 9 AM – 5 PM', sub: 'Sat: 10 AM – 2 PM · Sun: Closed', gradient: 'from-green-500 to-emerald-500', bg: 'from-green-50 to-emerald-50' },
   ];
 
@@ -65,7 +65,7 @@ export function ContactPage() {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="relative min-h-[50vh] flex items-center bg-linear-to-br from-purple-50 via-pink-50 to-orange-50 overflow-hidden">
+      <section className="relative min-h-[50vh] flex items-center bg-linear-to-br from-purple-50 via-pink-50 to-fuchsia-50 overflow-hidden">
         <motion.div className="orb orb-purple w-96 h-96 -top-20 -left-20" animate={{ scale: [1,1.3,1], x:[0,40,0], y:[0,30,0] }} transition={{ duration:12, repeat:Infinity, ease:'easeInOut' }} />
         <motion.div className="orb orb-pink w-80 h-80 -bottom-15 -right-15" animate={{ scale:[1,1.2,1], x:[0,-30,0], y:[0,-20,0] }} transition={{ duration:10, repeat:Infinity, ease:'easeInOut', delay:2 }} />
         {[...Array(8)].map((_,i) => (
@@ -80,7 +80,7 @@ export function ContactPage() {
           </motion.div>
           <motion.h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight" initial={{ opacity:0, y:30 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.7, delay:0.1 }}>
             <span className="block text-gray-900">Get In</span>
-            <span className="block bg-linear-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">Touch</span>
+            <span className="block bg-linear-to-r from-purple-600 via-pink-600 to-fuchsia-500 bg-clip-text text-transparent">Touch</span>
           </motion.h1>
           <motion.p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.7, delay:0.3 }}>
             Have a question? We&apos;re friendly, real humans — and we reply fast.
@@ -170,7 +170,7 @@ export function ContactPage() {
                           placeholder="Tell us how we can help you…" />
                       </motion.div>
                       {submitError && (
-                        <p className="text-red-500 text-sm text-center font-medium">{submitError}</p>
+                        <p className="text-rose-500 text-sm text-center font-medium">{submitError}</p>
                       )}
                       <motion.button type="submit" disabled={loading} className="w-full relative overflow-hidden bg-linear-to-r from-purple-600 to-pink-600 text-white py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
                         whileHover={loading ? {} : { scale:1.02, boxShadow:'0 20px 60px rgba(124,58,237,0.4)' }} whileTap={loading ? {} : { scale:0.98 }}>

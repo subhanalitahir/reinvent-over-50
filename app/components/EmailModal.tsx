@@ -86,7 +86,7 @@ export function EmailModal({
             transition={{ type: 'spring', stiffness: 340, damping: 28 }}
           >
             {/* Top gradient bar */}
-            <div className="h-1.5 w-full bg-linear-to-r from-purple-600 via-pink-500 to-orange-400" />
+            <div className="h-1.5 w-full bg-linear-to-r from-purple-600 via-pink-500 to-fuchsia-400" />
 
             <div className="p-8">
               {/* Close button */}
@@ -132,7 +132,7 @@ export function EmailModal({
                       placeholder="you@example.com"
                       className={`w-full pl-10 pr-4 py-3.5 border-2 rounded-xl text-gray-900 text-sm transition-all outline-none placeholder:text-gray-300
                         ${showError
-                          ? 'border-red-400 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                          ? 'border-rose-400 bg-rose-50 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
                           : 'border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-100'
                         }`}
                       autoComplete="email"
@@ -142,7 +142,7 @@ export function EmailModal({
                   <AnimatePresence>
                     {showError && (
                       <motion.p
-                        className="text-red-500 text-xs mt-1.5 font-medium"
+                        className="text-rose-500 text-xs mt-1.5 font-medium"
                         initial={{ opacity: 0, y: -4 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}

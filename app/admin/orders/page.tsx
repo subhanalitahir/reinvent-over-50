@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
@@ -21,8 +21,8 @@ interface IOrder {
 const STATUS_COLORS: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-700',
   paid: 'bg-green-100 text-green-700',
-  failed: 'bg-red-100 text-red-700',
-  refunded: 'bg-orange-100 text-orange-700',
+  failed: 'bg-rose-100 text-rose-700',
+  refunded: 'bg-fuchsia-100 text-fuchsia-700',
   cancelled: 'bg-gray-100 text-gray-500',
 };
 
