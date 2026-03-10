@@ -8,8 +8,8 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   const stats = [
-    { icon: Users, value: '5,000+', label: 'Members' },
-    { icon: Calendar, value: '200+', label: 'Monthly Events' },
+    { icon: Users, value: '300+', label: 'Members' },
+    { icon: Calendar, value: '50+', label: 'Monthly Events' },
     { icon: Award, value: '98%', label: 'Success Rate' },
     { icon: Star, value: '4.9/5', label: 'Rating' },
   ];

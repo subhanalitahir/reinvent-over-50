@@ -143,22 +143,17 @@ export function AboutPage() {
               </div>
               <h2 className="font-display text-5xl md:text-6xl font-bold mb-8 leading-tight">
                 <span className="text-gray-900">A Story of </span>
-                <span className="gradient-text-purple font-display italic">Courage</span>
+                <span className="gradient-text-purple font-display italic">Reinvention</span>
               </h2>
               <div className="space-y-5 mb-10">
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  After turning 50, our founder experienced a profound realization: this wasn&apos;t the
-                  end of anything&mdash;it was a new beginning. But finding support and resources for this
-                  unique life stage was challenging.
+                  After turning 50, I realized something powerful &mdash; life wasn&apos;t slowing down, it was opening the door to a brand new chapter filled with growth, opportunity, and self-discovery.
                 </p>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  That&apos;s why Reinvent You Over 50 was created. We wanted to build a community where
-                  people could find the guidance, support, and inspiration they needed to create the
-                  life they&apos;ve always wanted.
+                  That realization inspired me to create Reinvent You 50+, a space where women can find encouragement, connection, and the confidence to redefine what life looks like after 50.
                 </p>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  Today, we serve thousands of members worldwide, helping them discover new passions,
-                  build meaningful connections, and live with purpose and extraordinary joy.
+                  Today, this movement continues to grow as women from around the world come together to rediscover their passions, build meaningful connections, and step boldly into their next chapter.
                 </p>
               </div>
               <Link href="/membership">
