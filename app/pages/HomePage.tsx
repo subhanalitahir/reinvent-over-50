@@ -197,7 +197,7 @@ export function HomePage() {
               />
               <div className="relative">
                 <ImageWithFallback src="/img/hero-image.jpeg"
-                  alt="Confident woman over 50" className="rounded-4xl shadow-2xl w-full relative z-10 object-cover" />
+                  alt="Confident woman over 50" className="rounded-4xl shadow-2xl w-full relative z-10" />
 
                 <motion.div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-20"
                   initial={{ opacity: 0, x: -40, y: 20 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.8, delay: 1.2 }} whileHover={{ scale: 1.05 }}
