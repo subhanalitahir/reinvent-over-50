@@ -109,19 +109,19 @@ export function AboutPage() {
             >
               <div className="relative">
                 <motion.div
-                  className="absolute -inset-6 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] opacity-25"
+                  className="absolute -inset-3 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] opacity-20"
                   style={{ background:'linear-gradient(135deg,#7c3aed,#ec4899)' }}
                   animate={{ borderRadius:['40% 60% 70% 30% / 40% 50% 60% 50%','60% 40% 30% 70% / 50% 60% 40% 50%','40% 60% 70% 30% / 40% 50% 60% 50%'] }}
                   transition={{ duration:10, repeat:Infinity, ease:'easeInOut' }} />
                 <motion.div
-                  className="absolute -inset-4 bg-linear-to-r from-purple-600 to-pink-600 rounded-3xl blur-xl opacity-15"
+                  className="absolute -inset-2 bg-linear-to-r from-purple-600 to-pink-600 rounded-3xl blur-lg opacity-10"
                   animate={{ scale: [1, 1.05, 1] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 />
                 <ImageWithFallback
-                  src="/img/founder.png"
+                  src="/img/founder-copy.png"
                   alt="Founder"
-                  className="rounded-3xl shadow-2xl w-full relative z-10"
+                  className="rounded-3xl shadow-2xl w-full max-h-[480px] object-cover object-top relative z-10"
                 />
                 <motion.div className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-5 shadow-2xl border border-purple-100 max-w-50 z-20"
                   initial={{ opacity:0, scale:0.8 }} whileInView={{ opacity:1, scale:1 }} viewport={{ once:true }}

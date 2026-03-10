@@ -19,6 +19,7 @@ export function HomePage() {
       icon: Calendar,
       title: 'Empowering Events',
       description: 'Join inspiring virtual and in-person experiences designed to spark growth, connection, and personal transformation.',
+      gradient: 'from-purple-500 to-pink-500',
       bg: 'from-purple-50 to-pink-50',
     },
     {
@@ -197,7 +198,7 @@ export function HomePage() {
               />
               <div className="relative">
                 <ImageWithFallback src="/img/hero-image.jpeg"
-                  alt="Confident woman over 50" className="rounded-4xl shadow-2xl w-full relative z-10" />
+                  alt="Confident woman over 50" className="rounded-4xl shadow-2xl w-full relative z-10 max-h-[420px] object-cover object-top" />
 
                 <motion.div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-20"
                   initial={{ opacity: 0, x: -40, y: 20 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.8, delay: 1.2 }} whileHover={{ scale: 1.05 }}
@@ -245,7 +246,7 @@ export function HomePage() {
       <div className="py-5 overflow-hidden relative" style={{ background: 'linear-gradient(90deg, #7c3aed, #a855f7, #db2777, #d946ef, #db2777, #a855f7, #7c3aed)' }}>
         <div className="flex gap-10 animate-marquee whitespace-nowrap font-bold text-sm uppercase tracking-widest text-white">
           {[...Array(3)].map((_, rep) =>
-            ['Join 5,000+ Members', '✦ Transform Your Life', '✦ Expert Coaching', '✦ 98% Success Rate', '✦ 30-Day Guarantee', '✦ 50+ Countries', '✦ 200+ Events Monthly', '✦ Start Today Free'].map((item, i) => (
+            ['Join 300+ Members', '✦ Transform Your Life', '✦ Expert Coaching', '✦ 98% Success Rate', '✦ 30-Day Guarantee', '✦ 5+ Countries', '✦ 50+ Events Monthly', '✦ Start Today Free'].map((item, i) => (
               <span key={`${rep}-${i}`} className="flex items-center gap-3">
                 <span className="w-1 h-1 bg-white/60 rounded-full inline-block" />{item}
               </span>
@@ -327,8 +328,8 @@ Discover powerful tools, empowering resources, and a supportive community design
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <motion.div initial={{ opacity: 0, x: -60 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }} className="relative">
               <div className="absolute -inset-8 animate-blob opacity-30" style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.3), rgba(236,72,153,0.2))', borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' }} />
-              <ImageWithFallback src="https://images.unsplash.com/photo-1555069855-e580a9adbf43?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYXR1cmUlMjBhZHVsdHMlMjBjb21tdW5pdHklMjBncm91cHxlbnwxfHx8fDE3NzIzNTM1ODV8MA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Community gathering" className="rounded-[32px] shadow-2xl w-full relative z-10" />
+              <ImageWithFallback src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHwxfHxncm91cCUyMHZpZGVvJTIwY2FsbCUyMHdvbWVufGVufDB8fHx8MTcxMDAwMDAwMHww&ixlib=rb-4.1.0&q=80&w=1080"
+                alt="Virtual meetup" className="rounded-[32px] shadow-2xl w-full relative z-10" />
               <motion.div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-xl rounded-2xl p-5 shadow-xl border border-white z-20"
                 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.5 }}
               >
@@ -435,19 +436,19 @@ Discover powerful tools, empowering resources, and a supportive community design
             >
               <div className="relative">
                 <motion.div
-                  className="absolute -inset-6 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] opacity-25"
+                  className="absolute -inset-3 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] opacity-20"
                   style={{ background: 'linear-gradient(135deg,#7c3aed,#ec4899)' }}
                   animate={{ borderRadius: ['40% 60% 70% 30% / 40% 50% 60% 50%', '60% 40% 30% 70% / 50% 60% 40% 50%', '40% 60% 70% 30% / 40% 50% 60% 50%'] }}
                   transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }} />
                 <motion.div
-                  className="absolute -inset-4 bg-linear-to-r from-purple-600 to-pink-600 rounded-3xl blur-xl opacity-15"
+                  className="absolute -inset-2 bg-linear-to-r from-purple-600 to-pink-600 rounded-3xl blur-lg opacity-10"
                   animate={{ scale: [1, 1.05, 1] }}
                   transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
                 />
                 <ImageWithFallback
-                  src="/img/founder.png"
+                  src="/img/founder-copy.png"
                   alt="Founder"
-                  className="rounded-3xl shadow-2xl w-full relative z-10"
+                  className="rounded-3xl shadow-2xl w-full max-h-[480px] object-cover object-top relative z-10"
                 />
                 <motion.div className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-5 shadow-2xl border border-purple-100 max-w-50 z-20"
                   initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
