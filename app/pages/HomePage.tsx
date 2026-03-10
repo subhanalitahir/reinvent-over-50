@@ -197,8 +197,8 @@ export function HomePage() {
                 animate={{ scale: [1, 1.03, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ duration: 4, repeat: Infinity }}
               />
               <div className="relative">
-                <ImageWithFallback src="https://www.womansworld.com/wp-content/uploads/2025/01/how-to-lower-blood-pressure-naturally.jpg?quality=86&strip=all"
-                  alt="Confident woman over 50" className="rounded-[32px] shadow-2xl w-full relative z-10 object-cover" />
+                <ImageWithFallback src="/img/hero-image.jpeg"
+                  alt="Confident woman over 50" className="rounded-4xl shadow-2xl w-full relative z-10 object-cover" />
 
                 <motion.div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-20"
                   initial={{ opacity: 0, x: -40, y: 20 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.8, delay: 1.2 }} whileHover={{ scale: 1.05 }}
@@ -418,6 +418,140 @@ export function HomePage() {
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </section>
+
+      {/* ===== ABOUT THE FOUNDER ===== */}
+      <section className="py-36 bg-white relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-purple-200 to-transparent" />
+        <div className="absolute -top-40 -right-40 w-150 h-150 orb orb-purple opacity-10 pointer-events-none" />
+        <div className="absolute -bottom-40 -left-40 w-125 h-125 orb orb-pink opacity-10 pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <motion.div className="text-center mb-20" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
+            <div className="section-label mx-auto w-fit mb-6"><Heart className="w-3.5 h-3.5" />The Vision Behind It All</div>
+            <h2 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold leading-none">
+              <span className="block text-gray-900 tracking-tight">Meet The</span>
+              <span className="block gradient-text italic">Founder</span>
+            </h2>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+            {/* Image */}
+            <motion.div
+              className="relative"
+              initial={{ opacity: 0, x: -60 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+            >
+              <motion.div
+                className="absolute -inset-6 rounded-[40px] pointer-events-none"
+                style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.15), rgba(236,72,153,0.15))' }}
+                animate={{ rotate: [0, 3, -3, 0] }}
+                transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+              />
+              <motion.div
+                className="absolute -inset-3 rounded-[36px] pointer-events-none blur-2xl opacity-30"
+                style={{ background: 'linear-gradient(135deg, #7c3aed, #db2777)' }}
+                animate={{ scale: [1, 1.03, 1], opacity: [0.2, 0.4, 0.2] }}
+                transition={{ duration: 5, repeat: Infinity }}
+              />
+              <div className="relative">
+                <ImageWithFallback
+                  src="/img/founder.png"
+                  alt="Founder of Reinvent Over 50"
+                  className="rounded-4xl shadow-2xl w-full object-cover relative z-10"
+                />
+                <motion.div
+                  className="absolute -bottom-6 -right-6 bg-linear-to-br from-purple-600 to-pink-600 rounded-2xl shadow-2xl p-6 z-20 text-white"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.7 }}
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <div className="text-4xl font-black font-display">10+</div>
+                  <div className="text-sm font-bold opacity-90 mt-0.5">Years of Expertise</div>
+                </motion.div>
+                <motion.div
+                  className="absolute -top-6 -left-6 bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-20"
+                  initial={{ opacity: 0, y: -20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.9 }}
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <div className="flex items-center gap-1 mb-1.5">
+                    {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />)}
+                  </div>
+                  <div className="text-sm font-bold text-gray-900">Certified Life Coach</div>
+                  <div className="text-xs text-gray-500 mt-0.5">ICF Accredited</div>
+                </motion.div>
+              </div>
+            </motion.div>
+
+            {/* Text */}
+            <motion.div
+              initial={{ opacity: 0, x: 60 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+            >
+              <h3 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-4 leading-tight">
+                A Journey Born From <span className="gradient-text-purple italic">Personal Experience</span>
+              </h3>
+              <div className="w-16 h-1.5 rounded-full mb-8" style={{ background: 'linear-gradient(90deg, #7c3aed, #db2777)' }} />
+              <div className="space-y-5 text-lg text-gray-600 leading-relaxed mb-10">
+                <p>
+                  After facing her own crossroads at 52—navigating career change, rediscovered passions, and a fierce desire for more—our founder knew there had to be a better way to guide others through life’s most powerful second act.
+                </p>
+                <p>
+                  With over a decade of experience as a certified life coach and a deep passion for empowering adults over 50, she built <span className="font-semibold text-gray-800">Reinvent Over 50</span> as the community she wished had existed when she needed it most.
+                </p>
+                <p>
+                  Her mission is simple: <span className="font-semibold text-gray-800">prove that your most fulfilling, joyful, and purpose-driven years are still ahead of you</span>—no matter where you’re starting from.
+                </p>
+              </div>
+
+              <motion.div className="grid grid-cols-2 gap-4 mb-10" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+                {[
+                  { icon: Award, label: 'ICF Certified Coach', color: 'from-purple-500 to-violet-500' },
+                  { icon: Users, label: '5,000+ Lives Transformed', color: 'from-fuchsia-500 to-pink-500' },
+                  { icon: BookOpen, label: 'Best-Selling Author', color: 'from-blue-500 to-indigo-500' },
+                  { icon: Sparkles, label: 'International Speaker', color: 'from-purple-500 to-fuchsia-500' },
+                ].map((item, i) => (
+                  <motion.div key={i} variants={itemVariants}
+                    className="flex items-center gap-3 p-4 rounded-2xl border border-gray-100 hover:border-purple-100 hover:bg-purple-50/40 transition-all shadow-sm group"
+                  >
+                    <div className={`w-10 h-10 bg-linear-to-br ${item.color} rounded-xl flex items-center justify-center shrink-0 shadow-md`}>
+                      <item.icon className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="text-sm font-semibold text-gray-700">{item.label}</span>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              <motion.blockquote
+                className="relative bg-linear-to-br from-purple-50 to-pink-50 border-l-4 border-purple-400 rounded-2xl p-6 mb-10"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5 }}
+              >
+                <div className="absolute top-4 right-5 text-7xl leading-none font-display italic text-purple-100 select-none">❝</div>
+                <p className="text-xl font-medium text-gray-800 leading-relaxed italic relative z-10">
+                  {'“It’s never too late to become who you were always meant to be. Your story isn’t over—it’s just getting to the best part.”'}
+                </p>
+              </motion.blockquote>
+
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                <Link href="/about" className="inline-flex items-center gap-2 px-9 py-5 text-white rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all"
+                  style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #db2777 100%)' }}>
+                  Learn More About Our Story <ArrowRight className="w-5 h-5" />
+                </Link>
+              </motion.div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
