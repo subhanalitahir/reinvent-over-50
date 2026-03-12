@@ -328,7 +328,7 @@ Discover powerful tools, empowering resources, and a supportive community design
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <motion.div initial={{ opacity: 0, x: -60 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }} className="relative">
               <div className="absolute -inset-8 animate-blob opacity-30" style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.3), rgba(236,72,153,0.2))', borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' }} />
-                <ImageWithFallback src="/img/image-change.png"
+                <ImageWithFallback src="/img/copy-2.png"
                   alt="Black women over 50 connecting in a supportive community" className="rounded-[32px] shadow-2xl w-full aspect-[3/5] object-cover object-center relative z-10" />
               <motion.div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-xl rounded-2xl p-5 shadow-xl border border-white z-20"
                 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.5 }}
