@@ -153,7 +153,7 @@ export function HomePage() {
                 <span className="font-semibold text-gray-800">embracing reinvention</span> and creating a life filled with purpose, growth, and new possibilities.
               </motion.p>
 
-              <motion.div className="flex flex-col sm:flex-row gap-4 mb-10"
+              <motion.div className="hidden lg:flex flex-col sm:flex-row gap-4 mb-10"
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }}
               >
                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
@@ -187,11 +187,11 @@ export function HomePage() {
 
             {/* Right */}
             <motion.div className="relative" initial={{ opacity: 0, scale: 0.9, x: 40 }} animate={{ opacity: 1, scale: 1, x: 0 }} transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}>
-              <motion.div className="absolute -inset-6 rounded-[40px] pointer-events-none"
+              <motion.div className="hidden lg:block absolute -inset-6 rounded-[40px] pointer-events-none"
                 style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.15), rgba(236,72,153,0.15))' }}
                 animate={{ rotate: [0, 3, -3, 0] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
               />
-              <motion.div className="absolute -inset-3 rounded-[36px] pointer-events-none blur-2xl opacity-40"
+              <motion.div className="hidden lg:block absolute -inset-3 rounded-[36px] pointer-events-none blur-2xl opacity-40"
                 style={{ background: 'linear-gradient(135deg, #7c3aed, #db2777)' }}
                 animate={{ scale: [1, 1.03, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ duration: 4, repeat: Infinity }}
               />
@@ -199,7 +199,7 @@ export function HomePage() {
                 <ImageWithFallback src="/img/hero-image.jpeg"
                   alt="Confident woman over 50" className="rounded-4xl shadow-2xl w-full relative z-10 max-h-[800px] object-cover object-top" />
 
-                <motion.div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-20"
+                <motion.div className="hidden sm:block absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-20"
                   initial={{ opacity: 0, x: -40, y: 20 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.8, delay: 1.2 }} whileHover={{ scale: 1.05 }}
                 >
                   <div className="number-display text-4xl mb-1">300+</div>
@@ -222,18 +222,45 @@ export function HomePage() {
                   <div className="text-xs text-gray-500 font-semibold mt-1">Member Rating</div>
                 </motion.div> */}
 
-                <motion.div className="absolute top-1/2 -right-8 bg-linear-to-br from-purple-600 to-pink-600 rounded-2xl shadow-2xl p-4 z-20 text-white"
+                <motion.div className="hidden sm:block absolute top-1/2 -right-8 bg-linear-to-br from-purple-600 to-pink-600 rounded-2xl shadow-2xl p-4 z-20 text-white"
                   initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 1.6 }} whileHover={{ scale: 1.05 }}
                 >
                   <div className="text-3xl font-black font-display">98%</div>
                   <div className="text-xs font-bold opacity-90">Success Rate</div>
                 </motion.div>
               </div>
+
+              <motion.div className="flex lg:hidden flex-col sm:flex-row gap-4 mt-8"
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }}
+              >
+                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                  <Link href="/membership" className="group relative inline-flex w-full items-center justify-center gap-2 px-9 py-5 text-white rounded-full font-bold text-lg shadow-2xl overflow-hidden"
+                    style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #db2777 100%)' }}
+                  >
+                    <span className="relative z-10">Start Your Journey</span>
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" />
+                    <div className="absolute inset-0 btn-shimmer" />
+                  </Link>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                  <Link href="/workbook" className="inline-flex w-full items-center justify-center gap-2 px-9 py-5 bg-white text-purple-700 rounded-full font-bold text-lg border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-50 transition-all shadow-lg">
+                    <Play className="w-4 h-4 fill-current" />
+                    Get Free Workbook
+                  </Link>
+                </motion.div>
+              </motion.div>
+
+              <motion.div className="flex lg:hidden flex-col items-center gap-2 mt-8"
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}
+              >
+                <span className="text-xs text-gray-400 font-medium tracking-widest uppercase">Scroll to explore</span>
+                <div className="scroll-indicator" />
+              </motion.div>
             </motion.div>
           </div>
         </div>
 
-        <motion.div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10"
+        <motion.div className="hidden lg:flex absolute bottom-10 left-1/2 -translate-x-1/2 flex-col items-center gap-2 z-10"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}
         >
           <span className="text-xs text-gray-400 font-medium tracking-widest uppercase">Scroll to explore</span>
