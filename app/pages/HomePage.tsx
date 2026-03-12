@@ -77,7 +77,6 @@ export function HomePage() {
 
   const benefits = [
     { text: 'Cancel anytime, no questions asked', icon: CheckCircle },
-    { text: '30-day money-back guarantee', icon: Shield },
     { text: 'Join 300+ transforming lives', icon: Users },
     { text: 'Expert guidance & support', icon: Zap },
   ];
