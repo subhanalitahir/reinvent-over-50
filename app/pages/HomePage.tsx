@@ -262,7 +262,7 @@ export function HomePage() {
           <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
             <div className="section-label mx-auto w-fit mb-5"><Sparkles className="w-3.5 h-3.5" />Our Impact in Numbers</div>
             <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900">
-              Transforming Lives <span className="gradient-text-purple italic">Every Day</span>
+              Reinventing Lives <span className="gradient-text-purple italic">Every Day</span>
             </h2>
           </motion.div>
           <motion.div className="grid md:grid-cols-4 gap-8" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
