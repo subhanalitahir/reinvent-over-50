@@ -5,6 +5,7 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { Users, Calendar, BookOpen, Video, Award, Heart, ArrowRight, Star, CheckCircle, TrendingUp, Shield, Zap, Quote, Sparkles, Play } from 'lucide-react';
 import { motion } from 'motion/react';
 import { BannerStrip } from '../components/BannerStrip';
+import { text } from 'stream/consumers';
 
 export function HomePage() {
   const features = [
@@ -79,6 +80,7 @@ export function HomePage() {
     { text: 'Cancel anytime, no questions asked', icon: CheckCircle },
     { text: 'Join 300+ transforming lives', icon: Users },
     { text: 'Expert guidance & support', icon: Zap },
+    {text: 'Secure Environment', icon: Shield },
   ];
 
   const containerVariants = {
