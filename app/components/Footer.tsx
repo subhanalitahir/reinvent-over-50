@@ -220,9 +220,7 @@ export function Footer() {
               <h3 className="font-bold text-sm uppercase tracking-widest text-gray-300 mb-6">Contact Us</h3>
               <ul className="space-y-5">
                 {[
-                  { Icon: Mail, text: 'info@reinventyou.com', sub: 'Email us anytime' },
-                  { Icon: Phone, text: '(555) 123-4567', sub: 'Mon–Fri, 9am–6pm' },
-                  { Icon: MapPin, text: '123 Transformation St', sub: 'City, State 12345' },
+                  { Icon: Mail, text: 'erikab@reinventedover50.com', sub: 'Email us anytime' },
                 ].map(({ Icon, text, sub }, index) => (
                   <motion.li
                     key={index}
