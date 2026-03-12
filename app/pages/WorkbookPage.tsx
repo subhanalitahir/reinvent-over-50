@@ -155,17 +155,17 @@ export function WorkbookPage() {
               <motion.div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-sm rounded-full shadow-lg mb-8 border border-purple-100"
                 initial={{ opacity:0, y:-20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6 }}>
                 <Sparkles className="w-4 h-4 text-purple-600" />
-                <span className="text-sm font-semibold text-gray-700">150+ Pages of Pure Transformation</span>
+                <span className="text-sm font-semibold text-gray-700">50+ Pages of Pure Transformation</span>
               </motion.div>
               <motion.h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.8, delay:0.3 }}>
                 <span className="block text-gray-900">The Reinvention</span>
                 <span className="block bg-linear-to-r from-purple-600 via-pink-600 to-fuchsia-500 bg-clip-text text-transparent">Workbook</span>
               </motion.h1>
               <motion.p className="text-xl text-gray-600 mb-10 leading-relaxed" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.8, delay:0.5 }}>
-                A comprehensive guide to discovering your purpose, setting meaningful goals, and creating an action plan for the life you've always dreamed of.
+                A powerful guide designed to help women over 50 rediscover their purpose, set meaningful goals, and confidently create their next chapter.
               </motion.p>
               <motion.div className="flex flex-wrap gap-4 mb-10" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.8, delay:0.6 }}>
-                {[{ icon:BookOpen, label:'150+ Pages' }, { icon:Award, label:'12 Modules' }, { icon:Zap, label:'Digital & Print' }].map((item, i) => (
+                {[{ icon:BookOpen, label:'50+ Pages' }, { icon:Award, label:'12 Transformation Modules' }, { icon:Zap, label:'Digital & Printable Format' }].map((item, i) => (
                   <div key={i} className="flex items-center gap-2 px-5 py-3 bg-white/80 backdrop-blur-sm rounded-full border border-purple-100 shadow-sm text-gray-700 font-medium">
                     <item.icon className="w-4 h-4 text-purple-500" />
                     {item.label}
@@ -204,20 +204,20 @@ export function WorkbookPage() {
               <span className="block text-gray-900">What's Inside</span>
               <span className="block bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">the Workbook</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">12 comprehensive modules designed to guide you through every step of your transformation</p>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">12 thoughtfully designed modules to guide you through rediscovering yourself and building the life you truly want.</p>
           </motion.div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
               { num:'01', title:'Self-Discovery & Values Assessment' },
-              { num:'02', title:'Life Audit & Reflection' },
+              { num:'02', title:'Life Reflection & Reinvention Mindset' },
               { num:'03', title:'Identifying Your Passions' },
-              { num:'04', title:'Goal Setting Framework' },
+              { num:'04', title:'Vision & Goal Setting Framework' },
               { num:'05', title:'Overcoming Limiting Beliefs' },
-              { num:'06', title:'Building New Habits' },
-              { num:'07', title:'Creating Your Action Plan' },
-              { num:'08', title:'Time Management Strategies' },
+              { num:'06', title:'Building Empowering Daily Habits' },
+              { num:'07', title:'Creating Your Personal Action Plan' },
+              { num:'08', title:'Time & Energy Management' },
               { num:'09', title:'Building Meaningful Relationships' },
-              { num:'10', title:'Financial Planning for Your New Chapter' },
+              { num:'10', title:'Financial Confidence for Your Next Chapter' },
               { num:'11', title:'Health & Wellness Goals' },
               { num:'12', title:'Progress Tracking & Celebration' },
             ].map((module, index) => (
