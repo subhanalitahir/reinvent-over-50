@@ -278,38 +278,51 @@ Empowering women over 50 to rediscover confidence, purpose, and create a life fi
       </section>
 
       {/* Stats */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 animate-aurora" />
-        <div className="absolute inset-0 bg-noise opacity-20" />
-        <motion.div className="absolute top-0 right-0 w-100 h-100 rounded-full blur-[80px] opacity-25"
-          style={{ background:'radial-gradient(circle,rgba(255,255,255,0.3) 0%,transparent 70%)' }}
-          animate={{ scale:[1,1.3,1], x:[0,60,0] }} transition={{ duration:12, repeat:Infinity, ease:'easeInOut' }} />
+      <section className="py-24 relative overflow-hidden" style={{ background:'linear-gradient(145deg, #4c1d95 0%, #7c3aed 35%, #a855f7 65%, #db2777 100%)' }}>
+        <div className="absolute inset-0 bg-grid-pattern opacity-20" />
+        <div className="absolute inset-0 bg-noise opacity-15" />
+        <motion.div className="absolute -top-20 -left-20 w-96 h-96 rounded-full blur-3xl opacity-40"
+          style={{ background:'radial-gradient(circle, rgba(255,255,255,0.35) 0%, transparent 70%)' }}
+          animate={{ scale:[1,1.2,1], x:[0,30,0], y:[0,20,0] }}
+          transition={{ duration:11, repeat:Infinity, ease:'easeInOut' }} />
+        <motion.div className="absolute -bottom-20 -right-20 w-[28rem] h-[28rem] rounded-full blur-3xl opacity-35"
+          style={{ background:'radial-gradient(circle, rgba(255,255,255,0.25) 0%, transparent 70%)' }}
+          animate={{ scale:[1,1.25,1], x:[0,-35,0], y:[0,-15,0] }}
+          transition={{ duration:13, repeat:Infinity, ease:'easeInOut', delay:1 }} />
+
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div className="text-center mb-14"
             initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
             transition={{ duration:0.6 }}>
-            <h2 className="font-display text-5xl md:text-6xl font-bold text-white mb-3">
-              Our Community, <span className="font-display italic">By the Numbers</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 border border-white/25 text-white text-sm font-semibold mb-5">
+              Community Snapshot
+            </div>
+            <h2 className="font-display text-5xl md:text-6xl font-bold text-white mb-4">
+              Our Community, <span className="font-display italic text-purple-100">By the Numbers</span>
             </h2>
+            <p className="text-purple-100/95 text-lg max-w-2xl mx-auto">
+              Real growth, real momentum, and real outcomes from women choosing reinvention together.
+            </p>
           </motion.div>
+
           <motion.div
-            className="grid md:grid-cols-4 gap-8"
+            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
           >
             {[
-              { value: '300+', label: 'Active Members' },
-              { value: '50+', label: 'Monthly Events' },
-              { value: '5+', label: 'Countries' },
-              { value: '98%', label: 'Satisfaction Rate' },
+              { value: '300+', label: 'Active Members', note: 'Growing every month' },
+              { value: '50+', label: 'Monthly Events', note: 'Online + in-person' },
+              { value: '5+', label: 'Countries', note: 'Global sisterhood' },
+              { value: '98%', label: 'Satisfaction Rate', note: 'Loved by members' },
             ].map((stat, index) => (
-              <motion.div key={index} variants={itemVariants} whileHover={{ y:-8, scale:1.05 }}
-                className="text-center">
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:border-white/40 transition-all">
-                  <div className="number-display text-5xl md:text-6xl text-white mb-3 font-display">{stat.value}</div>
-                  <div className="text-purple-200 text-lg font-medium">{stat.label}</div>
+              <motion.div key={index} variants={itemVariants} whileHover={{ y:-8 }} className="group">
+                <div className="h-full rounded-3xl border border-white/30 bg-white/12 backdrop-blur-xl p-7 shadow-xl transition-all group-hover:bg-white/18 group-hover:border-white/50">
+                  <div className="font-display font-bold text-5xl md:text-6xl text-white mb-3 leading-none">{stat.value}</div>
+                  <div className="text-white text-lg font-semibold mb-1">{stat.label}</div>
+                  <div className="text-purple-100 text-sm">{stat.note}</div>
                 </div>
               </motion.div>
             ))}
