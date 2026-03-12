@@ -89,7 +89,7 @@ Have a question about events, membership, or the workbook? Our team is happy to 
       </section>
 
       {/* Contact Cards */}
-      <section className="py-20 bg-white relative overflow-hidden">
+      {/* <section className="py-20 bg-white relative overflow-hidden">
         <div className="absolute inset-0 bg-dot-pattern opacity-40" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once:true }}>
@@ -106,7 +106,7 @@ Have a question about events, membership, or the workbook? Our team is happy to 
             ))}
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       {/* Form + Side */}
       <section className="py-24 bg-linear-to-br from-gray-50 via-purple-50/20 to-pink-50/20 relative overflow-hidden">
