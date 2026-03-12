@@ -367,9 +367,9 @@ Empowering women over 50 to rediscover confidence, purpose, and create a life fi
                   }}
                 />
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1771340591381-e72f1b148b14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21tdW5pdHklMjBldmVudCUyMGdhdGhlcmluZ3xlbnwxfHx8fDE3NzIzNTM1ODd8MA&ixlib=rb-4.1.0&q=80&w=1080"
-                  alt="Community event"
-                  className="rounded-3xl shadow-2xl w-full relative z-10"
+                  src="https://images.unsplash.com/photo-1589156280159-27698a70f29e?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=900&q=80&w=720"
+                  alt="Confident Black woman embracing a meaningful new chapter"
+                  className="rounded-3xl shadow-2xl w-full aspect-[4/5] object-cover object-center relative z-10"
                 />
               </div>
             </motion.div>
@@ -391,16 +391,16 @@ Empowering women over 50 to rediscover confidence, purpose, and create a life fi
                   Reinvent You 50+ is more than a community — it’s a movement proving that life after 50 can be powerful, joyful, and full of new possibilities.
                 </p>
               </div>
-              <motion.div className="card-bordered relative" whileHover={{ y:-6 }}>
+              <motion.div className="card-bordered relative p-6" whileHover={{ y:-6 }}>
                 <div className="text-5xl text-purple-200 font-display leading-none mb-3 font-bold">&ldquo;</div>
                 <p className="text-lg text-gray-700 italic leading-relaxed mb-4">
-                  &ldquo;I found my tribe here. These people helped me launch my second career and discover passions I never knew I had. This community changed my life.&rdquo;
+                  &ldquo;Being part of Reinvent You 50+ reminded me that this stage of life is not the end of something, it is the beginning of something meaningful. I found encouragement, clarity, and the confidence to step fully into my next chapter.&rdquo;
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-lg">M</div>
                   <div>
-                    <div className="font-bold text-gray-900">Margaret T.</div>
-                    <div className="text-sm text-gray-500">Member since 2022 &middot; Age 58</div>
+                    <div className="font-bold text-gray-900">Monica R.</div>
+                    <div className="text-sm text-gray-500">Community Member &middot; Age 56</div>
                   </div>
                   <div className="ml-auto flex gap-0.5">
                     {[...Array(5)].map((_,i) => <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />)}

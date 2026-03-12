@@ -125,7 +125,7 @@ export function HomePage() {
 
             {/* Left */}
             <motion.div initial={{ opacity: 0, x: -60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}>
-              <motion.div
+              {/* <motion.div
                 className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg mb-8 border border-purple-100"
                 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
               >
@@ -134,7 +134,7 @@ export function HomePage() {
                 </div>
                 <div className="w-px h-4 bg-gray-200" />
                 <span className="text-sm font-semibold text-gray-700">Trusted by <span className="text-purple-600">3,00+</span> Women Worldwide</span>
-              </motion.div>
+              </motion.div> */}
 
               <motion.div className="mb-8" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}>
                 <h1 className="font-display font-bold leading-none">
