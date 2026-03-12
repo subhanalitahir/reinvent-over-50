@@ -46,17 +46,17 @@ export function ContactPage() {
   };
 
   const contactCards = [
-    { icon: Mail, title: 'Email Us', detail: 'info@reinventyou.com', sub: 'Response within 24 hours', gradient: 'from-purple-500 to-pink-500', bg: 'from-purple-50 to-pink-50' },
-    { icon: Phone, title: 'Call Us', detail: '(555) 123-4567', sub: 'Mon-Fri, 9 AM – 5 PM ET', gradient: 'from-blue-500 to-cyan-500', bg: 'from-blue-50 to-cyan-50' },
-    { icon: MapPin, title: 'Visit Us', detail: '123 Transformation St', sub: 'Suite 500, City, State 12345', gradient: 'from-fuchsia-500 to-purple-500', bg: 'from-fuchsia-50 to-purple-50' },
-    { icon: Clock, title: 'Office Hours', detail: 'Mon–Fri: 9 AM – 5 PM', sub: 'Sat: 10 AM – 2 PM · Sun: Closed', gradient: 'from-green-500 to-emerald-500', bg: 'from-green-50 to-emerald-50' },
+    { icon: Mail, title: 'Email Us', detail: 'info@reinventyou50.com', sub: 'Response within 24 hours', gradient: 'from-purple-500 to-pink-500', bg: 'from-purple-50 to-pink-50' },
+    { icon: Phone, title: 'Call Us', detail: '(555) 123-4567', sub: 'Mon–Fri: 9 AM – 5 PM', gradient: 'from-blue-500 to-cyan-500', bg: 'from-blue-50 to-cyan-50' },
+    { icon: MapPin, title: 'Visit Us', detail: 'Community Events & Meetups', sub: 'Various Locations', gradient: 'from-fuchsia-500 to-purple-500', bg: 'from-fuchsia-50 to-purple-50' },
+    { icon: Clock, title: 'Office Hours', detail: 'Mon–Fri: 9 AM – 5 PM', sub: 'Sat: 10 AM – 2 PM', gradient: 'from-green-500 to-emerald-500', bg: 'from-green-50 to-emerald-50' },
   ];
 
   const faqs = [
-    { q: 'How quickly will I get a response?', a: 'We respond to all inquiries within 24 hours during business days.' },
-    { q: 'Can I schedule a call?', a: "Yes! Mention in your message that you'd like a call and we'll arrange a time." },
-    { q: 'Do you offer refunds?', a: 'Yes, we have a 30-day money-back guarantee on all products and memberships.' },
-    { q: 'How can I partner with you?', a: 'We love collaborations! Email us with "Partnership" in the subject line.' },
+    { q: 'How quickly will I get a response?', a: 'We usually reply to messages within 24 hours during business days. ' },
+    { q: 'Can I schedule a call?', a: "Yes. You can book a one-on-one session directly through our website." },
+    { q: 'Do you offer refunds?', a: 'Please contact us regarding refund requests and we’ll review your situation.' },
+    { q: 'How can I partner with you?', a: 'Please contact us regarding refund requests and we’ll review your situation.' },
   ];
 
   const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } };
@@ -83,7 +83,8 @@ export function ContactPage() {
             <span className="block bg-linear-to-r from-purple-600 via-pink-600 to-fuchsia-500 bg-clip-text text-transparent">Touch</span>
           </motion.h1>
           <motion.p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.7, delay:0.3 }}>
-            Have a question? We&apos;re friendly, real humans — and we reply fast.
+Have a question about events, membership, or the workbook? Our team is happy to help and will respond as soon as possible.
+
           </motion.p>
         </div>
       </section>
@@ -209,8 +210,8 @@ export function ContactPage() {
                 <motion.div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full" animate={{ scale:[1,1.3,1] }} transition={{ duration:6, repeat:Infinity }} />
                 <motion.div className="absolute -bottom-6 -left-6 w-28 h-28 bg-white/10 rounded-full" animate={{ scale:[1,1.2,1] }} transition={{ duration:5, repeat:Infinity, delay:1 }} />
                 <Sparkles className="w-8 h-8 mb-4 text-yellow-300" />
-                <h3 className="text-2xl font-bold mb-3">Ready to Transform?</h3>
-                <p className="text-purple-100 mb-6 text-sm leading-relaxed">Skip the wait — dive straight into our community and start your reinvention today.</p>
+                <h3 className="text-2xl font-bold mb-3">Ready to Reinvent?</h3>
+                <p className="text-purple-100 mb-6 text-sm leading-relaxed">Join a powerful community of women over 50 who are embracing growth, confidence, and new possibilities.</p>
                 <Link href="/membership">
                   <motion.div className="inline-flex items-center gap-2 bg-white text-purple-600 px-6 py-3 rounded-xl font-bold hover:bg-purple-50 transition-colors" whileHover={{ x:4 }}>
                     Join Now <ArrowRight className="w-4 h-4" />
@@ -229,10 +230,10 @@ export function ContactPage() {
           style={{ backgroundImage:'radial-gradient(circle at 30% 50%, rgba(255,255,255,0.12) 0%, transparent 50%)' }} />
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
           <motion.h2 className="text-5xl md:text-6xl font-bold text-white mb-6" initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.6 }}>
-            Ready to Start Your Journey?
+            Ready to Start Your Next Chapter?
           </motion.h2>
           <motion.p className="text-2xl text-purple-100 mb-12" initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.6, delay:0.2 }}>
-            Don&apos;t wait to create the life you&apos;ve always dreamed of
+            Don’t wait to create the life you truly deserve.
           </motion.p>
           <motion.div className="flex flex-col sm:flex-row gap-5 justify-center" initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.6, delay:0.4 }}>
             <motion.div whileHover={{ scale:1.05 }} whileTap={{ scale:0.95 }}>

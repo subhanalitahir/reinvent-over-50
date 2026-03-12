@@ -198,7 +198,7 @@ export function HomePage() {
               />
               <div className="relative">
                 <ImageWithFallback src="/img/hero-image.jpeg"
-                  alt="Confident woman over 50" className="rounded-4xl shadow-2xl w-full relative z-10 max-h-[420px] object-cover object-top" />
+                  alt="Confident woman over 50" className="rounded-4xl shadow-2xl w-full relative z-10 max-h-[580px] object-cover object-top" />
 
                 <motion.div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-20"
                   initial={{ opacity: 0, x: -40, y: 20 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.8, delay: 1.2 }} whileHover={{ scale: 1.05 }}
@@ -328,8 +328,8 @@ Discover powerful tools, empowering resources, and a supportive community design
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <motion.div initial={{ opacity: 0, x: -60 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }} className="relative">
               <div className="absolute -inset-8 animate-blob opacity-30" style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.3), rgba(236,72,153,0.2))', borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' }} />
-              <ImageWithFallback src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHwxfHxncm91cCUyMHZpZGVvJTIwY2FsbCUyMHdvbWVufGVufDB8fHx8MTcxMDAwMDAwMHww&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Virtual meetup" className="rounded-[32px] shadow-2xl w-full relative z-10" />
+              <ImageWithFallback src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=700&w=560&q=80"
+                alt="Virtual meetup" className="rounded-[32px] shadow-2xl w-full aspect-[4/5] object-cover object-center relative z-10" />
               <motion.div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-xl rounded-2xl p-5 shadow-xl border border-white z-20"
                 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.5 }}
               >
@@ -338,7 +338,7 @@ Discover powerful tools, empowering resources, and a supportive community design
                     <p className="font-display font-bold text-gray-900 text-lg">Next Virtual Meetup</p>
                     <p className="text-sm text-gray-500">Thursday, 7PM EST · 200+ attending</p>
                   </div>
-                  <Link href="/events" className="px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 text-white text-sm font-bold rounded-full hover:shadow-lg transition-shadow">RSVP Free</Link>
+                  <Link href="/events" className="px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 text-white text-sm font-bold rounded-full hover:shadow-lg transition-shadow">Join Us</Link>
                 </div>
               </motion.div>
             </motion.div>
@@ -448,7 +448,7 @@ Discover powerful tools, empowering resources, and a supportive community design
                 <ImageWithFallback
                   src="/img/founder-copy.png"
                   alt="Founder"
-                  className="rounded-3xl shadow-2xl w-full max-h-[480px] object-cover object-top relative z-10"
+                  className="rounded-3xl shadow-2xl w-full max-h-[640px] object-cover object-top relative z-10"
                 />
                 <motion.div className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-5 shadow-2xl border border-purple-100 max-w-50 z-20"
                   initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}

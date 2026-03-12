@@ -10,29 +10,29 @@ export function AboutPage() {
   const values = [
     {
       icon: Heart,
-      title: 'Compassion',
-      description: 'We believe in supporting each other with empathy and profound understanding at every step.',
+      title: 'Confidence',
+      description: 'We encourage women to embrace their strength, rediscover their voice, and step forward with renewed self-belief.',
       gradient: 'from-fuchsia-500 to-pink-600',
       glow: 'rgba(217,70,239,0.3)',
     },
     {
       icon: Users,
       title: 'Community',
-      description: 'Together, we are stronger and can achieve things none of us could accomplish alone.',
+      description: 'Together we support one another through shared experiences, encouragement, and meaningful connections.',
       gradient: 'from-violet-500 to-purple-600',
       glow: 'rgba(139,92,246,0.3)',
     },
     {
       icon: Sparkles,
-      title: 'Transformation',
-      description: 'Growth and radical positive change are not just possible — they are inevitable at any age.',
+      title: 'Growth   ',
+      description: 'Reinvention means continuing to evolve, learn, and pursue new dreams at every stage of life.',
       gradient: 'from-purple-500 to-fuchsia-500',
       glow: 'rgba(168,85,247,0.3)',
     },
     {
       icon: Target,
       title: 'Purpose',
-      description: 'Everyone deserves to live a deeply meaningful and fulfilling life filled with passion.',
+      description: 'We believe every woman deserves a life filled with purpose, passion, and meaningful impact.',
       gradient: 'from-cyan-500 to-teal-500',
       glow: 'rgba(6,182,212,0.3)',
     },
@@ -91,7 +91,7 @@ export function AboutPage() {
           </motion.h1>
           <motion.p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
             initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.8, delay:0.25 }}>
-            Empowering individuals over 50 to discover their deepest purpose and live with extraordinary passion
+Empowering women over 50 to rediscover confidence, purpose, and create a life filled with growth and meaning.
           </motion.p>
         </div>
       </section>
@@ -121,7 +121,7 @@ export function AboutPage() {
                 <ImageWithFallback
                   src="/img/founder-copy.png"
                   alt="Founder"
-                  className="rounded-3xl shadow-2xl w-full max-h-[480px] object-cover object-top relative z-10"
+                  className="rounded-3xl shadow-2xl w-full max-h-[640px] object-cover object-top relative z-10"
                 />
                 <motion.div className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-5 shadow-2xl border border-purple-100 max-w-50 z-20"
                   initial={{ opacity:0, scale:0.8 }} whileInView={{ opacity:1, scale:1 }} viewport={{ once:true }}
@@ -202,11 +202,9 @@ export function AboutPage() {
                 <div className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest text-white mb-5 bg-linear-to-r from-purple-500 to-pink-500">
                   Our Mission
                 </div>
-                <h3 className="font-display text-3xl md:text-4xl font-bold mb-5 text-gray-900">Empower Every Chapter</h3>
+                <h3 className="font-display text-3xl md:text-4xl font-bold mb-5 text-gray-900">Empower Every Women</h3>
                 <p className="text-lg text-gray-600 leading-relaxed">
-                  To provide a supportive community and practical resources that empower individuals
-                  over 50 to reinvent themselves, pursue their passions, and create a life filled with
-                  purpose, joy, and meaningful connections.
+                 Empower women over 50 with the support, inspiration, and resources needed to rediscover purpose, embrace growth, and build a fulfilling next chapter.
                 </p>
               </div>
             </motion.div>
@@ -222,9 +220,7 @@ export function AboutPage() {
                 </div>
                 <h3 className="font-display text-3xl md:text-4xl font-bold mb-5 text-gray-900">Redefine Age</h3>
                 <p className="text-lg text-gray-600 leading-relaxed">
-                  A world where turning 50 is celebrated as the beginning of the best years of life&mdash;
-                  where age is seen as an advantage, and every individual has the support and resources
-                  to thrive.
+                  A world where turning 50 is celebrated as the beginning of a powerful new season — filled with confidence, opportunity, and personal transformation.
                 </p>
               </div>
             </motion.div>
@@ -248,7 +244,7 @@ export function AboutPage() {
               <span className="text-gray-900">The Principles That </span>
               <span className="gradient-text-aurora font-display italic">Guide Us</span>
             </h2>
-            <p className="text-xl text-gray-500 max-w-2xl mx-auto">Everything we do flows from these deeply held beliefs</p>
+            <p className="text-xl text-gray-500 max-w-2xl mx-auto">Everything we do is built on the belief that reinvention and growth have no age limit.</p>
           </motion.div>
           <motion.div
             className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
@@ -304,9 +300,9 @@ export function AboutPage() {
             viewport={{ once: true }}
           >
             {[
-              { value: '5,000+', label: 'Active Members' },
-              { value: '200+', label: 'Monthly Events' },
-              { value: '50+', label: 'Countries' },
+              { value: '300+', label: 'Active Members' },
+              { value: '50+', label: 'Monthly Events' },
+              { value: '5+', label: 'Countries' },
               { value: '98%', label: 'Satisfaction Rate' },
             ].map((stat, index) => (
               <motion.div key={index} variants={itemVariants} whileHover={{ y:-8, scale:1.05 }}
@@ -376,13 +372,10 @@ export function AboutPage() {
               </h3>
               <div className="space-y-5 mb-10">
                 <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                  Every day, we witness incredible transformations. Members who thought their best years
-                  were behind them are starting new businesses, finding love, pursuing creative passions,
-                  traveling the world, and building deep friendships.
+                  Every day we see inspiring transformations. Women who once felt uncertain are now starting businesses, building communities, exploring passions, and creating fulfilling lives.
                 </p>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  This isn&apos;t just a community&mdash;it&apos;s a movement of people proving that life after 50 can
-                  be the most vibrant, fulfilling, and exciting chapter yet.
+                  Reinvent You 50+ is more than a community — it’s a movement proving that life after 50 can be powerful, joyful, and full of new possibilities.
                 </p>
               </div>
               <motion.div className="card-bordered relative" whileHover={{ y:-6 }}>
