@@ -395,7 +395,7 @@ export function WorkbookPage() {
       </section>
 
       {/* Guarantee */}
-      <section className="py-24 bg-white relative overflow-hidden">
+      {/* <section className="py-24 bg-white relative overflow-hidden">
         <div className="absolute inset-0 bg-dot-pattern opacity-30" />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <motion.div className="relative bg-linear-to-br from-green-50 to-emerald-50 rounded-3xl p-12 border border-green-100 shadow-2xl text-center overflow-hidden"
@@ -423,7 +423,7 @@ export function WorkbookPage() {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       <EmailModal
         isOpen={modalOpen}
