@@ -311,7 +311,7 @@ export function WorkbookPage() {
                         className={`w-full mt-8 py-5 rounded-2xl font-bold text-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed ${isFeatured ? 'bg-white text-purple-600 shadow-xl hover:bg-purple-50' : 'border-2 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white'}`}
                         whileHover={{ scale: loadingPlan ? 1 : 1.02 }}
                         whileTap={{ scale: loadingPlan ? 1 : 0.98 }}>
-                        {loadingPlan === product._id ? 'Redirectingâ€¦' : freeForUser ? (user ? 'Access Now' : 'Get Free Access') : `Get ${product.name}`}
+                        {loadingPlan === product._id ? 'Redirecting...' : freeForUser ? (user ? 'Access Now' : 'Get Free Access') : `Get ${product.name}`}
                       </motion.button>
                     </div>
                   </motion.div>
@@ -410,7 +410,7 @@ export function WorkbookPage() {
               </motion.div>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">30-Day Money-Back Guarantee</h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                We're confident this workbook will transform your life. If you're not completely satisfied within 30 days, we'll refund your purchase â€” no questions asked.
+                We're confident this workbook will transform your life. If you're not completely satisfied within 30 days, we'll refund your purchase - no questions asked.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-6 text-gray-600">
                 {['No questions asked', 'Full refund within 24hrs', '100% risk-free'].map((item, i) => (

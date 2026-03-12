@@ -134,7 +134,7 @@ export default function AdminOverviewPage() {
 
         <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <p className="text-purple-200 text-sm font-medium mb-1">{greeting()}, {user?.name?.split(' ')[0] ?? 'Admin'} ðŸ‘‹</p>
+            <p className="text-purple-200 text-sm font-medium mb-1">{greeting()}, {user?.name?.split(' ')[0] ?? 'Admin'}</p>
             <h2 className="text-2xl lg:text-3xl font-bold tracking-tight">Dashboard Overview</h2>
             <p className="text-purple-200 text-sm mt-1.5">
               {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}

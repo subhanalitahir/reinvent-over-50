@@ -130,7 +130,7 @@ Have a question about events, membership, or the workbook? Our team is happy to 
                         <CheckCircle className="w-12 h-12 text-white" />
                       </motion.div>
                       <h3 className="text-3xl font-bold text-gray-900 mb-3">Message Sent!</h3>
-                      <p className="text-gray-500 text-lg">We&apos;ll be in touch within 24 hours ??</p>
+                      <p className="text-gray-500 text-lg">We'll be in touch within 24 hours</p>
                     </motion.div>
                   ) : (
                     <motion.form onSubmit={handleSubmit} className="space-y-6" key="form">
