@@ -246,7 +246,7 @@ export function HomePage() {
       <div className="py-5 overflow-hidden relative" style={{ background: 'linear-gradient(90deg, #7c3aed, #a855f7, #db2777, #d946ef, #db2777, #a855f7, #7c3aed)' }}>
         <div className="flex gap-10 animate-marquee whitespace-nowrap font-bold text-sm uppercase tracking-widest text-white">
           {[...Array(3)].map((_, rep) =>
-            ['Join 300+ Members', '✦ Transform Your Life', '✦ Expert Coaching', '✦ 98% Success Rate', '✦ 30-Day Guarantee', '✦ 5+ Countries', '✦ 50+ Events Monthly', '✦ Start Today Free'].map((item, i) => (
+            ['Join 300+ Members', '✦ Transform Your Life', '✦ Expert Coaching', '✦ 98% Success Rate', '✦ 5+ Countries', '✦ 50+ Events Monthly'].map((item, i) => (
               <span key={`${rep}-${i}`} className="flex items-center gap-3">
                 <span className="w-1 h-1 bg-white/60 rounded-full inline-block" />{item}
               </span>
