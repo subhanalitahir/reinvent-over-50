@@ -121,8 +121,8 @@ export function Footer() {
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
             >
-              <Link href="/" className="flex items-center gap-3 group mb-6 w-fit">
-                <img src="/img/logo.png" alt="Reinvent You Logo" className='w-50 h-40' />
+              <Link href="/" className="flex items-center gap-3 group mb-4 w-fit">
+                <img src="/img/logo.png" alt="Reinvent You Logo" className='w-40 h-32' />
               </Link>
               <p className="text-gray-500 leading-relaxed mb-8 text-sm">
                 Empowering individuals over 50 to discover their purpose, build meaningful connections, and create the extraordinary life they deserve.
