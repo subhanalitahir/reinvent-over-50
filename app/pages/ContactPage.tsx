@@ -56,7 +56,6 @@ export function ContactPage() {
     { q: 'How quickly will I get a response?', a: 'We usually reply to messages within 24 hours during business days. ' },
     { q: 'Can I schedule a call?', a: "Yes. You can book a one-on-one session directly through our website." },
     { q: 'Do you offer refunds?', a: 'Please contact us regarding refund requests and we’ll review your situation.' },
-    { q: 'How can I partner with you?', a: 'Please contact us regarding refund requests and we’ll review your situation.' },
   ];
 
   const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } };
