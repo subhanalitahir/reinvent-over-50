@@ -335,8 +335,8 @@ Discover powerful tools, empowering resources, and a supportive community design
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-display font-bold text-gray-900 text-lg">Next Virtual Meetup</p>
-                    <p className="text-sm text-gray-500">Thursday, 7PM EST · 200+ attending</p>
+                    <p className="font-display font-bold text-gray-900 text-lg">Next In-person Event</p>
+                    <p className="text-sm text-gray-500">Thursday, 10AM EST · 200+ attending</p>
                   </div>
                   <Link href="/events" className="px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 text-white text-sm font-bold rounded-full hover:shadow-lg transition-shadow">Join Us</Link>
                 </div>
