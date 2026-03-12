@@ -297,7 +297,7 @@ export function EventsPage() {
                 const durationLabel = durationMins >= 60 ? `${Math.floor(durationMins/60)}h${durationMins%60>0?` ${durationMins%60}m`:''}` : `${durationMins} min`;
                 return (
                   <motion.div key={event._id} variants={cardVariants} whileHover={{ y:-10, scale:1.03 }}
-                    className="card-shine bg-white border-2 border-purple-100 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:border-purple-300 transition-all">
+                    className="card-shine bg-white border-2 border-purple-100 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:border-purple-300 transition-all flex flex-col">
                     <div className="relative overflow-hidden">
                       <motion.div whileHover={{ scale:1.1 }} transition={{ duration:0.4 }}>
                         <ImageWithFallback src={event.imageUrl ?? ''} alt={event.title} className="w-full h-48 object-cover" />
@@ -311,13 +311,17 @@ export function EventsPage() {
                         </div>
                       )}
                     </div>
-                    <div className="p-6">
+                    <div className="p-6 flex flex-col h-full">
                       <h3 className="text-xl mb-3 font-semibold">{event.title}</h3>
-                      <p className="text-gray-600 mb-4 text-sm line-clamp-2">{event.description}</p>
+                      <p className="text-gray-600 mb-4 text-sm leading-relaxed">{event.description}</p>
                       <div className="space-y-2 text-sm text-gray-600 mb-4">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-purple-500" />
                           <span>{new Date(event.startDate).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' })}, {new Date(event.startDate).toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' })}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-purple-500" />
+                          <span>Ends: {new Date(event.endDate).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' })}, {new Date(event.endDate).toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' })}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4 text-purple-500" />
@@ -330,7 +334,7 @@ export function EventsPage() {
                           </div>
                         )}
                       </div>
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between mt-auto pt-2">
                         <span className={`text-lg font-semibold ${event.isFree ? 'text-green-600' : 'text-purple-600'}`}>{priceLabel}</span>
                         <motion.button
                           onClick={() => handleEventRegister(event)}
@@ -368,6 +372,9 @@ export function EventsPage() {
                 <span className="font-display italic" style={{ background:'linear-gradient(135deg,#c026d3,#9333ea)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Events</span>
               </h2>
               <p className="text-gray-500 text-sm mt-1">Real connections, real places</p>
+              <p className="mt-3 inline-flex rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">
+                Hotel dues are not included in this package/price.
+              </p>
             </div>
           </motion.div>
           {eventsLoading ? (
@@ -388,7 +395,7 @@ export function EventsPage() {
                 const freeForUser = isFreeForCurrentUser(event);
                 return (
                   <motion.div key={event._id} variants={cardVariants} whileHover={{ y:-10, scale:1.03 }}
-                    className="card-shine bg-white border-2 border-fuchsia-100 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:border-fuchsia-300 transition-all">
+                    className="card-shine bg-white border-2 border-fuchsia-100 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:border-fuchsia-300 transition-all flex flex-col">
                     <div className="relative overflow-hidden">
                       <motion.div whileHover={{ scale:1.1 }} transition={{ duration:0.4 }}>
                         <ImageWithFallback src={event.imageUrl ?? ''} alt={event.title} className="w-full h-48 object-cover" />
@@ -402,13 +409,17 @@ export function EventsPage() {
                         </div>
                       )}
                     </div>
-                    <div className="p-6">
+                    <div className="p-6 flex flex-col h-full">
                       <h3 className="text-xl mb-3 font-semibold">{event.title}</h3>
-                      <p className="text-gray-600 mb-4 text-sm line-clamp-2">{event.description}</p>
+                      <p className="text-gray-600 mb-4 text-sm leading-relaxed">{event.description}</p>
                       <div className="space-y-2 text-sm text-gray-600 mb-4">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-fuchsia-500" />
                           <span>{new Date(event.startDate).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' })}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-fuchsia-500" />
+                          <span>Ends: {new Date(event.endDate).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' })}</span>
                         </div>
                         {event.location && (
                           <div className="flex items-center gap-2">
@@ -423,7 +434,7 @@ export function EventsPage() {
                           </div>
                         )}
                       </div>
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between mt-auto pt-2">
                         <span className={`text-lg font-semibold ${event.isFree ? 'text-green-600' : 'text-fuchsia-600'}`}>{priceLabel}</span>
                         <motion.button
                           onClick={() => handleEventRegister(event)}
