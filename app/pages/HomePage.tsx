@@ -414,7 +414,6 @@ Discover powerful tools, empowering resources, and a supportive community design
                   </div>
                   <div>
                     <div className="font-bold text-gray-900">{testimonial.name}</div>
-                    <div className="text-sm text-gray-500">{testimonial.role} · Age {testimonial.age}</div>
                   </div>
                 </div>
               </motion.div>
