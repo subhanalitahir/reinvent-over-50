@@ -166,8 +166,9 @@ export function BookingPage() {
                 <motion.div className="absolute -inset-4 bg-linear-to-r from-purple-600 to-pink-600 rounded-3xl blur-2xl opacity-20"
                   animate={{ scale:[1,1.05,1] }} transition={{ duration:4, repeat:Infinity, ease:'easeInOut' }} />
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1713258827779-3ecedfd461a1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHdvbWVuJTIwYmxhY2slMjBvdmVyJTIwNTB8ZW58MHx8MHx8fDA%3D"
-                  className="rounded-3xl max-h-[800px] object-fit shadow-2xl w-full relative z-10"
+                  src="/img/copy-2.png"
+                  alt="One-on-one coaching session"
+                  className="rounded-3xl shadow-2xl w-full relative z-10"
                 />
               </motion.div>
             </div>
@@ -180,9 +181,9 @@ export function BookingPage() {
               </div>
               <div className="grid md:grid-cols-3 gap-6">
                 {[
-                  { name:'Patricia M.', role:'Entrepreneur', text:'The 1-on-1 session gave me clarity I had been searching for. Worth every penny!', rating:5 },
-                  { name:'James R.', role:'Retired Executive', text:'My coach really listened and understood my unique situation. The action plan was spot-on.', rating:5 },
-                  { name:'Carol S.', role:'Author', text:'I was hesitant at first, but this session changed my perspective and gave me hope.', rating:5 },
+                  { name:'Patricia M.', text:'The 1-on-1 session gave me clarity I had been searching for. Worth every penny!', rating:5 },
+                  { name:'James R.', text:'My coach really listened and understood my unique situation. The action plan was spot-on.', rating:5 },
+                  { name:'Carol S.', text:'I was hesitant at first, but this session changed my perspective and gave me hope.', rating:5 },
                 ].map((t, index) => (
                   <motion.div key={index} className="card-shine bg-linear-to-br from-gray-50 to-purple-50/30 rounded-3xl p-8 border border-gray-100 shadow-lg hover:shadow-xl transition-all"
                     whileHover={{ y:-6, scale:1.02 }}>
@@ -192,7 +193,6 @@ export function BookingPage() {
                     <p className="text-gray-700 italic mb-5 leading-relaxed">"{t.text}"</p>
                     <div>
                       <div className="font-bold text-gray-900">{t.name}</div>
-                      <div className="text-sm text-gray-500">{t.role}</div>
                     </div>
                   </motion.div>
                 ))}
