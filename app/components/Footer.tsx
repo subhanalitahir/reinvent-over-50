@@ -25,7 +25,6 @@ export function Footer() {
   const resourceLinks = [
     { to: '/booking', label: 'Book a Session' },
     { to: '/contact', label: 'Contact Us' },
-    { to: '#', label: 'Blog & Insights' },
     { to: '#', label: 'Privacy Policy' },
     { to: '#', label: 'Terms of Service' },
   ];
@@ -111,24 +110,24 @@ export function Footer() {
         </motion.div>
 
         {/* Main Footer Grid */}
-        <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12 mb-14">
+        <div className="max-w-7xl mx-auto px-6 py-10">
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 mb-10">
             {/* Brand Column */}
             <motion.div
-              className="lg:col-span-2"
+              className="lg:col-span-2 -mt-6"
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
             >
-              <Link href="/" className="flex items-center gap-3 group mb-4 w-fit">
+              <Link href="/" className="flex items-center gap-3 group mb-1 w-fit">
                 <img src="/img/logo.png" alt="Reinvent You Logo" className='w-40 h-32' />
               </Link>
-              <p className="text-gray-500 leading-relaxed mb-8 text-sm">
+              <p className="text-gray-500 leading-relaxed mb-2 text-sm">
                 Empowering individuals over 50 to discover their purpose, build meaningful connections, and create the extraordinary life they deserve.
               </p>
               {/* Social Icons */}
-              <div className="flex gap-3">
+              <div className="flex gap-2">
                 {socials.map(({ Icon, label, color }, index) => (
                   <motion.a
                     key={index}
