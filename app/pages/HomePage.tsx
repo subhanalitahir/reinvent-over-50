@@ -212,7 +212,7 @@ export function HomePage() {
                   </div>
                 </motion.div>
 
-                <motion.div className="absolute -top-6 -right-6 bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-20"
+                {/* <motion.div className="absolute -top-6 -right-6 bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-20"
                   initial={{ opacity: 0, x: 40, y: -20 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.8, delay: 1.4 }} whileHover={{ scale: 1.05 }}
                 >
                   <div className="flex items-center gap-1 mb-2">
@@ -220,7 +220,7 @@ export function HomePage() {
                   </div>
                   <div className="number-display text-3xl">4.9/5</div>
                   <div className="text-xs text-gray-500 font-semibold mt-1">Member Rating</div>
-                </motion.div>
+                </motion.div> */}
 
                 <motion.div className="absolute top-1/2 -right-8 bg-linear-to-br from-purple-600 to-pink-600 rounded-2xl shadow-2xl p-4 z-20 text-white"
                   initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 1.6 }} whileHover={{ scale: 1.05 }}
