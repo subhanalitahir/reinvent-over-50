@@ -166,9 +166,8 @@ export function BookingPage() {
                 <motion.div className="absolute -inset-4 bg-linear-to-r from-purple-600 to-pink-600 rounded-3xl blur-2xl opacity-20"
                   animate={{ scale:[1,1.05,1] }} transition={{ duration:4, repeat:Infinity, ease:'easeInOut' }} />
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1634840542403-1a9b1067aaa0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsaWZlJTIwY29hY2hpbmclMjBzZXNzaW9ufGVufDF8fHx8MTc3MjM1MzU4Nnww&ixlib=rb-4.1.0&q=80&w=1080"
-                  alt="Coaching session"
-                  className="rounded-3xl shadow-2xl w-full relative z-10"
+                  src="https://i.pinimg.com/736x/4d/d5/75/4dd575d7358e9cb9869ff0f2c598ea7d.jpg"
+                  className="rounded-3xl max-h-[800px] object-fit shadow-2xl w-full relative z-10"
                 />
               </motion.div>
             </div>

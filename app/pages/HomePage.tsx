@@ -98,7 +98,7 @@ export function HomePage() {
 
       {/* ===== HERO ===== */}
       <section
-        className="relative min-h-screen flex items-center overflow-hidden"
+        className="relative h-screen flex items-center overflow-hidden"
         style={{ background: 'linear-gradient(145deg, #faf5ff 0%, #fdf2f8 40%, #fae8ff 70%, #f5f3ff 100%)' }}
       >
         <div className="absolute inset-0 bg-mesh-gradient opacity-60" />
@@ -121,13 +121,13 @@ export function HomePage() {
           />
         ))}
 
-        <div className="max-w-7xl mx-auto px-6 py-20 relative z-10 w-full">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="max-w-7xl mx-auto px-6 py-6 relative z-10 w-full">
+          <div className="grid lg:grid-cols-2 gap-10 items-center">
 
             {/* Left */}
             <motion.div initial={{ opacity: 0, x: -60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}>
               <motion.div
-                className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg mb-8 border border-purple-100"
+                className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg mb-5 border border-purple-100"
                 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
               >
                 <div className="flex items-center gap-0.5">
@@ -137,24 +137,24 @@ export function HomePage() {
                 <span className="text-sm font-semibold text-gray-700">Trusted by <span className="text-purple-600">3,00+</span> Women Worldwide</span>
               </motion.div>
 
-              <motion.div className="mb-8" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}>
+              <motion.div className="mb-5" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}>
                 <h1 className="font-display font-bold leading-none">
-                  <span className="block text-5xl md:text-7xl lg:text-8xl text-gray-900 tracking-tight">Your Best</span>
-                  <span className="block text-5xl md:text-7xl lg:text-8xl text-gray-900 tracking-tight">Years Are</span>
-                  <span className="block text-5xl md:text-7xl lg:text-8xl font-black italic" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #db2777 50%, #c026d3 100%)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  <span className="block text-4xl md:text-6xl lg:text-7xl text-gray-900 tracking-tight">Your Best</span>
+                  <span className="block text-4xl md:text-6xl lg:text-7xl text-gray-900 tracking-tight">Years Are</span>
+                  <span className="block text-4xl md:text-6xl lg:text-7xl font-black italic" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #db2777 50%, #c026d3 100%)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                     Still Ahead
                   </span>
                 </h1>
               </motion.div>
 
-              <motion.p className="text-xl md:text-2xl text-gray-600 mb-10 leading-relaxed max-w-xl"
+              <motion.p className="text-lg md:text-xl text-gray-600 mb-6 leading-relaxed max-w-xl"
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}
               >
                 Join a powerful community of women over 50 who are{' '}
                 <span className="font-semibold text-gray-800">embracing reinvention</span> and creating a life filled with purpose, growth, and new possibilities.
               </motion.p>
 
-              <motion.div className="flex flex-col sm:flex-row gap-4 mb-10"
+              <motion.div className="flex flex-col sm:flex-row gap-4 mb-6"
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }}
               >
                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
@@ -198,7 +198,7 @@ export function HomePage() {
               />
               <div className="relative">
                 <ImageWithFallback src="/img/hero-image.jpeg"
-                  alt="Confident woman over 50" className="rounded-4xl shadow-2xl w-full relative z-10 max-h-[580px] object-cover object-top" />
+                  alt="Confident woman over 50" className="rounded-4xl shadow-2xl w-full relative z-10 max-h-[68vh] object-cover object-top" />
 
                 <motion.div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-20"
                   initial={{ opacity: 0, x: -40, y: 20 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.8, delay: 1.2 }} whileHover={{ scale: 1.05 }}
@@ -328,8 +328,8 @@ Discover powerful tools, empowering resources, and a supportive community design
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <motion.div initial={{ opacity: 0, x: -60 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }} className="relative">
               <div className="absolute -inset-8 animate-blob opacity-30" style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.3), rgba(236,72,153,0.2))', borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' }} />
-              <ImageWithFallback src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=700&w=560&q=80"
-                alt="Virtual meetup" className="rounded-[32px] shadow-2xl w-full aspect-[4/5] object-cover object-center relative z-10" />
+                <ImageWithFallback src="https://i.pinimg.com/736x/e0/77/f9/e077f9ac7f6a1120caee5a9981696707.jpg"
+                  alt="Black women over 50 connecting in a supportive community" className="rounded-[32px] shadow-2xl w-full aspect-[3/5] object-cover object-center relative z-10" />
               <motion.div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-xl rounded-2xl p-5 shadow-xl border border-white z-20"
                 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.5 }}
               >
@@ -448,7 +448,7 @@ Discover powerful tools, empowering resources, and a supportive community design
                 <ImageWithFallback
                   src="/img/founder-copy.png"
                   alt="Founder"
-                  className="rounded-3xl shadow-2xl w-full max-h-[640px] object-cover object-top relative z-10"
+                  className="rounded-3xl shadow-2xl w-full max-h-[700px] object-fit object-top relative z-10"
                 />
                 <motion.div className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-5 shadow-2xl border border-purple-100 max-w-50 z-20"
                   initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}

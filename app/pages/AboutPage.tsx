@@ -121,7 +121,7 @@ Empowering women over 50 to rediscover confidence, purpose, and create a life fi
                 <ImageWithFallback
                   src="/img/founder-copy.png"
                   alt="Founder"
-                  className="rounded-3xl shadow-2xl w-full max-h-[640px] object-cover object-top relative z-10"
+                  className="rounded-3xl shadow-2xl w-full max-h-[700px] object-fit object-top relative z-10"
                 />
                 <motion.div className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-5 shadow-2xl border border-purple-100 max-w-50 z-20"
                   initial={{ opacity:0, scale:0.8 }} whileInView={{ opacity:1, scale:1 }} viewport={{ once:true }}

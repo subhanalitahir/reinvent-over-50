@@ -561,7 +561,7 @@ export function MembershipPage() {
               },
             ].map((faq, index) => (
               <motion.div key={index}
-                className="card-bordered relative overflow-hidden group"
+                className="card-bordered p-4 relative overflow-hidden group"
                 initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
                 transition={{ duration:0.5, delay:index*0.1 }}
                 whileHover={{ x:6 }}>
@@ -609,7 +609,7 @@ export function MembershipPage() {
           <motion.p className="text-xl md:text-2xl text-purple-100 mb-10 max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
             transition={{ duration:0.6, delay:0.2 }}>
-            Join <span className="text-yellow-300 font-bold">5,000+</span> people over 50 who are reinventing themselves — and loving every step.
+            Join <span className="text-yellow-300 font-bold">300+</span> people over 50 who are reinventing themselves — and loving every step.
           </motion.p>
 
           {/* Trust strip */}
@@ -620,7 +620,7 @@ export function MembershipPage() {
               { icon: Star, label:'4.9/5 Rating', sub:'From 2,400+ reviews' },
               { icon: Shield, label:'30-Day Guarantee', sub:'No questions asked' },
               { icon: TrendingUp, label:'98% Success Rate', sub:'Member-reported' },
-              { icon: Users, label:'5,000+ Members', sub:'In 50+ countries' },
+              { icon: Users, label:'300+ Members', sub:'In 50+ countries' },
             ].map(({ icon: Icon, label, sub }, i) => (
               <div key={i} className="flex items-center gap-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-3">
                 <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center shrink-0">
