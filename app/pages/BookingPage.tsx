@@ -166,7 +166,7 @@ export function BookingPage() {
                 <motion.div className="absolute -inset-4 bg-linear-to-r from-purple-600 to-pink-600 rounded-3xl blur-2xl opacity-20"
                   animate={{ scale:[1,1.05,1] }} transition={{ duration:4, repeat:Infinity, ease:'easeInOut' }} />
                 <ImageWithFallback
-                  src="/img/copy-2.png"
+                  src="/img/copy-3.png"
                   alt="One-on-one coaching session"
                   className="rounded-3xl shadow-2xl w-full relative z-10"
                 />
