@@ -365,14 +365,17 @@ export function BookingPage() {
                 setError('');
                 try {
                   // Parse selected date + time into an ISO string
-                  const dateStr = selectedDate; // e.g. "March 5, 2026"
-                  const timeStr = selectedTime.replace(' ET', ''); // e.g. "9:00 AM"
-                  const scheduledAt = new Date(`${dateStr} ${timeStr}`).toISOString();
-                  const res = await fetch(`/api/checkout/booking`, {
+                  const dateStr = selectedDate;
+                  const timeStr = selectedTime.replace(' ET', '');
+                  const parsedDate = new Date(`${dateStr} ${timeStr}`);
+                  const scheduledAt = isNaN(parsedDate.getTime())
+                    ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+                    : parsedDate.toISOString();
+                  const res = await fetch('/api/checkout/booking', {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
-                      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+                      ...(token ? { Authorization: `Bearer ${token}` } : {}),
                     },
                     body: JSON.stringify({
                       name: formData.name,
@@ -384,12 +387,13 @@ export function BookingPage() {
                     }),
                   });
                   const data = await res.json();
-                  if (!res.ok) throw new Error(data?.message ?? 'Checkout failed');
-                  if (data.url) window.location.href = data.url;
+                  if (!res.ok) throw new Error(data?.message ?? 'Checkout failed. Please try again.');
+                  const checkoutUrl: string | undefined = data?.data?.url ?? data?.url;
+                  if (!checkoutUrl) throw new Error('Could not create payment session. Please try again.');
+                  window.location.assign(checkoutUrl);
                 } catch (err: unknown) {
-                  setError(err instanceof Error ? err.message : 'Something went wrong');
-                } finally {
                   setLoading(false);
+                  setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
                 }
               }}>
               <div>
@@ -422,7 +426,12 @@ export function BookingPage() {
                   You&apos;ll be redirected to Stripe for secure payment. A confirmation email with your session details will follow.
                 </p>
               </div>
-              {error && <p className="text-rose-500 text-sm text-center">{error}</p>}
+              {error && (
+                <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex items-start gap-3">
+                  <span className="text-rose-500 font-bold text-lg leading-none mt-0.5">!</span>
+                  <p className="text-rose-700 text-sm font-medium">{error}</p>
+                </div>
+              )}
               <motion.button type="submit" disabled={loading}
                 className="w-full bg-linear-to-r from-purple-600 to-pink-600 text-white py-5 rounded-2xl font-bold text-lg shadow-xl flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
                 whileHover={loading ? {} : { scale:1.02, boxShadow:'0 20px 60px rgba(124,58,237,0.4)' }} whileTap={loading ? {} : { scale:0.98 }}>
