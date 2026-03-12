@@ -258,7 +258,7 @@ Empowering women over 50 to rediscover confidence, purpose, and create a life fi
                 key={index}
                 variants={itemVariants}
                 whileHover={{ y: -12, scale: 1.03 }}
-                className="text-center group card-bordered relative overflow-hidden"
+                className="text-center group p-6 card-bordered relative overflow-hidden"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-500"
                   style={{ background:`radial-gradient(circle at 50% 0%, ${value.glow ?? 'rgba(124,58,237,0.3)'}, transparent 70%)` }} />
