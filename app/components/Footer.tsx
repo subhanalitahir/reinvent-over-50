@@ -265,7 +265,7 @@ export function Footer() {
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <span>© {currentYear} Reinvent You Over 50. All rights reserved.</span>
               <span className="hidden md:inline-flex items-center gap-1 ml-2 text-gray-700">
-                Made with <motion.span animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }}><Heart className="w-3.5 h-3.5 text-pink-500 fill-pink-500 inline" /></motion.span> for those over 50
+                Designed and developed with <Heart className="w-3 h-3 text-pink-500" /> by <Link target='_blank' href="https://www.fiverr.com/kamranumer838?public_mode=true" className="text-purple-400 hover:text-purple-300 transition-colors">Zubair Umar</Link>
               </span>
             </div>
             <div className="flex items-center gap-6">
